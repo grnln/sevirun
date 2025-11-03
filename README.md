@@ -1,2 +1,2 @@
-# sevirun
-Proyecto PGPI 2025-26 ETSII
+# Sevirun
+Proyecto de tienda virtual en Django desarrollado por el grupo 2.16 de la asignatura _Planificación y Gestión de Proyectos Informáticos_ (PGPI) del curso 2025-26 (Universidad de Sevilla - Escuela Técnica Superior de Ingeniería Informática).
