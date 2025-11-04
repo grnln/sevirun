@@ -2,7 +2,7 @@ from django.db import models
 
 # Brand
 class Brand(models.Model):
-    name = models.CharField(max_length = 255)
+    name = models.CharField(max_length = 255, null = False)
     logo = models.URLField()
 
     def __str__(self):
@@ -10,60 +10,60 @@ class Brand(models.Model):
 
 # Product attributes
 class ProductType(models.Model):
-    name = models.CharField(max_length = 16)
+    name = models.CharField(max_length = 16, null = False)
 
     def __str__(self):
         return f'{{name: {self.name}}}'
 
 class ProductSeason(models.Model):
-    name = models.CharField(max_length = 16)
+    name = models.CharField(max_length = 16, null = False)
 
     def __str__(self):
         return f'{{name: {self.name}}}'
 
 class ProductMaterial(models.Model):
-    name = models.CharField(max_length = 16)
+    name = models.CharField(max_length = 16, null = False)
 
     def __str__(self):
         return f'{{name: {self.name}}}'
 
 class ProductModel(models.Model):
-    name = models.CharField(max_length = 32)
+    name = models.CharField(max_length = 32, null = False)
 
     def __str__(self):
         return f'{{name: {self.name}}}'
 
 class ProductSize(models.Model):
-    name = models.CharField(max_length = 4)
+    name = models.CharField(max_length = 4, null = False)
 
     def __str__(self):
         return f'{{name: {self.name}}}'
 
 class ProductColour(models.Model):
-    name = models.CharField(max_length = 16)
+    name = models.CharField(max_length = 16, null = False)
 
     def __str__(self):
         return f'{{name: {self.name}}}'
 
 # Product
 class Product(models.Model):
-    name = models.CharField(max_length = 255)
-    description = models.TextField()
-    picture = models.URLField()
+    name = models.CharField(max_length = 255, null = False)
+    description = models.TextField(null = False)
+    picture = models.URLField(null = False)
 
-    price = models.DecimalField(max_digits = 6, decimal_places = 2)
+    price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
     price_on_sale = models.DecimalField(max_digits = 6, decimal_places = 2)
     
-    is_available = models.BooleanField()
-    is_highlighted = models.BooleanField()
+    is_available = models.BooleanField(null = False)
+    is_highlighted = models.BooleanField(null = False)
     
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
+    created_at = models.DateTimeField(null = False)
+    updated_at = models.DateTimeField(null = False)
 
     # Navigation attributes
-    type = models.ForeignKey(ProductType, on_delete = models.CASCADE)
-    season = models.ForeignKey(ProductSeason, on_delete = models.CASCADE)
-    material = models.ForeignKey(ProductMaterial, on_delete = models.CASCADE)
+    type = models.ForeignKey(ProductType, on_delete = models.CASCADE, null = False)
+    season = models.ForeignKey(ProductSeason, on_delete = models.CASCADE, null = False)
+    material = models.ForeignKey(ProductMaterial, on_delete = models.CASCADE, null = False)
 
     def __str__(self):
         return f'''
@@ -84,31 +84,31 @@ class Product(models.Model):
                 '''
         
 class ProductModelStock(models.Model):
-    stock = models.IntegerField()
+    stock = models.IntegerField(null = False)
 
     # Navigation attributes
-    product = models.ForeignKey(Product, on_delete = models.CASCADE)
-    model = models.ForeignKey(ProductModel, on_delete = models.CASCADE)
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False)
+    model = models.ForeignKey(ProductModel, on_delete = models.CASCADE, null = False)
 
     def __str__(self):
         return f'{{product: {self.product.name}, model: {self.model.name}, stock: {self.stock}}}'
 
 class ProductSizeStock(models.Model):
-    stock = models.IntegerField()
+    stock = models.IntegerField(null = False)
 
     # Navigation attributes
-    product = models.ForeignKey(Product, on_delete = models.CASCADE)
-    size = models.ForeignKey(ProductSize, on_delete = models.CASCADE)
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False)
+    size = models.ForeignKey(ProductSize, on_delete = models.CASCADE, null = False)
 
     def __str__(self):
         return f'{{product: {self.product.name}, size: {self.size.name}, stock: {self.stock}}}'
 
 class ProductColourStock(models.Model):
-    stock = models.IntegerField()
+    stock = models.IntegerField(null = False)
 
     # Navigation attributes
-    product = models.ForeignKey(Product, on_delete = models.CASCADE)
-    colour = models.ForeignKey(ProductColour, on_delete = models.CASCADE)
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False)
+    colour = models.ForeignKey(ProductColour, on_delete = models.CASCADE, null = False)
 
     def __str__(self):
         return f'{{product: {self.product.name}, colour: {self.colour.name}, stock: {self.stock}}}'
