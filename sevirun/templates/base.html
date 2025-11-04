@@ -1,0 +1,25 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{% block title %}Sevirun{% endblock %}</title>
+
+    <!-- Zephyr Bootswatch -->
+    <link rel="stylesheet" href="{% static 'css/zephyr.min.css' %}">
+
+    <!-- Navbar style -->
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+
+    {% block override_style %}{% endblock %}
+
+</head>
+<body>
+    <!-- Bootstrap navbar -->
+    {% include 'includes/navbar.html' %}
+
+    {% block content %}{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
