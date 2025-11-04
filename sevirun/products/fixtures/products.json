@@ -1,0 +1,219 @@
+[
+    {
+        "model": "products.Brand",
+        "pk": 1,
+        "fields": {
+            "name": "Marca de ejemplo 1",
+            "logo": "static/images/logo.png"
+        }
+    }, {
+        "model": "products.Brand",
+        "pk": 2,
+        "fields": {
+            "name": "Marca de ejemplo 2",
+            "logo": null
+        }
+    }, {
+        "model": "products.ProductType",
+        "pk": 1,
+        "fields": {
+            "name": "Botas"
+        }
+    }, {
+        "model": "products.ProductType",
+        "pk": 2,
+        "fields": {
+            "name": "Deportivas"
+        }
+    }, {
+        "model": "products.ProductSeason",
+        "pk": 1,
+        "fields": {
+            "name": "Primavera"
+        }
+    }, {
+        "model": "products.ProductSeason",
+        "pk": 2,
+        "fields": {
+            "name": "Verano"
+        }
+    }, {
+        "model": "products.ProductSeason",
+        "pk": 3,
+        "fields": {
+            "name": "Otoño"
+        }
+    }, {
+        "model": "products.ProductSeason",
+        "pk": 4,
+        "fields": {
+            "name": "Invierno"
+        }
+    }, {
+        "model": "products.ProductMaterial",
+        "pk": 1,
+        "fields": {
+            "name": "Cuero"
+        }
+    }, {
+        "model": "products.ProductMaterial",
+        "pk": 2,
+        "fields": {
+            "name": "Tela"
+        }
+    }, {
+        "model": "products.ProductModel",
+        "pk": 1,
+        "fields": {
+            "name": "Modelo de ejemplo 1"
+        }
+    }, {
+        "model": "products.ProductModel",
+        "pk": 2,
+        "fields": {
+            "name": "Modelo de ejemplo 2"
+        }
+    }, {
+        "model": "products.ProductSize",
+        "pk": 1,
+        "fields": {
+            "name": "44"
+        }
+    }, {
+        "model": "products.ProductSize",
+        "pk": 2,
+        "fields": {
+            "name": "46"
+        }
+    }, {
+        "model": "products.ProductColour",
+        "pk": 1,
+        "fields": {
+            "name": "White"
+        }
+    }, {
+        "model": "products.ProductColour",
+        "pk": 2,
+        "fields": {
+            "name": "Black"
+        }
+    }, {
+        "model": "products.Product",
+        "pk": 1,
+        "fields": {
+            "name": "Botas de ejemplo 1",
+            "description": "Descripción de las botas de ejemplo.",
+            "picture": "static/images/logo.png",
+            "price": 49.99,
+            "price_on_sale": 25.99,
+            "is_available": true,
+            "is_highlighted": false,
+            "created_at": "2025-01-01T00:00:00.000+01:00",
+            "updated_at": "2025-01-01T00:00:00.000+01:00",
+            "model": 1,
+            "type": 1,
+            "season": 4,
+            "material": 1
+        }
+    }, {
+        "model": "products.Product",
+        "pk": 2,
+        "fields": {
+            "name": "Botas de ejemplo 2",
+            "description": "",
+            "picture": "static/images/logo.png",
+            "price": 49.99,
+            "price_on_sale": null,
+            "is_available": false,
+            "is_highlighted": true,
+            "created_at": "2025-01-01T00:00:00.000+01:00",
+            "updated_at": "2025-05-01T00:10:10.000+01:00",
+            "model": 1,
+            "type": 1,
+            "season": 3,
+            "material": 1
+        }
+    }, {
+        "model": "products.Product",
+        "pk": 3,
+        "fields": {
+            "name": "Deportivas de ejemplo",
+            "description": "Descripción de las deportivas de ejemplo.",
+            "picture": "static/images/logo.png",
+            "price": 29.99,
+            "price_on_sale": 15.99,
+            "is_available": true,
+            "is_highlighted": true,
+            "created_at": "2025-01-01T00:00:00.000+01:00",
+            "updated_at": "2025-01-01T00:10:10.000+01:00",
+            "model": 2,
+            "type": 2,
+            "season": 1,
+            "material": 2
+        }
+    }, {
+        "model": "products.ProductSizeStock",
+        "pk": 1,
+        "fields": {
+            "stock": 10,
+            "product": 1,
+            "size": 1
+        }
+    }, {
+        "model": "products.ProductSizeStock",
+        "pk": 2,
+        "fields": {
+            "stock": 50,
+            "product": 2,
+            "size": 1
+        }
+    }, {
+        "model": "products.ProductSizeStock",
+        "pk": 3,
+        "fields": {
+            "stock": 50,
+            "product": 2,
+            "size": 2
+        }
+    }, {
+        "model": "products.ProductSizeStock",
+        "pk": 4,
+        "fields": {
+            "stock": 20,
+            "product": 3,
+            "size": 2
+        }
+    }, {
+        "model": "products.ProductColourStock",
+        "pk": 1,
+        "fields": {
+            "stock": 5,
+            "product": 1,
+            "colour": 1
+        }
+    }, {
+        "model": "products.ProductColourStock",
+        "pk": 2,
+        "fields": {
+            "stock": 5,
+            "product": 1,
+            "colour": 2
+        }
+    }, {
+        "model": "products.ProductColourStock",
+        "pk": 3,
+        "fields": {
+            "stock": 100,
+            "product": 2,
+            "colour": 2
+        }
+    }, {
+        "model": "products.ProductColourStock",
+        "pk": 4,
+        "fields": {
+            "stock": 20,
+            "product": 3,
+            "colour": 1
+        }
+    }
+]

@@ -3,12 +3,18 @@ from django.db import models
 # Brand
 class Brand(models.Model):
     name = models.CharField(max_length = 255, null = False)
-    logo = models.URLField()
+    logo = models.URLField(null = True)
 
     def __str__(self):
         return f'{{name: {self.name}, logo: {self.logo}}}'
 
 # Product attributes
+class ProductModel(models.Model):
+    name = models.CharField(max_length = 32, null = False)
+
+    def __str__(self):
+        return f'{{name: {self.name}}}'
+
 class ProductType(models.Model):
     name = models.CharField(max_length = 16, null = False)
 
@@ -23,12 +29,6 @@ class ProductSeason(models.Model):
 
 class ProductMaterial(models.Model):
     name = models.CharField(max_length = 16, null = False)
-
-    def __str__(self):
-        return f'{{name: {self.name}}}'
-
-class ProductModel(models.Model):
-    name = models.CharField(max_length = 32, null = False)
 
     def __str__(self):
         return f'{{name: {self.name}}}'
@@ -52,7 +52,7 @@ class Product(models.Model):
     picture = models.URLField(null = False)
 
     price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
-    price_on_sale = models.DecimalField(max_digits = 6, decimal_places = 2)
+    price_on_sale = models.DecimalField(max_digits = 6, decimal_places = 2, null = True)
     
     is_available = models.BooleanField(null = False)
     is_highlighted = models.BooleanField(null = False)
@@ -61,6 +61,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(null = False)
 
     # Navigation attributes
+    model = models.ForeignKey(ProductModel, on_delete = models.CASCADE, null = False)
     type = models.ForeignKey(ProductType, on_delete = models.CASCADE, null = False)
     season = models.ForeignKey(ProductSeason, on_delete = models.CASCADE, null = False)
     material = models.ForeignKey(ProductMaterial, on_delete = models.CASCADE, null = False)
@@ -77,21 +78,12 @@ class Product(models.Model):
                     is_highlighted: {self.is_highlighted},
                     created_at: {self.created_at},
                     updated_at: {self.updated_at},
+                    model: {self.model.name},
                     type: {self.type.name},
                     season: {self.season.name},
                     material: {self.material.name}
                 }}
                 '''
-        
-class ProductModelStock(models.Model):
-    stock = models.IntegerField(null = False)
-
-    # Navigation attributes
-    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False)
-    model = models.ForeignKey(ProductModel, on_delete = models.CASCADE, null = False)
-
-    def __str__(self):
-        return f'{{product: {self.product.name}, model: {self.model.name}, stock: {self.stock}}}'
 
 class ProductSizeStock(models.Model):
     stock = models.IntegerField(null = False)
