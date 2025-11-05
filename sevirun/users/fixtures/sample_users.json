@@ -1,0 +1,59 @@
+[
+  {
+    "model": "users.appuser",
+    "pk": 100,
+    "fields": {
+      "name": "user1",
+      "surname": "surname1",
+      "phone_number": "+1234567890",
+      "address": "123 Test St, Test City",
+      "city": "Test City",
+      "postal_code": "12345",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": false,
+      "email": "user1@example.com",
+      "password": "pbkdf2_sha256$1000000$TKppPGTJRDXhOmBdTDw9KK$AVNOytS+SBDJkq8/Z+4XJR31gdpjtV5PFlWRdDtvCRU=",
+      "date_joined": "2024-01-01T12:00:00Z"
+    }
+  },
+  {
+  "model": "users.appuser",
+  "pk": 101,
+  "fields": {
+    "name": "sudo",
+    "surname": "root",
+    "email": "sudo@sudo.com",
+    "password": "pbkdf2_sha256$1000000$OAjPHg5oMRsphJH5g5AzNy$DuNAEPJZMOMcIh2FW+mBqnoJGYzDnVQSqpVhD9Xdzy8=",
+    "phone_number": "123456789",
+    "address": "localhost",
+    "city": "rootcity",
+    "postal_code": "00000",
+    "is_superuser": true,
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-01-01T12:00:00Z"
+  }
+}
+,
+  {
+    "model": "users.appuser",
+    "pk": 103,
+    "fields": {
+      "name": "admin",
+      "email": "admin@admin.com",
+      "password": "pbkdf2_sha256$1000000$nBi0jgqZ6HSiFzuKaQ7BVc$00Eyt3Y1HR0HoKbHWCQRxFoWrBd8U0kkjR24Y02ul3E=",
+      "is_staff": true,
+      "date_joined": "2024-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "users.appuser",
+    "pk": 104,
+    "fields": {
+      "email": "user2@example.com",
+      "password": "pbkdf2_sha256$1000000$TKppPGTJRDXhOmBdTDw9KK$AVNOytS+SBDJkq8/Z+4XJR31gdpjtV5PFlWRdDtvCRU=",
+      "date_joined": "2024-01-01T12:00:00Z"
+    }
+  }
+]
