@@ -12,6 +12,9 @@
     <!-- Navbar style -->
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
 
+    <!-- Footer style -->
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+
     {% block override_style %}{% endblock %}
 
 </head>
@@ -22,4 +25,7 @@
     {% block content %}{% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+{% include 'includes/footer.html' %}
+
 </html>
