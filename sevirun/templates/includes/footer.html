@@ -1,0 +1,43 @@
+{% load static %}
+<footer class="sevi-footer" role="contentinfo" aria-label="Site footer">
+
+	<div class="container">
+		<div class="brand" aria-hidden="false">
+			<img src="{% static 'images/logo.png' %}" alt="SeviRun Logo" class="brand-logo">
+			<div class="brand-text">
+				<strong>SeviRun</strong>
+				<p>Tu tienda de confianza para encontrar el par perfecto para cualquier ocasión.</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="container footer-bottom">
+		<div class="legal">
+			<div>
+				<span>&copy; <span id="sevi-year"></span> SeviRun</span>
+			</div>
+
+			<div class="actions">
+				<nav class="footer-nav" aria-label="Footer navigation">
+					<a href="/" title="Inicio">Inicio</a>
+					<a href="/shop" title="Tienda">Tienda</a>
+					<a href="/collections" title="Colecciones">Colecciones</a>
+					<a href="/about" title="Acerca de">Acerca de</a>
+					<a href="/contact" title="Contacto">Contacto</a>
+					<a href="/cart" title="Carrito">Carrito</a>
+					<a href="/account" title="Cuenta">Cuenta</a>
+				</nav>
+
+				<div class="pay-icons" aria-hidden="true">
+					<!-- Payment method placeholder-->
+					<span class="pay-option">VISA</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Insert current year
+		(function(){var y=new Date().getFullYear();var el=document.getElementById('sevi-year');if(el)el.textContent=y;})();
+	</script>
+</footer>

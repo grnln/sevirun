@@ -12,6 +12,14 @@ body {
     padding: 24px;
 }
 
+.card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(16, 24, 40, 0.12);
+    padding: 24px;
+}
+
 /* Hero section */
 .hero {
     display: grid;
