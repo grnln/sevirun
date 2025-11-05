@@ -1,5 +1,4 @@
 from django.contrib import admin
-from .models import DisplayCase, Article
+from .models import Product
 
-admin.site.register(DisplayCase)
-admin.site.register(Article)
+admin.site.register(Product)
