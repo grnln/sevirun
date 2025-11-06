@@ -3,7 +3,7 @@ from django.db import models
 # Brand
 class Brand(models.Model):
     name = models.CharField(max_length = 255, null = False)
-    logo = models.URLField(null = True)
+    logo = models.ImageField(upload_to = 'brands/', null = True)
 
     def __str__(self):
         return f'{{name: {self.name}, logo: {self.logo}}}'
@@ -49,7 +49,7 @@ class ProductColour(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length = 255, null = False)
     description = models.TextField(null = False)
-    picture = models.URLField(null = False)
+    picture = models.ImageField(upload_to = 'products/')
 
     price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
     price_on_sale = models.DecimalField(max_digits = 6, decimal_places = 2, null = True)
