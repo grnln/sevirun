@@ -52,7 +52,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.EmailAuthBackend',
+]
+
 ROOT_URLCONF = 'sevirun.urls'
+
+LOGIN_REDIRECT_URL = '/'
 
 TEMPLATES = [
     {

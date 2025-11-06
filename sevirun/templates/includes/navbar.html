@@ -19,7 +19,11 @@
       </ul>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="/cart/">Carrito</a></li>
-        <li class="nav-item"><a class="nav-link" href="/accounts/login/">Identificarse</a></li>
+        {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="/accounts/logout">Cerrar Sesión</a></li>
+        {% else %}
+            <li class="nav-item"><a class="nav-link" href="/accounts/login">Iniciar Sesión</a></li>
+        {% endif %}
       </ul>
     </div>
   </div>
