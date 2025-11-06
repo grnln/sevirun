@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel = "stylesheet" href = "{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main class = "container py-4">
+        <h2 class = "h5 mb-3 fw-bold">Filtrar</h2>
+        <section class = "hero mb-4" role = "region">
+            <form action = "/products/" method = "post">
+                {% csrf_token %}
+                {{ filters }}
+                <input type = "submit" value = "Filtrar">
+            </form>
+        </section>
+        <section>
+            <h2 class = "h5 mb-3 fw-bold">Productos:</h2>
+            <div class = "row g-3">
+                {% if products %}
+                    {% for p in products %}
+                        <div class = "col-6 col-md-4">
+                            <div class = "card p-2 h-100 bg-white text-dark">
+                                <img src = "{{ p.picture.url }}" class = "card-img-top rounded" alt = "{{ p.name }}">
+                                <div class = "card-body p-2">
+                                    <h5 class = "card-title mb-1 fs-6">{{p.name}}</h5>
+                                    <div class = "d-flex justify-content-between align-items-center">
+                                        <strong>{{ p.price }} €</strong>
+                                        <a href = "{% url 'product_detail' p.pk %}" class = "btn btn-sm btn-primary">Ver</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay productos disponibles en este momento.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+{% endblock %}
