@@ -19,12 +19,10 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from products import views as product_views
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
-    path('products/', product_views.index)
+    path('', include('products.urls'))
 ]
 
 if settings.DEBUG:
