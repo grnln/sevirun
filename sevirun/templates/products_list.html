@@ -2,16 +2,21 @@
 {% load static %}
 
 {% block override_style %}
-    <link rel = "stylesheet" href = "{% static 'css/home.css' %}">
+<link rel = "stylesheet" href = "{% static 'css/home.css' %}">
 {% endblock %}
 
 {% block content %}
+    <script src = "{% static 'js/products_list.js' %}"></script>
     <main class = "container py-4">
         <h2 class = "h5 mb-3 fw-bold">Filtrar</h2>
         <section class = "hero mb-4" role = "region">
             <form action = "/products/" method = "post">
                 {% csrf_token %}
-                {{ filters }}
+                {% for field in filters %}
+                    <div class = "fieldWrapper">
+                        {{ field.label_tag }} {{ field }}
+                    </div>
+                {% endfor %}
                 <input type = "submit" value = "Filtrar">
             </form>
         </section>
