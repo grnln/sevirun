@@ -9,6 +9,8 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+def about(request):
+    return render(request, 'about.html')
 
 # Placeholder views - remove when implementing actual functionality
 def shop(request):
@@ -25,9 +27,6 @@ def cart(request):
 
 def login_view(request):
     return HttpResponse("Login — (implementar plantilla)")
-
-def about(request):
-    return HttpResponse("Acerca de — (implementar plantilla)")
 
 def contact(request):
     return HttpResponse("Contacto — (implementar plantilla)")

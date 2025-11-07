@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+    <h1>Sobre nosotros</h1>
+
+    <hr/>
+
+    <section class="card mb-4" role="region" aria-label="Nuestro compromiso">
+        <h2>Nuestra historia</h2>
+        <p>En Sevirun llevamos el paso firme desde Sevilla, ciudad de tradición, movimiento y estilo. Nacimos con una idea clara: ofrecer un calzado que combine comodidad, calidad y diseño, pensado para quienes disfrutan caminando, corriendo o simplemente viviendo el día a día con energía.</p>
+        <p>Lo que comenzó como una pequeña tienda local se ha convertido en un punto de referencia para los amantes del deporte y el buen calzado. Cada temporada seleccionamos cuidadosamente nuestras marcas y modelos, apostando siempre por materiales duraderos, innovación y estilo actual.</p>
+    </section>
+
+    <section class="card mb-4" role="region" aria-label="Nuestra misión">
+        <h2>Nuestra misión</h2>
+        <p>En Sevirun creemos que un buen zapato puede cambiar tu forma de moverte y de sentirte. Por eso, trabajamos para que cada cliente encuentre el calzado perfecto para su ritmo, su estilo y sus necesidades.</p>
+        <p>Nos guía una filosofía sencilla: ofrecer trato cercano, asesoramiento experto y productos de calidad. Queremos que cada persona que entra en nuestra tienda salga con una sonrisa y la sensación de haber acertado.</p>
+    </section>
+
+    <section class="card mb-4" role="region" aria-label="Nuestros valores">
+        <h2>Nuestros valores</h2>
+        <ul>
+            <li>Cercanía y confianza: somos una tienda sevillana, de barrio, que valora la atención personalizada.</li>
+            <li>Calidad y confort: solo trabajamos con marcas que garantizan bienestar y durabilidad.</li>
+            <li>Pasión por el movimiento: amamos el deporte, la actividad y la vida al aire libre.</li>
+            <li>Compromiso local: apoyamos el comercio de proximidad y la economía sevillana.</li>
+        </ul>
+    </section>
+
+    <section class="card mb-4" role="region" aria-label="El equipo Sevirun">
+        <h2>El equipo Sevirun</h2>
+        <p>Detrás de cada par de zapatos hay un equipo que escucha, asesora y comparte la misma pasión por el calzado y el deporte. Nos encanta ayudar a cada cliente a encontrar el modelo que mejor se adapta a su forma de caminar, a su rutina o a su próximo reto.</p>
+        <p>En Sevirun no solo vendemos zapatos: acompañamos pasos, sueños y recorridos.</p>
+    </section>
+
+    <section class="card mb-4" role="region" aria-label="Nuestro compromiso">
+        <h2>Nuestro compromiso</h2>
+        <p>Sabemos que cada elección cuenta. Por eso apostamos por marcas responsables, embalajes reciclables y un consumo más consciente. Queremos que caminar con Sevirun también signifique caminar hacia un futuro más sostenible.</p>
+    </section>
+
+    <section class="card mb-4" role="region" aria-label="Ven a conocernos">
+        <h2>Ven a conocernos</h2>
+        <p>Te esperamos en el corazón de Sevilla para que descubras nuestra colección y vivas la experiencia Sevirun.</p>
+        <p>Porque el mejor camino siempre empieza con unos buenos zapatos.</p>
+    </section>
+</main>
+{% endblock %}
