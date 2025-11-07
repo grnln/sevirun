@@ -35,6 +35,27 @@
 	padding-left: 8px;
 }
 
+.product-pickers {
+	display: flex;
+	gap: 0.5rem 1.5rem;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+.product-pickers .picker {
+	display: flex;
+	flex-direction: column;
+}
+.product-pickers label {
+	margin: 0 0 0.25rem 0;
+	white-space: normal;
+	font-weight: 600;
+}
+.product-pickers .form-select {
+	min-width: 160px;
+	max-width: 320px;
+	flex: 0 1 auto;
+}
+
 .details-card {
 	background: #ffffff;
 	border: 1px solid rgba(0,0,0,0.06);
@@ -91,8 +112,18 @@
 	margin-right: 0.45rem;
 }
 
+.product-pickers select option:disabled {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
 @media (max-width: 576px) {
 	.meta-dates { flex-direction: column; gap: 6px; }
 	.product-detail { margin-left: 12px; }
 	.details-grid { grid-template-columns: 1fr; }
+	.product-pickers {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.product-pickers label { margin-bottom: 0.25rem; }
 }

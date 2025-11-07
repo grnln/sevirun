@@ -93,3 +93,6 @@ class ProductStock(models.Model):
     product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False)
     size = models.ForeignKey(ProductSize, on_delete = models.CASCADE, null = False)
     colour = models.ForeignKey(ProductColour, on_delete = models.CASCADE, null = False)
+
+    def __str__(self):
+        return f'{{product: {self.product.name}, size: {self.size.name}, colour: {self.colour.name}, stock: {self.stock}}}'

@@ -38,6 +38,10 @@
                     {% endif %}
                 </div>
 
+                <div class="brand">
+                    {{ product.model.brand.name }}
+                </div>
+
                 <p class="price">
                     {% if product.price_on_sale %}
                         <span class="text-muted text-decoration-line-through">{{ product.price }}€</span>
@@ -48,6 +52,38 @@
                 </p>
 
                 <p class="short_description">{{ product.short_description }}</p>
+                
+                {% if product.is_available %}
+                <div class="mb-3 product-pickers">
+                    {% if sizes %}
+                        <div class="picker">
+                            <label for="size-select" class="form-label">Talla</label>
+                            <select id="size-select" class="form-select" {% if not product.is_available %}disabled{% endif %}>
+                                <option value="">Selecciona talla</option>
+                                {% for s in sizes %}
+                                    <option value="{{ s.size__id }}" data-stock="{{ s.total }}" data-original-text="{{ s.size__name }}" {% if s.total == 0 %}disabled{% endif %}>
+                                        {{ s.size__name }}{% if s.total == 0 %} (Agotado){% endif %}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% endif %}
+
+                    {% if colours %}
+                        <div class="picker">
+                            <label for="color-select" class="form-label">Color</label>
+                            <select id="color-select" class="form-select" {% if not product.is_available %}disabled{% endif %}>
+                                <option value="">Selecciona color</option>
+                                {% for c in colours %}
+                                    <option value="{{ c.colour__id }}" data-stock="{{ c.total }}" data-original-text="{{ c.colour__name }}" {% if c.total == 0 %}disabled{% endif %}>
+                                        {{ c.colour__name }}{% if c.total == 0 %} (Agotado){% endif %}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% endif %}
+                </div>
+                {% endif %}
 
                 <div class="mb-3">
                     {% if product.is_available %}
@@ -111,6 +147,8 @@
             </div>
         </div>
     </section>
-
-</main>
+        {{ stock_list|json_script:"product-stock-data" }}
+        {{ product_available|json_script:"product-available" }}
+        <script src="{% static 'js/product-detail.js' %}"></script>
+    </main>
 {% endblock %}
