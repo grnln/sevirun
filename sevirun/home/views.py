@@ -11,12 +11,6 @@ def home(request):
 
 
 # Placeholder views - remove when implementing actual functionality
-def shop(request):
-    return HttpResponse("Tienda — listado de productos (implementar plantilla)")
-
-def collections(request):
-    return HttpResponse("Colecciones — (implementar plantilla)")
-
 def cart(request):
     return HttpResponse("Carrito — (implementar plantilla)")
 

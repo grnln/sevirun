@@ -231,5 +231,41 @@
             "size": 2,
             "colour": 2
         }
+    }, {
+        "model": "products.ProductStock",
+        "pk": 8,
+        "fields": {
+            "stock": 0,
+            "product": 3,
+            "size": 1,
+            "colour": 1
+        }
+    }, {
+        "model": "products.ProductStock",
+        "pk": 9,
+        "fields": {
+            "stock": 0,
+            "product": 3,
+            "size": 1,
+            "colour": 2
+        }
+    }, {
+        "model": "products.ProductStock",
+        "pk": 10,
+        "fields": {
+            "stock": 32,
+            "product": 3,
+            "size": 2,
+            "colour": 1
+        }
+    }, {
+        "model": "products.ProductStock",
+        "pk": 11,
+        "fields": {
+            "stock": 64,
+            "product": 3,
+            "size": 2,
+            "colour": 2
+        }
     }
 ]

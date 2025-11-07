@@ -1,4 +1,4 @@
-import pytest
+import pytest, os
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
@@ -17,14 +17,15 @@ from products.models import (
 )
 
 @pytest.mark.django_db
-def test_product_details_status_and_context(client):
+def test_product_details_status_and_context(client):    
     brand = Brand.objects.create(name='Test Brand')
     product_model = ProductModel.objects.create(name='Model X', brand=brand)
     ptype = ProductType.objects.create(name='Shoes')
     season = ProductSeason.objects.create(name='Summer')
     material = ProductMaterial.objects.create(name='Leather')
 
-    img_path = Path(__file__).resolve().parents[2] / 'static' / 'images' / 'test_image.jpg'
+    base_path = Path(__file__).resolve().parents[2]
+    img_path = base_path / 'static' / 'images' / 'test_image.jpg'
     image_bytes = img_path.read_bytes()
     image = SimpleUploadedFile(img_path.name, image_bytes, content_type='image/jpeg')
 
@@ -59,6 +60,9 @@ def test_product_details_status_and_context(client):
 
     url = reverse('product_detail', args=[product.id])
     response = client.get(url)
+
+    os.remove(base_path / 'media' / 'products' / image.name)
+
     assert response.status_code == 200
     for key in ('product', 'sizes', 'colours', 'stock_list', 'product_available'):
         assert key in response.context
@@ -66,7 +70,7 @@ def test_product_details_status_and_context(client):
 
 
 @pytest.mark.django_db
-def test_sizes_colours_and_stock_list(client):
+def test_sizes_colours_and_stock_list(client):    
     brand = Brand.objects.create(name='Brand')
     model = ProductModel.objects.create(name='Model', brand=brand)
     ptype = ProductType.objects.create(name='Type')
@@ -74,7 +78,8 @@ def test_sizes_colours_and_stock_list(client):
     material = ProductMaterial.objects.create(name='Material')
 
     now = timezone.now()
-    img_path = Path(__file__).resolve().parents[2] / 'static' / 'images' / 'test_image.jpg'
+    base_path = Path(__file__).resolve().parents[2]
+    img_path = base_path / 'static' / 'images' / 'test_image.jpg'
     image = SimpleUploadedFile(img_path.name, img_path.read_bytes(), content_type='image/jpeg')
 
     product = Product.objects.create(
@@ -105,6 +110,8 @@ def test_sizes_colours_and_stock_list(client):
     url = reverse('product_detail', args=[product.id])
     response = client.get(url)
 
+    os.remove(base_path / 'media' / 'products' / image.name)
+
     sizes = list(response.context['sizes'])
     colours = list(response.context['colours'])
     stock_list = response.context['stock_list']
@@ -121,7 +128,6 @@ def test_sizes_colours_and_stock_list(client):
     assert any(item['size_id'] == size_37.id and item['colour_id'] == colour_red.id and item['stock'] == 2 for item in stock_list)
     assert any(item['size_id'] == size_38.id and item['colour_id'] == colour_blue.id and item['stock'] == 1 for item in stock_list)
 
-
 @pytest.mark.django_db
 def test_price_on_sale_display(client):
     brand = Brand.objects.create(name='Brand Sale')
@@ -131,7 +137,8 @@ def test_price_on_sale_display(client):
     material = ProductMaterial.objects.create(name='Material Sale')
 
     now = timezone.now()
-    img_path = Path(__file__).resolve().parents[2] / 'static' / 'images' / 'test_image.jpg'
+    base_path = Path(__file__).resolve().parents[2]
+    img_path = base_path / 'static' / 'images' / 'test_image.jpg'
     image = SimpleUploadedFile(img_path.name, img_path.read_bytes(), content_type='image/jpeg')
 
     product = Product.objects.create(
@@ -153,6 +160,9 @@ def test_price_on_sale_display(client):
 
     url = reverse('product_detail', args=[product.id])
     response = client.get(url)
+
+    os.remove(base_path / 'media' / 'products' / image.name)
+
     assert response.status_code == 200
     content = response.content.decode()
 
@@ -168,7 +178,8 @@ def test_unavailable_product_display(client):
     material = ProductMaterial.objects.create(name='Material Unavailable')
 
     now = timezone.now()
-    img_path = Path(__file__).resolve().parents[2] / 'static' / 'images' / 'test_image.jpg'
+    base_path = Path(__file__).resolve().parents[2]
+    img_path = base_path / 'static' / 'images' / 'test_image.jpg'
     image = SimpleUploadedFile(img_path.name, img_path.read_bytes(), content_type='image/jpeg')
 
     product = Product.objects.create(
@@ -190,6 +201,9 @@ def test_unavailable_product_display(client):
 
     url = reverse('product_detail', args=[product.id])
     response = client.get(url)
+
+    os.remove(base_path / 'media' / 'products' / image.name)
+
     assert response.status_code == 200
     content = response.content.decode()
 

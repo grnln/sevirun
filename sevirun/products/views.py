@@ -38,13 +38,13 @@ def index(request):
         no_filters = False
 
     if size_filter != None:
-        products_with_size = [s.product for s in ProductStock.objects.all().filter(size = size_filter)]
-        products = [p for p in products if p in products_with_size]
+        products_with_size = [s.product.pk for s in ProductStock.objects.all().filter(size = size_filter)]
+        products = [p for p in products if p.pk in products_with_size]
         no_filters = False
 
     if colour_filter != None:
-        products_with_colour = [s.product for s in ProductStock.objects.all().filter(colour = colour_filter)]
-        products = [p for p in products if p in products_with_colour]
+        products_with_colour = [s.product.pk for s in ProductStock.objects.all().filter(colour = colour_filter)]
+        products = [p for p in products if p.pk in products_with_colour]
         no_filters = False
 
     context = {
