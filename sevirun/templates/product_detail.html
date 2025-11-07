@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+    <!-- SVG icon definition from Bootstrap Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+        <symbol id="icon-cart" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1h1a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .49.598l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 1a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+        </symbol>
+    </svg>
+    
+    <section class="product-detail">
+        <div class="row">
+            <div class="col-md-6">
+                {% if product.picture %}
+                    <img src="{{ product.picture.url }}" alt="{{ product.name }}" class="img-fluid">
+                {% else %}
+                    <img src="{% static 'images/product-placeholder.png' %}" alt="Producto" class="img-fluid">
+                {% endif %}
+            </div>
+
+            <div class="col-md-6 info-col">
+                <h1>{{ product.name }}</h1>
+
+                <div class="mb-2">
+                    {% if product.is_highlighted %}
+                        <span class="badge bg-warning text-dark">Destacado</span>
+                    {% endif %}
+                    {% if product.is_available %}
+                        <span class="badge bg-success">Disponible</span>
+                    {% else %}
+                        <span class="badge bg-danger">No disponible</span>
+                    {% endif %}
+                </div>
+
+                <p class="price">
+                    {% if product.price_on_sale %}
+                        <span class="text-muted text-decoration-line-through">{{ product.price }}€</span>
+                        <span class="ms-2 text-danger fw-bold">{{ product.price_on_sale }}€</span>
+                    {% else %}
+                        <span class="fw-bold">{{ product.price }}€</span>
+                    {% endif %}
+                </p>
+
+                <p class="description">{{ product.description }}</p>
+
+                <div class="mb-3">
+                    {% if product.is_available %}
+                        <button class="btn btn-primary" type="button" aria-label="Añadir al carrito">
+                            <svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-cart"/></svg>
+                            Añadir al carrito
+                        </button>
+                    {% else %}
+                        <button class="btn btn-secondary" type="button" disabled aria-disabled="true">
+                            <svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-cart"/></svg>
+                            Añadir al carrito
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12 details-col">
+                <h5 class="mb-3">Detalles:</h5>
+
+                <div class="details-card">
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Modelo</div>
+                            <div class="detail-value">{{ product.model.name }}</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Tipo</div>
+                            <div class="detail-value">{{ product.type.name }}</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Temporada</div>
+                            <div class="detail-value">{{ product.season.name }}</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Material</div>
+                            <div class="detail-value">{{ product.material.name }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class = meta-data>
+        <div class="row mt-4 ml-1">
+            <div class="col-12">
+                <div class="meta-dates small muted mb-3">
+                    <div><strong>Creado:</strong> {{ product.created_at|date:"d M Y, H:i" }}</div>
+                    <div><strong>Última actualización:</strong> {{ product.updated_at|date:"d M Y, H:i" }}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+{% endblock %}
