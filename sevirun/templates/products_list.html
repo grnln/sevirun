@@ -2,38 +2,53 @@
 {% load static %}
 
 {% block override_style %}
-<link rel = "stylesheet" href = "{% static 'css/home.css' %}">
+    <link rel = "stylesheet" href = "{% static 'css/home.css' %}">
 {% endblock %}
 
 {% block content %}
-    <script src = "{% static 'js/products_list.js' %}"></script>
     <main class = "container py-4">
-        <h2 class = "h5 mb-3 fw-bold">Filtrar</h2>
-        <section class = "hero mb-4" role = "region">
-            <form action = "/products/" method = "post">
-                {% csrf_token %}
-                {% for field in filters %}
-                    <div class = "fieldWrapper">
-                        {{ field.label_tag }} {{ field }}
-                    </div>
-                {% endfor %}
-                <input type = "submit" value = "Filtrar">
-            </form>
-        </section>
+        <aside class = "ml-4 mb-4">
+            {% if no_filters %}
+                <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
+            {% else %}
+                <a href = "{% url 'categories' %}" class = "text-dark">← Volver</a>
+            {% endif %}
+        </aside>
         <section>
             <h2 class = "h5 mb-3 fw-bold">Productos:</h2>
             <div class = "row g-3">
                 {% if products %}
-                    {% for p in products %}
+                {% for p in products %}
                         <div class = "col-6 col-md-4">
                             <div class = "card p-2 h-100 bg-white text-dark">
                                 <img src = "{{ p.picture.url }}" class = "card-img-top rounded" alt = "{{ p.name }}">
                                 <div class = "card-body p-2">
-                                    <h5 class = "card-title mb-1 fs-6">{{p.name}}</h5>
-                                    <div class = "d-flex justify-content-between align-items-center">
-                                        <strong>{{ p.price }} €</strong>
-                                        <a href = "{% url 'product_detail' p.pk %}" class = "btn btn-sm btn-primary">Ver</a>
+                                    <h5 class = "card-title mb-1 fs-6"><strong>{{p.name}}</strong></h5>
+
+                                    <div class = "brand">
+                                        {{ p.model.brand.name }}
                                     </div>
+                                    
+                                    <div class = "mb-2">
+                                        {% if p.is_highlighted %}
+                                            <span class = "badge bg-warning text-dark">Destacado</span>
+                                        {% endif %}
+                                        {% if p.is_available %}
+                                            <span class = "badge bg-success">Disponible</span>
+                                        {% else %}
+                                            <span class = "badge bg-danger">No disponible</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <p class = "price">
+                                        {% if p.price_on_sale %}
+                                            <span class = "text-muted text-decoration-line-through">{{ p.price }}€</span>
+                                            <span class = "ms-2 text-danger fw-bold">{{ p.price_on_sale }}€</span>
+                                        {% else %}
+                                            <span class = "fw-bold">{{ p.price }}€</span>
+                                        {% endif %}
+                                    </p>
+                                    <a href = "{% url 'product_detail' p.pk %}" class = "btn btn-sm btn-primary">Ver</a>
                                 </div>
                             </div>
                         </div>

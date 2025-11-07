@@ -17,55 +17,64 @@
         "model": "products.ProductType",
         "pk": 1,
         "fields": {
-            "name": "Botas"
+            "name": "Botas",
+            "picture": "types/boots.jpg"
         }
     }, {
         "model": "products.ProductType",
         "pk": 2,
         "fields": {
-            "name": "Deportivas"
+            "name": "Deportivas",
+            "picture": "types/trainers.jpg"
         }
     }, {
         "model": "products.ProductSeason",
         "pk": 1,
         "fields": {
-            "name": "Primavera"
+            "name": "Primavera",
+            "picture": "seasons/spring.jpg"
         }
     }, {
         "model": "products.ProductSeason",
         "pk": 2,
         "fields": {
-            "name": "Verano"
+            "name": "Verano",
+            "picture": "seasons/summer.jpg"
         }
     }, {
         "model": "products.ProductSeason",
         "pk": 3,
         "fields": {
-            "name": "Otoño"
+            "name": "Otoño",
+            "picture": "seasons/autumn.jpg"
         }
     }, {
         "model": "products.ProductSeason",
         "pk": 4,
         "fields": {
-            "name": "Invierno"
+            "name": "Invierno",
+            "picture": "seasons/winter.jpg"
         }
     }, {
         "model": "products.ProductMaterial",
         "pk": 1,
         "fields": {
-            "name": "Cuero"
+            "name": "Cuero",
+            "picture": "materials/leather.jpg"
         }
     }, {
         "model": "products.ProductMaterial",
         "pk": 2,
         "fields": {
-            "name": "Tela"
+            "name": "Tela",
+            "picture": "materials/textile.jpg"
         }
     }, {
         "model": "products.ProductModel",
         "pk": 1,
         "fields": {
             "name": "Modelo de ejemplo 1",
+            "picture": "models/boots.jpg",
             "brand": 1
         }
     }, {
@@ -73,6 +82,7 @@
         "pk": 2,
         "fields": {
             "name": "Modelo de ejemplo 2",
+            "picture": "models/trainers.jpg",
             "brand": 2
         }
     }, {
@@ -91,13 +101,15 @@
         "model": "products.ProductColour",
         "pk": 1,
         "fields": {
-            "name": "White"
+            "name": "Negro",
+            "picture": "colours/black.png"
         }
     }, {
         "model": "products.ProductColour",
         "pk": 2,
         "fields": {
-            "name": "Black"
+            "name": "Blanco",
+            "picture": "colours/white.jpg"
         }
     }, {
         "model": "products.Product",
@@ -105,7 +117,7 @@
         "fields": {
             "name": "Botas de ejemplo 1",
             "description": "Descripción de las botas de ejemplo.",
-            "picture": "products/sample.jpg",
+            "picture": "products/boots.jpg",
             "price": 49.99,
             "price_on_sale": 25.99,
             "is_available": true,
@@ -123,7 +135,7 @@
         "fields": {
             "name": "Botas de ejemplo 2",
             "description": "",
-            "picture": "products/sample.jpg",
+            "picture": "products/boots.jpg",
             "price": 49.99,
             "price_on_sale": null,
             "is_available": false,
@@ -141,7 +153,7 @@
         "fields": {
             "name": "Deportivas de ejemplo",
             "description": "Descripción de las deportivas de ejemplo.",
-            "picture": "products/sample.jpg",
+            "picture": "products/trainers.jpg",
             "price": 29.99,
             "price_on_sale": 15.99,
             "is_available": true,
