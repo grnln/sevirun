@@ -11,9 +11,10 @@ class Brand(models.Model):
 # Product attributes
 class ProductModel(models.Model):
     name = models.CharField(max_length = 32, null = False)
+    brand = models.ForeignKey(Brand, on_delete = models.CASCADE, null = False)
 
     def __str__(self):
-        return f'{{name: {self.name}}}'
+        return f'{{name: {self.name}, brand: {self.brand.name}}}'
 
 class ProductType(models.Model):
     name = models.CharField(max_length = 16, null = False)
