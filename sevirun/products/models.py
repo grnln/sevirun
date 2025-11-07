@@ -11,9 +11,10 @@ class Brand(models.Model):
 # Product attributes
 class ProductModel(models.Model):
     name = models.CharField(max_length = 32, null = False)
+    brand = models.ForeignKey(Brand, on_delete = models.CASCADE, null = False)
 
     def __str__(self):
-        return f'{{name: {self.name}}}'
+        return f'{{name: {self.name}, brand: {self.brand.name}}}'
 
 class ProductType(models.Model):
     name = models.CharField(max_length = 16, null = False)
@@ -31,7 +32,7 @@ class ProductMaterial(models.Model):
     name = models.CharField(max_length = 16, null = False)
 
     def __str__(self):
-        return f'{{name: {self.name}}}'
+        return f'{{name: {self.name}}}'    
 
 class ProductSize(models.Model):
     name = models.CharField(max_length = 4, null = False)
@@ -85,22 +86,9 @@ class Product(models.Model):
                 }}
                 '''
 
-class ProductSizeStock(models.Model):
-    stock = models.IntegerField(null = False)
+class ProductStock(models.Model):
+    stock = models.PositiveIntegerField(null = False)
 
-    # Navigation attributes
     product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False)
     size = models.ForeignKey(ProductSize, on_delete = models.CASCADE, null = False)
-
-    def __str__(self):
-        return f'{{product: {self.product.name}, size: {self.size.name}, stock: {self.stock}}}'
-
-class ProductColourStock(models.Model):
-    stock = models.IntegerField(null = False)
-
-    # Navigation attributes
-    product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False)
     colour = models.ForeignKey(ProductColour, on_delete = models.CASCADE, null = False)
-
-    def __str__(self):
-        return f'{{product: {self.product.name}, colour: {self.colour.name}, stock: {self.stock}}}'
