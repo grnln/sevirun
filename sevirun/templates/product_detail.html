@@ -47,7 +47,7 @@
                     {% endif %}
                 </p>
 
-                <p class="description">{{ product.description }}</p>
+                <p class="short_description">{{ product.short_description }}</p>
 
                 <div class="mb-3">
                     {% if product.is_available %}
@@ -63,6 +63,11 @@
                     {% endif %}
                 </div>
             </div>
+        </div>
+
+        <div class="col mt-4">
+            <h5 class="mb-3">Descripción:</h5>
+            <p class="description">{{ product.description }}</p>
         </div>
 
         <div class="row mt-4">

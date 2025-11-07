@@ -48,6 +48,7 @@ class ProductColour(models.Model):
 # Product
 class Product(models.Model):
     name = models.CharField(max_length = 255, null = False)
+    short_description = models.CharField(null = False, max_length = 255)
     description = models.TextField(null = False)
     picture = models.ImageField(upload_to = 'products/')
 
