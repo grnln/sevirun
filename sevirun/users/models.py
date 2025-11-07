@@ -39,7 +39,7 @@ class AppUser(AbstractBaseUser):
 
     objects = AppUserManager()
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['password']
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return f'{{name: {self.name + self.surname}, email: {self.email}}}'

@@ -1,3 +1,4 @@
-from django.test import TestCase
+import pytest
+from django.urls import reverse
+from .models import Product, ProductMaterial, ProductSeason, ProductType, ProductModel
 
-# Create your tests here.

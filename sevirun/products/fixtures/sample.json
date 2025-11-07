@@ -116,7 +116,8 @@
         "pk": 1,
         "fields": {
             "name": "Botas de ejemplo 1",
-            "description": "Descripción de las botas de ejemplo.",
+            "short_description": "Un par de botas de ejemplo.",
+            "description": "Descripción de las botas de ejemplo más larga.",
             "picture": "products/boots.jpg",
             "price": 49.99,
             "price_on_sale": 25.99,
@@ -134,6 +135,7 @@
         "pk": 2,
         "fields": {
             "name": "Botas de ejemplo 2",
+            "short_description": "",
             "description": "",
             "picture": "products/boots.jpg",
             "price": 49.99,
@@ -152,6 +154,7 @@
         "pk": 3,
         "fields": {
             "name": "Deportivas de ejemplo",
+            "short_description": "Un par de deportivas.",
             "description": "Descripción de las deportivas de ejemplo.",
             "picture": "products/trainers.jpg",
             "price": 29.99,

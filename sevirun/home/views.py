@@ -17,14 +17,8 @@ def shop(request):
 def collections(request):
     return HttpResponse("Colecciones — (implementar plantilla)")
 
-def product_detail(request, pk):
-    return HttpResponse(f"Detalle producto {pk} — (implementar plantilla)")
-
 def cart(request):
     return HttpResponse("Carrito — (implementar plantilla)")
-
-def login_view(request):
-    return HttpResponse("Login — (implementar plantilla)")
 
 def about(request):
     return HttpResponse("Acerca de — (implementar plantilla)")

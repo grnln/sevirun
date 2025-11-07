@@ -54,6 +54,7 @@ class ProductColour(models.Model):
 # Product
 class Product(models.Model):
     name = models.CharField(max_length = 255, null = False)
+    short_description = models.CharField(null = False, max_length = 255)
     description = models.TextField(null = False)
     picture = models.ImageField(upload_to = 'products/', null = False)
 
@@ -97,3 +98,6 @@ class ProductStock(models.Model):
     product = models.ForeignKey(Product, on_delete = models.CASCADE, null = False)
     size = models.ForeignKey(ProductSize, on_delete = models.CASCADE, null = False)
     colour = models.ForeignKey(ProductColour, on_delete = models.CASCADE, null = False)
+
+    def __str__(self):
+        return f'{{product: {self.product.name}, size: {self.size.name}, colour: {self.colour.name}, stock: {self.stock}}}'
