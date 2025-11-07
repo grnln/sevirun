@@ -1,12 +1,4 @@
-:root {
-    --accent: #0d6efd;
-    --muted: #666;
-    --bg: #fafafa;
-    --card: #fff;
-}
-
 body {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
     line-height: 1.5;
     margin: 0;
     background: var(--bg);
@@ -19,33 +11,12 @@ body {
     padding: 24px;
 }
 
-/* Header / brand */
-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 0;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-}
-
-.logo {
-    width: 44px;
-    height: 44px;
-    background: linear-gradient(135deg, var(--accent), #6610f2);
-    border-radius: 8px;
-    display: inline-block;
-}
-
-nav a {
-    margin-left: 16px;
-    color: var(--muted);
-    text-decoration: none;
+.card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(16, 24, 40, 0.12);
+    padding: 24px;
 }
 
 /* Hero section */
@@ -54,87 +25,23 @@ nav a {
     grid-template-columns: 1fr 420px;
     gap: 24px;
     align-items: center;
-    padding: 36px 0;
+    
+    padding: 36px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.04);
+    
+    box-shadow: 0 12px 40px rgba(16, 24, 40, 0.12);
 }
 
 .hero .intro h1 {
     font-size: 2rem;
+    font-weight: 800;
+    color: #176ae8;
     margin: 0 0 12px;
 }
 
 .hero .intro p {
     color: var(--muted);
     margin: 0 0 18px;
-}
-
-/* Buttons and search card */
-.btn {
-    background: var(--accent);
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: 8px;
-    text-decoration: none;
-    display: inline-block;
-}
-
-.search-card,
-input[type="search"] {
-    width: 100%;
-}
-
-.search-card {
-    background: var(--card);
-    padding: 16px;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(10, 10, 10, 0.06);
-}
-
-/* Cards grid */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin: 24px 0;
-}
-
-.card {
-    background: var(--card);
-    padding: 14px;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(10, 10, 10, 0.06);
-    text-align: center;
-}
-
-.card img {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-/* Footer */
-footer {
-    padding: 28px 0;
-    border-top: 1px solid #eee;
-    color: var(--muted);
-    margin-top: 36px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 900px) {
-    .hero {
-        grid-template-columns: 1fr;
-    }
-    .grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 520px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
-    .brand span {
-        display: none;
-    }
 }
