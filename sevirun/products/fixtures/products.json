@@ -154,68 +154,67 @@
             "material": 2
         }
     }, {
-        "model": "products.ProductSizeStock",
+        "model": "products.ProductStock",
         "pk": 1,
-        "fields": {
-            "stock": 10,
-            "product": 1,
-            "size": 1
-        }
-    }, {
-        "model": "products.ProductSizeStock",
-        "pk": 2,
-        "fields": {
-            "stock": 50,
-            "product": 2,
-            "size": 1
-        }
-    }, {
-        "model": "products.ProductSizeStock",
-        "pk": 3,
-        "fields": {
-            "stock": 50,
-            "product": 2,
-            "size": 2
-        }
-    }, {
-        "model": "products.ProductSizeStock",
-        "pk": 4,
-        "fields": {
-            "stock": 20,
-            "product": 3,
-            "size": 2
-        }
-    }, {
-        "model": "products.ProductColourStock",
-        "pk": 1,
-        "fields": {
-            "stock": 5,
-            "product": 1,
-            "colour": 1
-        }
-    }, {
-        "model": "products.ProductColourStock",
-        "pk": 2,
-        "fields": {
-            "stock": 5,
-            "product": 1,
-            "colour": 2
-        }
-    }, {
-        "model": "products.ProductColourStock",
-        "pk": 3,
         "fields": {
             "stock": 100,
-            "product": 2,
+            "product": 1,
+            "size": 1,
+            "colour": 1
+        }
+    }, {
+        "model": "products.ProductStock",
+        "pk": 2,
+        "fields": {
+            "stock": 50,
+            "product": 1,
+            "size": 2,
+            "colour": 1
+        }
+    }, {
+        "model": "products.ProductStock",
+        "pk": 3,
+        "fields": {
+            "stock": 20,
+            "product": 1,
+            "size": 2,
             "colour": 2
         }
     }, {
-        "model": "products.ProductColourStock",
+        "model": "products.ProductStock",
         "pk": 4,
         "fields": {
-            "stock": 20,
-            "product": 3,
+            "stock": 25,
+            "product": 2,
+            "size": 1,
             "colour": 1
+        }
+    }, {
+        "model": "products.ProductStock",
+        "pk": 5,
+        "fields": {
+            "stock": 45,
+            "product": 2,
+            "size": 1,
+            "colour": 2
+        }
+    }, {
+        "model": "products.ProductStock",
+        "pk": 6,
+        "fields": {
+            "stock": 65,
+            "product": 2,
+            "size": 2,
+            "colour": 1
+        }
+    }, {
+        "model": "products.ProductStock",
+        "pk": 7,
+        "fields": {
+            "stock": 85,
+            "product": 2,
+            "size": 2,
+            "colour": 2
         }
     }
 ]
