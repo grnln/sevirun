@@ -18,7 +18,6 @@ def product_detail(request, product_id):
         .annotate(total=Sum('stock'))\
         .order_by('colour__name')
 
-    # Provide raw stock list for the client-side script to build a combination map
     stock_list = list(product.productstock_set.values('size_id', 'colour_id', 'stock'))
 
     context = {

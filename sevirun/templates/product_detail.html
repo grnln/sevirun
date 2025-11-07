@@ -101,10 +101,14 @@
             </div>
         </div>
 
-        <div class="col mt-4">
-            <h5 class="mb-3">Descripción:</h5>
-            <p class="description">{{ product.description }}</p>
+        {% if product.description %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <h5 class="mb-3">Descripción:</h5>
+                <p class="description">{{ product.description }}</p>
+            </div>
         </div>
+        {% endif %}
 
         <div class="row mt-4">
             <div class="col-12 details-col">

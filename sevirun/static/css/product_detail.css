@@ -35,6 +35,11 @@
 	padding-left: 8px;
 }
 
+.product-detail .description,
+.product-detail .details-col {
+	padding-left: 16px;
+}
+
 .product-pickers {
 	display: flex;
 	gap: 0.5rem 1.5rem;
