@@ -65,13 +65,15 @@
         "model": "products.ProductModel",
         "pk": 1,
         "fields": {
-            "name": "Modelo de ejemplo 1"
+            "name": "Modelo de ejemplo 1",
+            "brand": 1
         }
     }, {
         "model": "products.ProductModel",
         "pk": 2,
         "fields": {
-            "name": "Modelo de ejemplo 2"
+            "name": "Modelo de ejemplo 2",
+            "brand": 2
         }
     }, {
         "model": "products.ProductSize",
