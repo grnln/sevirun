@@ -67,7 +67,7 @@
     "model": "orders.OrderItem",
     "pk": 3,
     "fields": {
-      "order": 3,
+      "order": 2,
       "product": 2,
       "size": 44,
       "quantity": 1,

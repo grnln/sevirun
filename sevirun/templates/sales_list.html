@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel = "stylesheet" href = "{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main class = "container py-4">
+        <aside class = "ml-4 mb-4">
+            <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
+        </aside>
+        <section>
+            <h2 class = "h5 mb-3 fw-bold">Ventas:</h2>
+            <div class = "row g-3">
+                {% if sales %}
+                    {% for s in sales %}
+                        <div class="card">
+                            <strong style="font-size: large; margin-bottom: 15px;">Pedido {{ s.pk }}</strong>
+                            <div style="display: flex; justify-content: space-between;">
+                                <div>
+                                    Productos enviados:
+                                    <ul>
+                                        {% for i in s.items.all %}
+                                            <li>x{{ i.quantity }} {{ i.product.name }}, talla {{ i.size }}: {{ i.total_price }} euros</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <p>
+                                    Gastos de envío: {{ s.delivery_cost }} euros
+                                    <br/>Porcentaje de descuento aplicado: {{ s.discount_percentage }}%
+                                    <br/>Método de pago: {{ s.get_payment_method_display }}
+                                    <br/><br/>Subtotal (tras descuentos e impuestos): {{ s.subtotal }} euros
+                                </p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay ventas.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+{% endblock %}
