@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from users.models import AppUser
 from products.models import Product
+from decimal import Decimal, ROUND_CEILING
 
 phone_validator = RegexValidator(
     regex=r'^\+?1?\d{9,15}$',
@@ -41,19 +42,20 @@ class Order(models.Model):
 
     @property
     def total_price(self):
-        return sum(item.total_price for item in self.items.all())
+        result = Decimal(sum(item.total_price for item in self.items.all()))
+        return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
     delivery_cost = models.DecimalField(
-        max_digits = 3,
+        max_digits = 5,
         decimal_places = 2,
         null = False,
-        validators=[MinValueValidator(0)]
+        validators=[MinValueValidator(0.0)]
     )
     discount_percentage = models.DecimalField(
-        max_digits = 3,
+        max_digits = 5,
         decimal_places = 2,
         null = False,
-        validators=[MinValueValidator(0), MaxValueValidator(100.00)]
+        validators=[MinValueValidator(0.0), MaxValueValidator(100.00)]
     )
     payment_method = models.CharField(choices=PaymentMethod, default=PaymentMethod.CREDIT_CARD, null=False)
     shipping_address = models.CharField(max_length = 255, null = False, blank=False)
@@ -65,8 +67,26 @@ class Order(models.Model):
 
     @property
     def subtotal(self):
-        '''Taxes are assumed to be a 21% of the final price'''
-        return (self.total_price + self.delivery_cost) * 1.21 * (100 - self.discount_percentage) / 100
+        total = self.total_price
+        delivery = self.delivery_cost 
+        discount = self.discount_percentage 
+        result = Decimal((total + delivery) * Decimal("1.21") * (100 - discount) / 100)
+        return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
+
+    def __str__(self):
+        return f'''
+                {{
+                    client: {self.client.pk},
+                    state: {self.state},
+                    delivery_cost: {self.delivery_cost},
+                    discount_percentage: {self.discount_percentage},
+                    payment_method: {self.payment_method},
+                    shipping_address: {self.shipping_address},
+                    phone_number: {self.phone_number},
+                    total_price: {self.total_price},
+                    subtotal: {self.subtotal}
+                }}
+                '''
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.DO_NOTHING, null=False, related_name="items")
@@ -81,3 +101,15 @@ class OrderItem(models.Model):
     @property
     def total_price(self):
         return self.quantity * self.unit_price
+
+    def __str__(self):
+        return f'''
+                {{
+                    order: {self.order.pk},
+                    product: {self.product.pk},
+                    size: {self.size},
+                    quantity: {self.quantity},
+                    unit_price: {self.unit_price},
+                    total_price: {self.total_price}
+                }}
+                '''
