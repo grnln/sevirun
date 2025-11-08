@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel = "stylesheet" href = "{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main class = "container py-4">
+        <aside class = "ml-4 mb-4">
+            <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
+        </aside>
+        <section class = "section mb-4">
+            <h2 class = "h5 mb-3 fw-bold">Marcas:</h2>
+            <div class = "row g-3">
+                {% if brands %}
+                    {% for b in brands %}
+                        <div class = "col-6 col-md-4">
+                            <div class = "card p-2 h-100 bg-white text-dark">
+                                {% if b.logo %}
+                                    <img src = "{{ b.logo.url }}" class = "card-img-top rounded" alt = "{{ b.name }}">
+                                {% else %}
+                                    <img src = "{% static 'images/dummy.png' %}" class = "card-img-top rounded" alt = "{{ b.name }}">
+                                {% endif %}
+                                <div class = "card-body p-2">
+                                    <h5 class = "card-title mb-1 fs-6">{{b.name}}</h5>
+                                </div>
+                                <a href = "{% url 'products' %}?brand={{b.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay marcas registradas en el sistema.</p>
+                {% endif %}
+            </div>
+        </section>
+        <section class = "section mb-4">
+            <h2 class = "h5 mb-3 fw-bold">Tipos de producto:</h2>
+            <div class = "row g-3">
+                {% if product_types %}
+                    {% for t in product_types %}
+                        <div class = "col-6 col-md-4">
+                            <div class = "card p-2 h-100 bg-white text-dark">
+                                {% if t.picture %}
+                                    <img src = "{{ t.picture.url }}" class = "card-img-top rounded" alt = "{{ t.name }}">
+                                {% else %}
+                                    <img src = "{% static 'images/dummy.png' %}" class = "card-img-top rounded" alt = "{{ t.name }}">
+                                {% endif %}
+                                <div class = "card-body p-2">
+                                    <h5 class = "card-title mb-1 fs-6">{{t.name}}</h5>
+                                </div>
+                                <a href = "{% url 'products' %}?type={{t.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay tipos de producto registrados en el sistema.</p>
+                {% endif %}
+            </div>
+        </section>
+        <section class = "section mb-4">
+            <h2 class = "h5 mb-3 fw-bold">Modelos:</h2>
+            <div class = "row g-3">
+                {% if product_models %}
+                    {% for m in product_models %}
+                        <div class = "col-6 col-md-4">
+                            <div class = "card p-2 h-100 bg-white text-dark">
+                                {% if m.picture %}
+                                    <img src = "{{ m.picture.url }}" class = "card-img-top rounded" alt = "{{ m.name }}">
+                                {% else %}
+                                    <img src = "{% static 'images/dummy.png' %}" class = "card-img-top rounded" alt = "{{ m.name }}">
+                                {% endif %}
+                                <div class = "card-body p-2">
+                                    <h5 class = "card-title mb-1 fs-6">{{m.name}}</h5>
+                                </div>
+                                <a href = "{% url 'products' %}?model={{m.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay modelos registrados en el sistema.</p>
+                {% endif %}
+            </div>
+        </section>
+        <section class = "section mb-4">
+            <h2 class = "h5 mb-3 fw-bold">Temporadas:</h2>
+            <div class = "row g-3">
+                {% if product_seasons %}
+                    {% for s in product_seasons %}
+                        <div class = "col-6 col-md-4">
+                            <div class = "card p-2 h-100 bg-white text-dark">
+                                {% if s.picture %}
+                                    <img src = "{{ s.picture.url }}" class = "card-img-top rounded" alt = "{{ s.name }}">
+                                {% else %}
+                                    <img src = "{% static 'images/dummy.png' %}" class = "card-img-top rounded" alt = "{{ s.name }}">
+                                {% endif %}
+                                <div class = "card-body p-2">
+                                    <h5 class = "card-title mb-1 fs-6">{{s.name}}</h5>
+                                </div>
+                                <a href = "{% url 'products' %}?season={{s.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay temporadas registradas en el sistema.</p>
+                {% endif %}
+            </div>
+        </section>
+        <section class = "section mb-4">
+            <h2 class = "h5 mb-3 fw-bold">Materiales:</h2>
+            <div class = "row g-3">
+                {% if product_materials %}
+                    {% for m in product_materials %}
+                        <div class = "col-6 col-md-4">
+                            <div class = "card p-2 h-100 bg-white text-dark">
+                                {% if m.picture %}
+                                    <img src = "{{ m.picture.url }}" class = "card-img-top rounded" alt = "{{ m.name }}">
+                                {% else %}
+                                    <img src = "{% static 'images/dummy.png' %}" class = "card-img-top rounded" alt = "{{ m.name }}">
+                                {% endif %}
+                                <div class = "card-body p-2">
+                                    <h5 class = "card-title mb-1 fs-6">{{m.name}}</h5>
+                                </div>
+                                <a href = "{% url 'products' %}?material={{m.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay materiales registrados en el sistema.</p>
+                {% endif %}
+            </div>
+        </section>
+        <section class = "section mb-4">
+            <h2 class = "h5 mb-3 fw-bold">Tallas:</h2>
+            <div class = "row g-3">
+                {% if product_sizes %}
+                    {% for s in product_sizes %}
+                        <div class = "col-6 col-md-4">
+                            <div class = "card p-2 h-100 bg-white text-dark">
+                                <div class = "card p-2 h-100 bg-white text-dark align-items-center">
+                                    <h2 class = "h3"><strong>{{s.name}}</strong></h2>
+                                </div>
+                                <a href = "{% url 'products' %}?size={{s.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay tallas registradas en el sistema.</p>
+                {% endif %}
+            </div>
+        </section>
+        <section class = "section mb-4">
+            <h2 class = "h5 mb-3 fw-bold">Colores:</h2>
+            <div class = "row g-3">
+                {% if product_colours %}
+                    {% for c in product_colours %}
+                        <div class = "col-6 col-md-4">
+                            <div class = "card p-2 h-100 bg-white text-dark">
+                                {% if c.picture %}
+                                    <img src = "{{ c.picture.url }}" class = "card-img-top rounded" alt = "{{ c.name }}">
+                                {% else %}
+                                    <img src = "{% static 'images/dummy.png' %}" class = "card-img-top rounded" alt = "{{ c.name }}">
+                                {% endif %}
+                                <div class = "card-body p-2">
+                                    <h5 class = "card-title mb-1 fs-6">{{c.name}}</h5>
+                                </div>
+                                <a href = "{% url 'products' %}?colour={{c.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay colores registrados en el sistema.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+{% endblock %}
