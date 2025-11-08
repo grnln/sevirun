@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     'home',
     'users',
-    'products'
+    'products',
+    'orders'
 ]
 
 MIDDLEWARE = [
