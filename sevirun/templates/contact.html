@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+    <h1>Contacta con nosotros</h1>
+
+    <hr/>
+
+    <section class="card mb-4" role="region" aria-label="Nuestra misión">
+        <h2>Visítanos</h2>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <p style="flex: 3; margin: 0;">
+                <strong>Dirección:</strong><br>
+                Calle Falsa 123, 41001, Sevilla, España<br><br>
+                <strong>Horario:</strong><br>
+                Lunes a viernes: 10:00 - 14:00 / 17:00 - 20:30<br>
+                Sábados: 10:00 - 14:00<br>
+                Domingos: cerrado<br><br>
+                Ven a probarte tus próximos zapatos y déjate asesorar por nuestro equipo. ¡Nos encantará recibirte!
+            </p>
+            <img src="{% static 'images/map.png' %}" 
+                alt="Mapa" 
+                class="img-fluid rounded" 
+                style="max-width: 380px; flex-shrink: 0; margin-left: 20px;">
+        </div>
+    </section>
+
+    <section class="card mb-4" role="region" aria-label="Nuestra misión">
+        <h2>Contáctanos</h2>
+        <p>
+            Email: info@sevirun.es
+            <br/>Teléfono / WhatsApp: +34 123 456 789
+        </p>
+    </section>
+</main>
+{% endblock %}
+

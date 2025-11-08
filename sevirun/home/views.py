@@ -9,13 +9,12 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+def about(request):
+    return render(request, 'about.html')
+
+def contact(request):
+    return render(request, 'contact.html')
 
 # Placeholder views - remove when implementing actual functionality
 def cart(request):
     return HttpResponse("Carrito — (implementar plantilla)")
-
-def about(request):
-    return HttpResponse("Acerca de — (implementar plantilla)")
-
-def contact(request):
-    return HttpResponse("Contacto — (implementar plantilla)")
