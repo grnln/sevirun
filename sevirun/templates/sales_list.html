@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel = "stylesheet" href = "{% static 'css/sales_list.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main class = "container py-4">
+        <aside class = "ml-4 mb-4">
+            <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
+        </aside>
+        <section>
+            <h2 class = "h5 mb-3 fw-bold">Ventas:</h2>
+            <div class = "row g-3">
+                {% if sales %}
+                    {% for s in sales %}
+                        <div class="card">
+                            <div class="card-header">Pedido #{{ s.pk }}</div>
+                            
+                            <div class="card-content">
+                                <div class="products-section">
+                                    <div class="section-title">Productos enviados</div>
+                                    <ul class="products-list">
+                                        {% for i in s.items.all %}
+                                            <li class="product-item">
+                                                <span class="product-quantity">x{{ i.quantity }}</span>
+                                                <div class="product-details">
+                                                    <span class="product-name">{{ i.product.name }}</span>
+                                                    <span class="product-meta">Talla {{ i.size }}</span>
+                                                </div>
+                                                <span class="product-price">{{ i.total_price }}€</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                
+                                <div class="summary-section">
+                                    <div class="summary-item">
+                                        <span class="summary-label">Gastos de envío:</span> {{ s.delivery_cost }}€
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Descuento aplicado:</span> {{ s.discount_percentage }}%
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Método de pago:</span> {{ s.get_payment_method_display }}
+                                    </div>
+                                    <div class="subtotal">
+                                        Subtotal: {{ s.subtotal }}€
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay ventas.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+{% endblock %}

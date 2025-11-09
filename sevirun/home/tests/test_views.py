@@ -55,3 +55,19 @@ def test_home_shows_products_list_when_present(client):
 
     assert resp.status_code == 200
     assert product.title.encode() in resp.content
+
+@pytest.mark.django_db
+def test_about_us_is_shown(client):
+    url = reverse('about')
+    resp = client.get(url)
+
+    assert resp.status_code == 200
+    assert b'Sobre nosotros' in resp.content
+
+@pytest.mark.django_db
+def test_contact_is_shown(client):
+    url = reverse('contact')
+    resp = client.get(url)
+
+    assert resp.status_code == 200
+    assert b'Contacta con nosotros' in resp.content
