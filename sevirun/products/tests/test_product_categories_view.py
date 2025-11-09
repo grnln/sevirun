@@ -8,7 +8,7 @@ from pathlib import Path
 from products.models import *
 
 @pytest.mark.django_db
-def test_products_status_and_context(client):
+def test_product_categories_view(client):
     brand = Brand.objects.create(name = 'Test Brand')
     product_model = ProductModel.objects.create(name = 'Model X', brand = brand)
     product_type = ProductType.objects.create(name = 'Shoes')
@@ -44,7 +44,7 @@ def test_products_status_and_context(client):
     assert (bytearray(colour.name, encoding = 'utf-8') in response.content)
 
 @pytest.mark.django_db
-def test_products_status_and_context(client):
+def test_empty_product_categories_view(client):
     url = reverse('categories')
     response = client.get(url)
 
