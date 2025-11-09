@@ -22,9 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!%g8za79#3o6b6hac-^smtfh)wf0_+-aspi4q!!uli#suvh=u8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'https://sevirun.onrender.com/',
+    'localhost',
+    '127.0.0.1'
+]
 
 
 # Application definition

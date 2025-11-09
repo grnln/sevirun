@@ -3,3 +3,4 @@ Pillow==9.5.0
 django-bootstrap5==23.1.0
 pytest==7.4.0
 pytest-django==4.5.2
+gunicorn==23.0.0
