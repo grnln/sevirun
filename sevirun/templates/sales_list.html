@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block override_style %}
-    <link rel = "stylesheet" href = "{% static 'css/home.css' %}">
+    <link rel = "stylesheet" href = "{% static 'css/sales_list.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -16,22 +16,39 @@
                 {% if sales %}
                     {% for s in sales %}
                         <div class="card">
-                            <strong style="font-size: large; margin-bottom: 15px;">Pedido {{ s.pk }}</strong>
-                            <div style="display: flex; justify-content: space-between;">
-                                <div>
-                                    Productos enviados:
-                                    <ul>
+                            <div class="card-header">Pedido #{{ s.pk }}</div>
+                            
+                            <div class="card-content">
+                                <div class="products-section">
+                                    <div class="section-title">Productos enviados</div>
+                                    <ul class="products-list">
                                         {% for i in s.items.all %}
-                                            <li>x{{ i.quantity }} {{ i.product.name }}, talla {{ i.size }}: {{ i.total_price }} euros</li>
+                                            <li class="product-item">
+                                                <span class="product-quantity">x{{ i.quantity }}</span>
+                                                <div class="product-details">
+                                                    <span class="product-name">{{ i.product.name }}</span>
+                                                    <span class="product-meta">Talla {{ i.size }}</span>
+                                                </div>
+                                                <span class="product-price">{{ i.total_price }}€</span>
+                                            </li>
                                         {% endfor %}
                                     </ul>
                                 </div>
-                                <p>
-                                    Gastos de envío: {{ s.delivery_cost }} euros
-                                    <br/>Porcentaje de descuento aplicado: {{ s.discount_percentage }}%
-                                    <br/>Método de pago: {{ s.get_payment_method_display }}
-                                    <br/><br/>Subtotal (tras descuentos e impuestos): {{ s.subtotal }} euros
-                                </p>
+                                
+                                <div class="summary-section">
+                                    <div class="summary-item">
+                                        <span class="summary-label">Gastos de envío:</span> {{ s.delivery_cost }}€
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Descuento aplicado:</span> {{ s.discount_percentage }}%
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Método de pago:</span> {{ s.get_payment_method_display }}
+                                    </div>
+                                    <div class="subtotal">
+                                        Subtotal: {{ s.subtotal }}€
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     {% endfor %}
