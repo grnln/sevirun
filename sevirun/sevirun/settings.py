@@ -26,6 +26,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'sevirun.onrender.com'
+    'localhost',
+    '127.0.0.1'
 ]
 
 
