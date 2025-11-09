@@ -1,0 +1,141 @@
+.card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(16, 24, 40, 0.12);
+    padding: 24px;
+}
+
+.card-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+    color: #1f2937;
+}
+
+.card-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.products-section {
+    padding-right: 16px;
+}
+
+.section-title {
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #374151;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.products-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.products-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #f3f4f6;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.products-list li:last-child {
+    border-bottom: none;
+}
+
+.product-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 12px;
+}
+
+.product-item:last-child {
+    border-bottom: none;
+}
+
+.product-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.product-name {
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.product-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.product-quantity {
+    background-color: #e5e7eb;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.product-price {
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+}
+
+.summary-section {
+    background-color: #f9fafb;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid #3b82f6;
+}
+
+.summary-item {
+    margin-bottom: 10px;
+    color: #4b5563;
+    line-height: 1.6;
+}
+
+.summary-item:last-child {
+    margin-bottom: 0;
+}
+
+.summary-label {
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.subtotal {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 2px solid #e5e7eb;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+@media (max-width: 768px) {
+    .card-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .products-section {
+        padding-right: 0;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+}
