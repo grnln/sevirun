@@ -20,6 +20,7 @@
         <li class="nav-item"><a class="nav-link" href="/contact/">Contacto</a></li>
         {% if user.is_staff %}
             <li class="nav-item"><a class="nav-link" href="/orders/sales">Ventas</a></li>
+            <li class="nav-item"><a class="nav-link" href="/users/admin/all">Usuarios</a></li>
         {% endif %}
         {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
             <li class="nav-item"><a class="nav-link" href="/orders">Mis pedidos</a></li>

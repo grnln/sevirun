@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="container py-4">
+    <section>
+        <aside class="mb-3">
+            <a href="{% url 'admin_users' %}" class="text-dark">← Volver a la lista</a>
+        </aside>
+
+        <h2 class="h5 mb-3 fw-bold">Crear usuario</h2>
+
+        <div class="alert alert-info">
+            Página provisional.
+        </div>
+
+        <a href="{% url 'admin_users' %}" class="btn btn-secondary">Volver</a>
+    </section>
+</main>
+{% endblock %}

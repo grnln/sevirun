@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-4">
+    <h2 class="h5 mb-3 fw-bold">Editar usuario (Provisional)</h2>
+    <div class="card p-3">
+        <p><strong>Nombre:</strong> {{ user.name|default:"" }}</p>
+        <p><strong>Apellido:</strong> {{ user.surname|default:"" }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Teléfono:</strong> {{ user.phone_number|default:"" }}</p>
+        <p><strong>Dirección:</strong> {{ user.address|default:"" }}</p>
+        <p><strong>Ciudad:</strong> {{ user.city|default:"" }}</p>
+        <p><strong>Código postal:</strong> {{ user.postal_code|default:"" }}</p>
+        <p><strong>Fecha registro:</strong> {{ user.date_joined|date:"Y-m-d H:i" }}</p>
+        <a href="{% url 'admin_users' %}" class="btn btn-secondary">Volver</a>
+    </div>
+</main>
+{% endblock %}
