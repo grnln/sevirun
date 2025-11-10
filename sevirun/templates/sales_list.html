@@ -31,6 +31,10 @@
                                                 </div>
                                                 <span class="product-price">{{ i.total_price }}€</span>
                                             </li>
+                                        {% empty %}
+                                            <li class="no-products">
+                                                <span>No hay productos en este pedido.</span>
+                                            </li>
                                         {% endfor %}
                                     </ul>
                                 </div>
@@ -46,7 +50,7 @@
                                         <span class="summary-label">Método de pago:</span> {{ s.get_payment_method_display }}
                                     </div>
                                     <div class="subtotal">
-                                        Subtotal: {{ s.subtotal }}€
+                                        Subtotal (IVA incluido): {{ s.subtotal }}€
                                     </div>
                                 </div>
                             </div>
