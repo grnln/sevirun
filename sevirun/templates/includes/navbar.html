@@ -21,6 +21,9 @@
         {% if user.is_staff %}
             <li class="nav-item"><a class="nav-link" href="/orders/sales">Ventas</a></li>
         {% endif %}
+        {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
+            <li class="nav-item"><a class="nav-link" href="/orders">Mis pedidos</a></li>
+        {% endif %}
       </ul>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="/cart/">Carrito</a></li>
