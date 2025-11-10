@@ -7,12 +7,22 @@
 
 {% block content %}
     <main class = "container py-4">
-        <aside class = "ml-4 mb-4">
-            {% if no_filters %}
-                <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
-            {% else %}
-                <a href = "{% url 'categories' %}" class = "text-dark">← Volver</a>
-            {% endif %}
+        <h1>Tienda</h1>
+        <hr/>
+        <aside class = "ml-4 mb-4 d-flex justify-content-between">
+            <div class = "d-flex justify-content-center">
+                {% if no_filters %}
+                    <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
+                {% else %}
+                    <a href = "{% url 'categories' %}" class = "text-dark">← Volver</a>
+                {% endif %}
+            </div>
+            <form class = "d-flex justify-content-center" method = "GET" action = "{% url 'products' %}">
+                {% csrf_token %}
+                <input type = "search" id = "product-search" name = "product-search" class = "form-control"/>
+                <button class = "btn btn-sm btn-primary" id = "product-search-button" type = "submit">Buscar</button>
+            </form>
+            <div>Ejemplo</div>
         </aside>
         <section>
             <h2 class = "h5 mb-3 fw-bold">Productos:</h2>

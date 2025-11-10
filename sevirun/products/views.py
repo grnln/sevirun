@@ -7,7 +7,7 @@ from .models import Product
 def index(request):
     no_filters = True
     products = Product.objects.all()
-
+    
     brand_filter = request.GET.get('brand', None)
     type_filter = request.GET.get('type', None)
     model_filter = request.GET.get('model', None)
@@ -15,6 +15,7 @@ def index(request):
     material_filter = request.GET.get('material', None)
     size_filter = request.GET.get('size', None)
     colour_filter = request.GET.get('colour', None)
+    search_text = request.GET.get('product-search', None)
 
     if brand_filter != None:
         model_pks = [m.pk for m in ProductModel.objects.all().filter(brand = brand_filter)]
@@ -47,6 +48,10 @@ def index(request):
         products = [p for p in products if p.pk in products_with_colour]
         no_filters = False
 
+    if search_text != None:
+        products = products.filter(name__contains = search_text)
+        no_filters = True
+    
     context = {
         'products': products,
         'no_filters': no_filters
