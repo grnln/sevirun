@@ -34,20 +34,16 @@ def register(request):
         if request.method == "POST":
             email = request.POST.get("email", "").strip()
             password = request.POST.get("password", "").strip()
-
-            # Validar email
             try:
                 validate_email(email)
             except ValidationError:
                 messages.error(request, 'No ha podido registrarse. Vuelva a intentarlo.')
                 return render(request, 'registration/register.html')
 
-            # Validar contraseña no vacía
             if not password:
                 messages.error(request, 'No ha podido registrarse. Vuelva a intentarlo.')
                 return render(request, 'registration/register.html')
 
-            # Verificar si el usuario ya existe
             try:
                 existing_user = User.objects.get(email=email)
             except User.DoesNotExist:
@@ -57,7 +53,6 @@ def register(request):
                 messages.error(request, 'Ya existe una cuenta con ese email.')
                 return render(request, 'registration/register.html')
 
-            # Obtener el resto de campos
             name = request.POST.get("name", "").strip()
             surname = request.POST.get("surname", "").strip()
             phone_number = request.POST.get("phone_number", "").strip()
