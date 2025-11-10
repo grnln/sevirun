@@ -11,18 +11,18 @@
             <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
         </aside>
         <section>
-            <h2 class = "h5 mb-3 fw-bold">Ventas:</h2>
+            <h2 class = "h5 mb-3 fw-bold">Mis pedidos:</h2>
             <div class = "row g-3">
-                {% if sales %}
-                    {% for s in sales %}
+                {% if orders %}
+                    {% for o in orders %}
                         <div class="card">
-                            <div class="card-header">Pedido #{{ s.pk }}</div>
+                            <div class="card-header">Pedido #{{ o.pk }} - {{ o.get_state_display }}</div>
                             
                             <div class="card-content">
                                 <div class="products-section">
-                                    <div class="section-title">Productos enviados</div>
+                                    <div class="section-title">Productos</div>
                                     <ul class="products-list">
-                                        {% for i in s.items.all %}
+                                        {% for i in o.items.all %}
                                             <li class="product-item">
                                                 <span class="product-quantity">x{{ i.quantity }}</span>
                                                 <div class="product-details">
@@ -41,23 +41,26 @@
                                 
                                 <div class="summary-section">
                                     <div class="summary-item">
-                                        <span class="summary-label">Gastos de envío:</span> {{ s.delivery_cost }}€
+                                        <span class="summary-label">Dirección de envío:</span> {{ o.shipping_address }}
                                     </div>
                                     <div class="summary-item">
-                                        <span class="summary-label">Descuento aplicado:</span> {{ s.discount_percentage }}%
+                                        <span class="summary-label">Gastos de envío:</span> {{ o.delivery_cost }}€
                                     </div>
                                     <div class="summary-item">
-                                        <span class="summary-label">Método de pago:</span> {{ s.get_payment_method_display }}
+                                        <span class="summary-label">Descuento aplicado:</span> {{ o.discount_percentage }}%
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">Método de pago:</span> {{ o.get_payment_method_display }}
                                     </div>
                                     <div class="subtotal">
-                                        Subtotal (IVA incluido): {{ s.subtotal }}€
+                                        Subtotal (IVA incluido): {{ o.subtotal }}€
                                     </div>
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                 {% else %}
-                    <p>No hay ventas.</p>
+                    <p>No tienes pedidos.</p>
                 {% endif %}
             </div>
         </section>
