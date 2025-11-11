@@ -15,7 +15,7 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Inicio</a></li>
         {% if not user.is_staff and not user.is_superuser %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'products' %}?from={% url 'home' %}">Tienda</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'products' %}?from={{ request.path }}">Tienda</a></li>
         {% endif %}
         <li class="nav-item"><a class="nav-link" href="{% url 'categories' %}">Categorías</a></li>
         {% if user.is_staff or user.is_superuser %}
@@ -24,7 +24,7 @@
               Gestión
             </a>
             <ul class="dropdown-menu" aria-labelledby="gestionDropdown">
-              <li><a class="dropdown-item" href="/products">Productos</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'products' %}?from={{ request.path }}">Productos</a></li>
             </ul>
           </li>
           <li class="nav-item"><a class="nav-link" href="/orders/sales">Ventas</a></li>
