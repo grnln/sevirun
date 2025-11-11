@@ -15,7 +15,7 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Inicio</a></li>
         {% if not user.is_staff and not user.is_superuser %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'products' %}">Tienda</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'products' %}?from={% url 'home' %}">Tienda</a></li>
         {% endif %}
         <li class="nav-item"><a class="nav-link" href="{% url 'categories' %}">Categorías</a></li>
         {% if user.is_staff or user.is_superuser %}
