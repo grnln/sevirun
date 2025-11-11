@@ -3,6 +3,9 @@ from .models import *
 from django.http import HttpResponse
 from django.db.models import Sum
 from .models import Product
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
 
 def index(request):
     no_filters = True
@@ -94,3 +97,26 @@ def product_detail(request, product_id):
         'product_available': product.is_available,
     }
     return render(request, 'product_detail.html', context)
+
+def manage_products(request):
+    products = Product.objects.all()
+    context = {
+        'products': products,
+    }
+    return render(request, 'products_list.html', context)
+
+@staff_member_required
+def edit_product(request, product_id):
+    return HttpResponse("Editar producto - (implementar plantilla)")
+
+@staff_member_required
+def create_product(request):
+    return HttpResponse("Crear producto - (implementar plantilla)")
+
+@staff_member_required
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    product_name = product.name
+    product.delete()
+    messages.success(request, f'El producto "{product_name}" ha sido eliminado correctamente.')
+    return redirect("products")
