@@ -27,7 +27,7 @@
                                 <div class = "card-body p-2">
                                     <h5 class = "card-title mb-1 fs-6">{{b.name}}</h5>
                                 </div>
-                                <a href = "{% url 'products' %}?brand={{b.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                                <a href = "{% url 'products' %}?from={% url 'categories' %}&brand={{b.pk}}" class = "btn btn-sm btn-primary">Ver</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -51,7 +51,7 @@
                                 <div class = "card-body p-2">
                                     <h5 class = "card-title mb-1 fs-6">{{t.name}}</h5>
                                 </div>
-                                <a href = "{% url 'products' %}?type={{t.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                                <a href = "{% url 'products' %}?from={% url 'categories' %}&type={{t.pk}}" class = "btn btn-sm btn-primary">Ver</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -75,7 +75,7 @@
                                 <div class = "card-body p-2">
                                     <h5 class = "card-title mb-1 fs-6">{{m.name}}</h5>
                                 </div>
-                                <a href = "{% url 'products' %}?model={{m.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                                <a href = "{% url 'products' %}?from={% url 'categories' %}&model={{m.pk}}" class = "btn btn-sm btn-primary">Ver</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -99,7 +99,7 @@
                                 <div class = "card-body p-2">
                                     <h5 class = "card-title mb-1 fs-6">{{s.name}}</h5>
                                 </div>
-                                <a href = "{% url 'products' %}?season={{s.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                                <a href = "{% url 'products' %}?from={% url 'categories' %}&season={{s.pk}}" class = "btn btn-sm btn-primary">Ver</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -123,7 +123,7 @@
                                 <div class = "card-body p-2">
                                     <h5 class = "card-title mb-1 fs-6">{{m.name}}</h5>
                                 </div>
-                                <a href = "{% url 'products' %}?material={{m.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                                <a href = "{% url 'products' %}?from={% url 'categories' %}&material={{m.pk}}" class = "btn btn-sm btn-primary">Ver</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -142,7 +142,7 @@
                                 <div class = "card p-2 h-100 bg-white text-dark align-items-center">
                                     <h2 class = "h3"><strong>{{s.name}}</strong></h2>
                                 </div>
-                                <a href = "{% url 'products' %}?size={{s.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                                <a href = "{% url 'products' %}?from={% url 'categories' %}&size={{s.pk}}" class = "btn btn-sm btn-primary">Ver</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -166,7 +166,7 @@
                                 <div class = "card-body p-2">
                                     <h5 class = "card-title mb-1 fs-6">{{c.name}}</h5>
                                 </div>
-                                <a href = "{% url 'products' %}?colour={{c.pk}}" class = "btn btn-sm btn-primary">Ver</a>
+                                <a href = "{% url 'products' %}?from={% url 'categories' %}&colour={{c.pk}}" class = "btn btn-sm btn-primary">Ver</a>
                             </div>
                         </div>
                     {% endfor %}

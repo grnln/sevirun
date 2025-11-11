@@ -11,11 +11,7 @@
         <hr/>
         <aside class = "ml-4 mb-4 d-flex">
             <div class = "d-flex flex-fill me-4">
-                {% if no_filters %}
-                    <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
-                {% else %}
-                    <a href = "{% url 'categories' %}" class = "text-dark">← Volver</a>
-                {% endif %}
+                <a href = "{{ from }}" class = "text-dark">← Volver</a>
             </div>
         </aside>
         <h2 class = "h5 mb-3 fw-bold">Búsqueda y filtros:</h2>
@@ -25,8 +21,12 @@
                     {% csrf_token %}
                     <label for = "product-search">Buscar por nombre o modelo:</label>
                     <div class = "d-flex flex-fill mb-4">
-                        <input type = "search" id = "product-search" name = "product-search" class = "form-control" placeholder = "Introducir nombre o modelo"/>
-                        <button class = "btn btn-sm btn-primary" id = "product-search-button" type = "submit">Buscar</button>
+                        <input type = "search" id = "product-search" name = "product-search" class = "form-control me-2" placeholder = "Introducir nombre o modelo"/>
+                        <button class = "btn btn-sm btn-primary" id = "product-search-button" type = "submit">
+                            <svg xmlns = "http://www.w3.org/2000/svg" width = "16" height = "16" fill = "currentColor" class = "bi bi-search" viewBox = "0 0 16 16">
+                                <path d = "M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                            </svg>
+                        </button>
                     </div>
                     <div class = "d-flex flex-fill justify-content-around">
                         {{ filters }}
