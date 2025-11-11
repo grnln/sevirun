@@ -9,7 +9,7 @@ def test_sales_access_as_unauthenticated(client):
     response = client.get(url)
 
     assert response.status_code == 302
-    assert "/login" in response.url
+    assert "accounts/login" in response.url
 
 @pytest.mark.django_db
 def test_sales_access_as_non_staff(client, regular_user):
@@ -18,7 +18,7 @@ def test_sales_access_as_non_staff(client, regular_user):
     response = client.get(url)
     
     assert response.status_code == 302
-    assert "/login" in response.url
+    assert "accounts/login" in response.url
 
 @pytest.mark.django_db
 def test_sales_access_as_staff(client, staff_user):
