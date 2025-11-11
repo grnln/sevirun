@@ -58,7 +58,7 @@ def test_products_status_and_context(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (bytearray(product.name, encoding = 'utf-8') in response.content)
 
 @pytest.mark.django_db
@@ -112,7 +112,7 @@ def test_products_show_prices(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (bytearray(product.price.replace('.', ','), encoding = 'utf-8') in response.content)
     assert (bytearray(product.price_on_sale.replace('.', ','), encoding = 'utf-8') in response.content)
 
@@ -192,7 +192,7 @@ def test_products_show_badges(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (b'Destacado' in response.content)
     assert (b'Disponible' in response.content)
     assert (b'No disponible' in response.content)
@@ -275,7 +275,7 @@ def test_products_brand_filter(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 1)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') in response.content)
@@ -360,7 +360,7 @@ def test_products_type_filter(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 1)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') in response.content)
@@ -449,7 +449,7 @@ def test_products_model_filter(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 1)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') in response.content)
@@ -538,7 +538,7 @@ def test_products_season_filter(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 1)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') in response.content)
@@ -627,7 +627,7 @@ def test_products_material_filter(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 1)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') in response.content)
@@ -716,7 +716,7 @@ def test_products_size_filter(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 1)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') in response.content)
@@ -805,7 +805,7 @@ def test_products_colour_filter(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 1)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') in response.content)
@@ -821,7 +821,7 @@ def test_products_empty(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (b'No hay productos disponibles en este momento.' in response.content)
 
 @pytest.mark.django_db
@@ -907,7 +907,7 @@ def test_products_name_search(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 1)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') not in response.content)
@@ -996,7 +996,7 @@ def test_products_model_search(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 1)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') not in response.content)
@@ -1085,7 +1085,7 @@ def test_products_name_model_search(client):
     for key in ('products', 'filters', 'from'):
         assert key in response.context
 
-    assert any(t.name == 'products_list.html' for t in response.templates)
+    assert any(t.name == 'products/products_list.html' for t in response.templates)
     assert (len(response.context['products']) == 2)
 
     assert (bytearray(product_1.name, encoding = 'utf-8') in response.content)
