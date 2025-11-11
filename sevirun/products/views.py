@@ -3,11 +3,12 @@ from .models import *
 from django.http import HttpResponse
 from django.db.models import Sum
 from .models import Product
+from .forms import ProductFiltersForm
 
 def index(request):
-    no_filters = True
     products = Product.objects.all()
-
+    
+    prev_page = request.GET.get('from', '/')
     brand_filter = request.GET.get('brand', None)
     type_filter = request.GET.get('type', None)
     model_filter = request.GET.get('model', None)
@@ -15,41 +16,44 @@ def index(request):
     material_filter = request.GET.get('material', None)
     size_filter = request.GET.get('size', None)
     colour_filter = request.GET.get('colour', None)
+    search_text = request.GET.get('product-search', None)
 
-    if brand_filter != None:
+    if brand_filter != None and brand_filter != 'null':
         model_pks = [m.pk for m in ProductModel.objects.all().filter(brand = brand_filter)]
-        products = [p for p in products if p.model.pk in model_pks]
-        no_filters = False
+        products = products.filter(model__in = model_pks)
 
-    if type_filter != None:
+    if type_filter != None and type_filter != 'null':
         products = products.filter(type = type_filter)
-        no_filters = False
 
-    if model_filter != None:
+    if model_filter != None and model_filter != 'null':
         products = products.filter(model = model_filter)
-        no_filters = False
 
-    if season_filter != None:
+    if season_filter != None and season_filter != 'null':
         products = products.filter(season = season_filter)
-        no_filters = False
 
-    if material_filter != None:
+    if material_filter != None and material_filter != 'null':
         products = products.filter(material = material_filter)
-        no_filters = False
 
-    if size_filter != None:
+    if size_filter != None and size_filter != 'null':
         products_with_size = [s.product.pk for s in ProductStock.objects.all().filter(size = size_filter)]
-        products = [p for p in products if p.pk in products_with_size]
-        no_filters = False
+        products = products.filter(pk__in = products_with_size)
 
-    if colour_filter != None:
+    if colour_filter != None and colour_filter != 'null':
         products_with_colour = [s.product.pk for s in ProductStock.objects.all().filter(colour = colour_filter)]
-        products = [p for p in products if p.pk in products_with_colour]
-        no_filters = False
+        products = products.filter(pk__in = products_with_colour)
+
+    if search_text != None and search_text != 'null' and search_text != '':
+        model_pks = [m.pk for m in ProductModel.objects.all().filter(name__contains = search_text)]
+        products_name = products.filter(name__contains = search_text)
+        products_model = products.filter(model__in = model_pks)
+        products = (products_name | products_model).distinct()
+    
+    filters = ProductFiltersForm(request.GET)
 
     context = {
         'products': products,
-        'no_filters': no_filters
+        'filters': filters,
+        'from': prev_page
     }
     return render(request, 'products_list.html', context)
 

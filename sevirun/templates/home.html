@@ -14,7 +14,7 @@
             <h1 class="display-6">Sevirun — Tu zapatería de confianza</h1>
             <p class="text-muted">Un par de zapatos para cada ocasión.</p>
             <p>
-                <a class="btn btn-primary" href="{% url 'products' %}">Ver tienda</a>
+                <a class="btn btn-primary" href="{% url 'products' %}?from={% url 'home' %}">Ver tienda</a>
                 <a class="btn btn-outline-secondary ms-2" href="{% url 'categories' %}">Categorías</a>
             </p>
         </div>

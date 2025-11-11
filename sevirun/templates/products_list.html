@@ -7,18 +7,38 @@
 
 {% block content %}
     <main class = "container py-4">
-        <aside class = "ml-4 mb-4">
-            {% if no_filters %}
-                <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
-            {% else %}
-                <a href = "{% url 'categories' %}" class = "text-dark">← Volver</a>
-            {% endif %}
+        <h1>Tienda</h1>
+        <hr/>
+        <aside class = "ml-4 mb-4 d-flex">
+            <div class = "d-flex flex-fill me-4">
+                <a href = "{{ from }}" class = "text-dark">← Volver</a>
+            </div>
+        </aside>
+        <h2 class = "h5 mb-3 fw-bold">Búsqueda y filtros:</h2>
+        <aside class = "ml-4 mb-4 d-flex justify-content-center">
+            <div class = "card h-100 bg-white text-dark flex-fill">
+                <form class = "d-flex flex-column flex-fill" method = "GET" action = "{% url 'products' %}">
+                    {% csrf_token %}
+                    <label for = "product-search">Buscar por nombre o modelo:</label>
+                    <div class = "d-flex flex-fill mb-4">
+                        <input type = "search" id = "product-search" name = "product-search" class = "form-control me-2" placeholder = "Introducir nombre o modelo"/>
+                        <button class = "btn btn-sm btn-primary" id = "product-search-button" type = "submit">
+                            <svg xmlns = "http://www.w3.org/2000/svg" width = "16" height = "16" fill = "currentColor" class = "bi bi-search" viewBox = "0 0 16 16">
+                                <path d = "M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class = "d-flex flex-fill justify-content-around">
+                        {{ filters }}
+                    </div>
+                </form>
+            </div>
         </aside>
         <section>
             <h2 class = "h5 mb-3 fw-bold">Productos:</h2>
             <div class = "row g-3">
                 {% if products %}
-                {% for p in products %}
+                    {% for p in products %}
                         <div class = "col-6 col-md-4">
                             <div class = "card p-2 h-100 bg-white text-dark">
                                 <img src = "{{ p.picture.url }}" class = "card-img-top rounded" alt = "{{ p.name }}">
