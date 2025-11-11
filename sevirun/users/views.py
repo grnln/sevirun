@@ -6,12 +6,12 @@ from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 from django.db import IntegrityError
 
-@staff_member_required
+@staff_member_required(login_url='login')
 def admin_users_view(request):
     users = AppUser.objects.all()
     return render(request, 'users/admin_users.html', {'users': users})
 
-@staff_member_required
+@staff_member_required(login_url='login')
 @require_http_methods(['GET', 'POST'])
 def admin_edit_user(request, user_id):
     user = get_object_or_404(AppUser, id=user_id)
@@ -32,6 +32,11 @@ def admin_edit_user(request, user_id):
 
         user.name = name
         user.surname = surname
+
+        if AppUser.objects.filter(email=email).exclude(id=user.id).exists():
+            messages.error(request, 'El correo ya está en uso por otro usuario.')
+            return redirect('admin_edit_user', user_id=user.id)
+
         user.email = email
         user.phone_number = phone_number
         user.address = address
@@ -56,7 +61,7 @@ def admin_edit_user(request, user_id):
     # GET
     return render(request, 'users/admin_edit_user.html', {'user': user})
 
-@staff_member_required
+@staff_member_required(login_url='login')
 @require_http_methods(['GET', 'POST'])
 def admin_delete_user(request, user_id):
     user = get_object_or_404(AppUser, id=user_id)
@@ -68,7 +73,7 @@ def admin_delete_user(request, user_id):
     return render(request, 'users/admin_confirm_delete.html', {'user': user})
 
 
-@staff_member_required
+@staff_member_required(login_url='login')
 @require_http_methods(['GET', 'POST'])
 def admin_create_user(request):
     if request.method == 'POST':
@@ -97,6 +102,10 @@ def admin_create_user(request):
             'is_staff': is_staff,
             'is_superuser': False,
         }
+
+        if AppUser.objects.filter(email=email).exists():
+            messages.error(request, 'Ya existe un usuario con ese correo electrónico.')
+            return redirect('admin_create_user')
 
         try:
             AppUser.objects.create_user(email=email, password=password, **extra)
