@@ -64,9 +64,9 @@ class Product(models.Model):
     is_available = models.BooleanField(null = False)
     is_highlighted = models.BooleanField(null = False)
     
-    created_at = models.DateTimeField(null = False)
-    updated_at = models.DateTimeField(null = False)
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     is_deleted = models.BooleanField(null = False, default=False)
 
     # Navigation attributes

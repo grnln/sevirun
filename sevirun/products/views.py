@@ -115,7 +115,41 @@ def edit_product(request, product_id):
 
 @staff_member_required
 def create_product(request):
-    return HttpResponse("Crear producto - (implementar plantilla)")
+    if request.method == 'POST':
+        try:
+            model = get_object_or_404(ProductModel, id=request.POST.get('model'))
+            product_type = get_object_or_404(ProductType, id=request.POST.get('type'))
+            season = get_object_or_404(ProductSeason, id=request.POST.get('season'))
+            material = get_object_or_404(ProductMaterial, id=request.POST.get('material'))
+            
+            product = Product(
+                name=request.POST.get('name'),
+                short_description=request.POST.get('short_description'),
+                description=request.POST.get('description'),
+                picture=request.FILES.get('picture'),
+                price=request.POST.get('price'),
+                price_on_sale=request.POST.get('price_on_sale') or None,
+                is_available='is_available' in request.POST,
+                is_highlighted='is_highlighted' in request.POST,
+                model=model,
+                type=product_type,
+                season=season,
+                material=material,
+            )
+            product.save()
+            messages.success(request, f'Producto "{product.name}" creado correctamente.')
+            return redirect('products')
+            
+        except Exception as e:
+            messages.error(request, f'Error al crear el producto: {str(e)}')    
+
+    context = {
+        'models': ProductModel.objects.all(),
+        'types': ProductType.objects.all(),
+        'seasons': ProductSeason.objects.all(),
+        'materials': ProductMaterial.objects.all(),
+    }
+    return render(request, 'products/create_product.html', context)
 
 @staff_member_required
 def delete_product(request, product_id):
