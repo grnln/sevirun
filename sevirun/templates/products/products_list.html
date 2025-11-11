@@ -13,11 +13,13 @@
             <div>
                 <a href="{{ from }}" class="text-dark">← Volver</a>
             </div>
-            <div>
-                <a href="{% url 'create_product' %}" class="btn btn-success btn-sm">
-                    <i class="bi bi-plus-circle"></i> Añadir Producto
-                </a>
-            </div>
+            {% if user.is_staff or user.is_superuser %}
+                <div>
+                    <a href="{% url 'create_product' %}" class="btn btn-success btn-sm">
+                        <i class="bi bi-plus-circle"></i> Añadir Producto
+                    </a>
+                </div>
+            {% endif %}
         </aside>
         <h2 class = "h5 mb-3 fw-bold">Búsqueda y filtros:</h2>
         <aside class = "ml-4 mb-4 d-flex justify-content-center">
