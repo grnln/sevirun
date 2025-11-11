@@ -7,13 +7,13 @@ def home(request):
     context = {
         'products': products,
     }
-    return render(request, 'home.html', context)
+    return render(request, 'home/home.html', context)
 
 def about(request):
-    return render(request, 'about.html')
+    return render(request, 'home/about.html')
 
 def contact(request):
-    return render(request, 'contact.html')
+    return render(request, 'home/contact.html')
 
 # Placeholder views - remove when implementing actual functionality
 def cart(request):

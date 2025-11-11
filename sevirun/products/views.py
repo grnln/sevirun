@@ -58,7 +58,7 @@ def index(request):
         'filters': filters,
         'from': prev_page
     }
-    return render(request, 'products_list.html', context)
+    return render(request, 'products/products_list.html', context)
 
 def categories(request):
     brands = Brand.objects.all()
@@ -78,7 +78,7 @@ def categories(request):
         'product_sizes': product_sizes,
         'product_colours': product_colours
     }
-    return render(request, 'categories.html', context)
+    return render(request, 'products/categories.html', context)
 
 def product_detail(request, product_id):
     product = Product.objects.get(id=product_id)
@@ -100,14 +100,14 @@ def product_detail(request, product_id):
         'stock_list': stock_list,
         'product_available': product.is_available,
     }
-    return render(request, 'product_detail.html', context)
+    return render(request, 'products/product_detail.html', context)
 
 def manage_products(request):
     products = Product.objects.all()
     context = {
         'products': products,
     }
-    return render(request, 'products_list.html', context)
+    return render(request, 'products/products_list.html', context)
 
 @staff_member_required
 def edit_product(request, product_id):
