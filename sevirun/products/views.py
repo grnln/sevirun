@@ -9,7 +9,7 @@ from django.contrib import messages
 from .forms import ProductFiltersForm
 
 def index(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(is_deleted=False)
     
     prev_page = request.GET.get('from', '/')
     brand_filter = request.GET.get('brand', None)
@@ -121,6 +121,7 @@ def create_product(request):
 def delete_product(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     product_name = product.name
-    product.delete()
+    product.is_deleted = True
+    product.save()
     messages.success(request, f'El producto "{product_name}" ha sido eliminado correctamente.')
     return redirect("products")

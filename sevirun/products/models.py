@@ -67,6 +67,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(null = False)
     updated_at = models.DateTimeField(null = False)
 
+    is_deleted = models.BooleanField(null = False, default=False)
+
     # Navigation attributes
     model = models.ForeignKey(ProductModel, on_delete = models.CASCADE, null = False)
     type = models.ForeignKey(ProductType, on_delete = models.CASCADE, null = False)
