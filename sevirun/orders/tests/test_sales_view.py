@@ -2,6 +2,7 @@ import pytest
 from django.urls import reverse
 from orders.models import *
 from orders.test_fixtures import *
+from users.test_fixtures import *
 
 @pytest.mark.django_db
 def test_sales_access_as_unauthenticated(client):

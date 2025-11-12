@@ -1,53 +1,8 @@
 import pytest
-from django.utils import timezone
-from users.models import AppUser
 from orders.models import *
 from products.models import *
-
-@pytest.fixture
-def staff_user(db):
-    user = AppUser.objects.create_user(
-        email="staff@example.com",
-        name="Staff",
-        surname="User",
-        phone_number="+34123456789",
-        address="Test Street 1",
-        city="City",
-        postal_code="12345",
-        password="test123",
-        is_staff=True
-    )
-    return user
-
-@pytest.fixture
-def regular_user(db):
-    user = AppUser.objects.create_user(
-        email="regular@example.com",
-        name="Regular",
-        surname="User",
-        phone_number="+34123456789",
-        address="Test Street 1",
-        city="City",
-        postal_code="12345",
-        password="test123",
-        is_staff=False
-    )
-    return user
-
-@pytest.fixture
-def regular_user_2(db):
-    user = AppUser.objects.create_user(
-        email="regular2@example.com",
-        name="Regular",
-        surname="User",
-        phone_number="+34123456789",
-        address="Test Street 1",
-        city="City",
-        postal_code="12345",
-        password="test123",
-        is_staff=False
-    )
-    return user
+from products.test_fixtures import *
+from users.test_fixtures import *
 
 @pytest.fixture
 def order_list(regular_user, regular_user_2):
@@ -77,35 +32,12 @@ def order_list(regular_user, regular_user_2):
     return [order1, order2]
 
 @pytest.fixture
-def order_and_items_list(order_list):
+def order_and_items_list(order_list, sample_product):
     delivered_order = order_list[0]
-    brand = Brand.objects.create(name = 'Test Brand')
-    product_model = ProductModel.objects.create(name = 'Model X', brand = brand)
-    product_type = ProductType.objects.create(name = 'Shoes')
-    season = ProductSeason.objects.create(name = 'Summer')
-    material = ProductMaterial.objects.create(name = 'Leather')
-
-    now = timezone.now()
-
-    fakeProduct = Product.objects.create(
-        name = 'Test Product',
-        short_description = 'Short desc',
-        description = 'Long description',
-        price = '19.99',
-        price_on_sale = '6.99',
-        is_available = True,
-        is_highlighted = False,
-        created_at = now,
-        updated_at = now,
-        model = product_model,
-        type = product_type,
-        season = season,
-        material = material,
-    )
 
     OrderItem.objects.create(**{
         "order": delivered_order,
-        "product": fakeProduct,
+        "product": sample_product,
         "size": 42,
         "quantity": 2,
         "unit_price": "55.90"

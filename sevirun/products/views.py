@@ -109,7 +109,7 @@ def manage_products(request):
     }
     return render(request, 'products/products_list.html', context)
 
-@staff_member_required
+@staff_member_required(login_url='login')
 def edit_product(request, product_id):
     if request.method == 'POST':
         try:
@@ -141,7 +141,7 @@ def edit_product(request, product_id):
             
     return render_create_edit_form(request, product=get_object_or_404(Product, id=product_id), is_editing=True)
 
-@staff_member_required
+@staff_member_required(login_url='login')
 def create_product(request):
     if request.method == 'POST':
         try:
@@ -184,7 +184,7 @@ def render_create_edit_form(request, product=None, is_editing=False):
     }
     return render(request, 'products/create_edit_product.html', context)
 
-@staff_member_required
+@staff_member_required(login_url='login')
 def delete_product(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     product_name = product.name
