@@ -24,7 +24,8 @@ def test_sales_access_as_staff(client, staff_user):
     client.force_login(staff_user)
     url = reverse('orders')
     response = client.get(url)
-    assert response.status_code == 403
+    assert response.status_code == 302
+    assert response.url == reverse('sales')
 
 @pytest.mark.django_db
 def test_orders_are_of_client(client, regular_user, order_list):
