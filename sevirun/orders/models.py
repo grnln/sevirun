@@ -73,6 +73,14 @@ class Order(models.Model):
         result = Decimal((total + delivery) * Decimal("1.21") * (100 - discount) / 100)
         return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
+    @property
+    def items_count(self):
+        return self.items.count()
+
+    @property
+    def total_units(self):
+        return sum(item.quantity for item in self.items.all())
+
     def __str__(self):
         return f'''
                 {{

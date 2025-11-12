@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block override_style %}
-    <link rel = "stylesheet" href = "{% static 'css/sales_list.css' %}">
+    <link rel = "stylesheet" href = "{% static 'css/orders_list.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -23,46 +23,23 @@
             <div class = "row g-3">
                 {% if orders %}
                     {% for o in orders %}
-                        <div class="card">
-                            <div class="card-header">Pedido #{{ o.pk }} - {{ o.get_state_display }}</div>
-                            
-                            <div class="card-content">
-                                <div class="products-section">
-                                    <div class="section-title">Productos</div>
-                                    <ul class="products-list">
-                                        {% for i in o.items.all %}
-                                            <li class="product-item">
-                                                <span class="product-quantity">x{{ i.quantity }}</span>
-                                                <div class="product-details">
-                                                    <span class="product-name">{{ i.product.name }}</span>
-                                                    <span class="product-meta">Talla {{ i.size }}</span>
-                                                </div>
-                                                <span class="product-price">{{ i.total_price }}€</span>
-                                            </li>
-                                        {% empty %}
-                                            <li class="no-products">
-                                                <span>No hay productos en este pedido.</span>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
+                        <div class = "col-12 col-md-6 col-lg-6">
+                            <div class = "card h-100">
+                                <div class = "card-header">
+                                    Pedido #{{ o.pk }}  <span class="state-badge order-state-{{ o.state }}">{{ o.get_state_display }}</span>
                                 </div>
-                                
-                                <div class="summary-section">
-                                    <div class="summary-item">
-                                        <span class="summary-label">Dirección de envío:</span> {{ o.shipping_address }}
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Gastos de envío:</span> {{ o.delivery_cost }}€
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Descuento aplicado:</span> {{ o.discount_percentage }}%
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="summary-label">Método de pago:</span> {{ o.get_payment_method_display }}
-                                    </div>
-                                    <div class="subtotal">
-                                        Subtotal (IVA incluido): {{ o.subtotal }}€
-                                    </div>
+                                <div class = "card-body d-flex flex-column">
+                                    <p>
+                                        <strong>Fecha de pedido:</strong> {{ o.created_at }}
+                                    </p>
+                                    <p>
+                                        <strong>Dirección:</strong> {{ o.shipping_address }}
+                                    </p>
+                                    <p class="d-flex align-items-center justify-content-start gap-3">
+                                        <span class="order-products"><strong>Productos:</strong> {{ o.total_units }}</span>
+                                        <span class="order-total"><strong>Total:</strong> {{ o.subtotal }}€</span>
+                                    </p>
+                                    <a href = "{% url 'order_detail' o.pk %}" class = "btn btn-primary mt-auto">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
