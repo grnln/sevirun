@@ -37,7 +37,7 @@
                                     </p>
                                     <p class="d-flex align-items-center justify-content-start gap-3">
                                         <span class="order-products"><strong>Productos:</strong> {{ o.total_units }}</span>
-                                        <span class="order-total"><strong>Total:</strong> {{ o.subtotal }}€</span>
+                                        <span class="order-total"><strong>Total:</strong> {{ o.total_price }}€</span>
                                     </p>
                                     <a href = "{% url 'order_detail' o.pk %}" class = "btn btn-primary mt-auto">Ver detalles</a>
                                 </div>

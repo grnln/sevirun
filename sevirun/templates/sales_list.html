@@ -50,7 +50,7 @@
                                         <span class="summary-label">Método de pago:</span> {{ s.get_payment_method_display }}
                                     </div>
                                     <div class="subtotal">
-                                        Subtotal (IVA incluido): {{ s.subtotal }}€
+                                        Total (IVA {{ s.tax_percentage }}%): {{ s.total_price }}€
                                     </div>
                                 </div>
                             </div>

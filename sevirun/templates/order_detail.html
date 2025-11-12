@@ -37,7 +37,7 @@
 
                                     <div class="total-items">
                                         <div class="total-items-count"><strong>Número de productos:</strong> {{ order.total_units }}</div>
-                                        <div class="total-items-price"><strong>Total:</strong> {{ order.total_price }}€</div>
+                                        <div class="total-items-price"><strong>Subtotal:</strong> {{ order.subtotal }}€</div>
                                     </div>
                                 </div>
                                 
@@ -67,7 +67,7 @@
                                             <span class="summary-label">Método de pago:</span> {{ order.get_payment_method_display }}
                                         </div>
                                         <div class="subtotal">
-                                            Subtotal (IVA incluido {{ order.tax_percentage }}%): {{ order.subtotal }}€
+                                            Total (IVA {{ order.tax_percentage }}%): {{ order.total_price }}€
                                         </div>
                                     </div>
                                 </div>

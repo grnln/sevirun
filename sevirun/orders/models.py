@@ -41,7 +41,7 @@ class Order(models.Model):
     state = models.CharField(choices=OrderState, default=OrderState.PENDING, null=False)
 
     @property
-    def total_price(self):
+    def subtotal(self):
         result = Decimal(sum(item.total_price for item in self.items.all()))
         return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
@@ -68,11 +68,11 @@ class Order(models.Model):
     tax_percentage = 21  # IVA
 
     @property
-    def subtotal(self):
-        total = self.total_price
+    def total_price(self):
+        subtotal = self.subtotal
         delivery = self.delivery_cost 
         discount = self.discount_percentage 
-        result = Decimal((total + delivery) * Decimal(f"1.{int(self.tax_percentage)}") * (100 - discount) / 100)
+        result = Decimal((subtotal + delivery) * Decimal(f"1.{int(self.tax_percentage)}") * (100 - discount) / 100)
         return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
     @property
