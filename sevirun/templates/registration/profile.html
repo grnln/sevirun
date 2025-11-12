@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi perfil</title>
+</head>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container-xl">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-8 col-lg-6">
+                <div class="card mt-2 mb-2 shadow-lg profile-card">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">Mi perfil</h2>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if "actualizado correctamente" in message.message %}
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nombre" required value="{{ user.name }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="surname" class="form-label">Apellidos</label>
+                                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Apellidos" required value="{{ user.surname }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required value="{{ user.email }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone_number" class="form-label">Número de teléfono</label>
+                                    <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Teléfono" required value="{{ user.phone_number }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="address" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Dirección" required value="{{ user.address }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">Ciudad</label>
+                                    <input type="text" class="form-control" id="city" name="city" placeholder="Ciudad" required value="{{ user.city }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="postal_code" class="form-label">Código postal</label>
+                                    <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Código postal" required value="{{ user.postal_code }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="current_password" class="form-label">Contraseña actual</label>
+                                    <input type="password" class="form-control" id="current_password" name="current_password" placeholder="Contraseña actual">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">Nueva contraseña</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Nueva contraseña">
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
+</html>
