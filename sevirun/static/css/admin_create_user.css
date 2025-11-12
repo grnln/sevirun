@@ -1,0 +1,13 @@
+@media (max-width: 767.98px) {
+  .admin-create-form .row .col-md-6 {
+    margin-bottom: 0.75rem;
+  }
+
+  .admin-create-form .row .col-md-6:last-child {
+    margin-bottom: 0;
+  }
+
+  .admin-create-form .d-grid {
+    margin-top: 0.5rem;
+  }
+}
