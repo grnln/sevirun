@@ -85,6 +85,9 @@ def order_and_items_list(order_list):
     season = ProductSeason.objects.create(name = 'Summer')
     material = ProductMaterial.objects.create(name = 'Leather')
 
+    size = ProductSize.objects.create(name = '42')
+    colour = ProductColour.objects.create(name = 'Red')
+
     now = timezone.now()
 
     fakeProduct = Product.objects.create(
@@ -106,7 +109,8 @@ def order_and_items_list(order_list):
     OrderItem.objects.create(**{
         "order": delivered_order,
         "product": fakeProduct,
-        "size": 42,
+        "size": size,
+        "colour": colour,
         "quantity": 2,
         "unit_price": "55.90"
     })
