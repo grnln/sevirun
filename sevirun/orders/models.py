@@ -95,6 +95,7 @@ class OrderItem(models.Model):
         choices=ShoeSize.choices,
         null=False
     )
+    color = models.CharField(max_length=30, null=False)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)], null=False)
     unit_price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
     
@@ -108,6 +109,7 @@ class OrderItem(models.Model):
                     order: {self.order.pk},
                     product: {self.product.pk},
                     size: {self.size},
+                    color: {self.color},
                     quantity: {self.quantity},
                     unit_price: {self.unit_price},
                     total_price: {self.total_price}
