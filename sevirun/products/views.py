@@ -111,7 +111,35 @@ def manage_products(request):
 
 @staff_member_required
 def edit_product(request, product_id):
-    return HttpResponse("Editar producto - (implementar plantilla)")
+    if request.method == 'POST':
+        try:
+            model = get_object_or_404(ProductModel, id=request.POST.get('model'))
+            product_type = get_object_or_404(ProductType, id=request.POST.get('type'))
+            season = get_object_or_404(ProductSeason, id=request.POST.get('season'))
+            material = get_object_or_404(ProductMaterial, id=request.POST.get('material'))
+
+            product = get_object_or_404(Product, id=product_id)
+            product.name = request.POST.get('name')
+            product.short_description = request.POST.get('short_description')
+            product.description = request.POST.get('description')
+            product.picture = request.FILES.get('picture') if 'picture' in request.FILES else product.picture
+            product.price = request.POST.get('price')
+            product.price_on_sale = request.POST.get('price_on_sale') or None
+            product.is_available = 'is_available' in request.POST
+            product.is_highlighted = 'is_highlighted' in request.POST
+            product.model = model
+            product.product_type = product_type
+            product.season = season
+            product.material = material
+
+            product.save()
+            messages.success(request, f'Producto "{product.name}" editado correctamente.')
+            return redirect('products')
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear el producto: {str(e)}')
+            
+    return render_create_edit_form(request, product=get_object_or_404(Product, id=product_id), is_editing=True)
 
 @staff_member_required
 def create_product(request):
@@ -143,13 +171,18 @@ def create_product(request):
         except Exception as e:
             messages.error(request, f'Error al crear el producto: {str(e)}')    
 
+    return render_create_edit_form(request)
+
+def render_create_edit_form(request, product=None, is_editing=False):
     context = {
         'models': ProductModel.objects.all(),
         'types': ProductType.objects.all(),
         'seasons': ProductSeason.objects.all(),
         'materials': ProductMaterial.objects.all(),
+        'is_editing': is_editing,
+        'product': product
     }
-    return render(request, 'products/create_product.html', context)
+    return render(request, 'products/create_edit_product.html', context)
 
 @staff_member_required
 def delete_product(request, product_id):
