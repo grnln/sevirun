@@ -65,12 +65,14 @@ class Order(models.Model):
         null=False
     )
 
+    tax_percentage = 21  # IVA
+
     @property
     def subtotal(self):
         total = self.total_price
         delivery = self.delivery_cost 
         discount = self.discount_percentage 
-        result = Decimal((total + delivery) * Decimal("1.21") * (100 - discount) / 100)
+        result = Decimal((total + delivery) * Decimal(f"1.{int(self.tax_percentage)}") * (100 - discount) / 100)
         return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
     @property
