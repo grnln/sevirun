@@ -107,8 +107,18 @@ def order_and_items_list(order_list):
         "order": delivered_order,
         "product": fakeProduct,
         "size": 42,
+        "color": "Red",
         "quantity": 2,
         "unit_price": "55.90"
+    })
+
+    OrderItem.objects.create(**{
+        "order": delivered_order,
+        "product": fakeProduct,
+        "size": 43,
+        "color": "Blue",
+        "quantity": 1,
+        "unit_price": "75.00"
     })
 
     return delivered_order

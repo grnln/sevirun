@@ -22,12 +22,18 @@ def order_detail(request, order_id):
     try:
         order = Order.objects.get(id=order_id)
     except Order.DoesNotExist:
-        messages.error(request, "El pedido no existe.")
-        return redirect('index_customer_orders')
+        messages.error(request, "El pedido al que intenta acceder no existe.")
+        if request.user.is_staff:
+            return redirect('sales')
+        return redirect('orders')
 
+    if request.user.is_staff:
+        messages.error(request, "Esta vista es sólo para clientes.")
+        return redirect('sales')
+    
     if not (order.client == request.user):
-        messages.error(request, "No tienes permiso para ver este pedido.")
-        return redirect('index_customer_orders')
+        messages.error(request, "El pedido al que intenta acceder no es suyo.")
+        return redirect('orders')
 
     order_items = OrderItem.objects.filter(order=order)
     return render(request, 'order_detail.html', { "order": order, "order_items": order_items })

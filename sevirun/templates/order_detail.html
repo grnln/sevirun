@@ -8,7 +8,7 @@
 {% block content %}
 <main class = "container py-4">
     <aside class = "ml-4 mb-4">
-        <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
+        <a href = "{% url 'orders' %}" class = "text-dark">← Volver</a>
     </aside>
     <div class="card-header">Pedido #{{ order.pk }} -  <span class="state-badge order-state-{{ order.state }}">{{ order.get_state_display }}</span></div>
                             
