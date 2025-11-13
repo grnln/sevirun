@@ -20,15 +20,6 @@
                     <div class="card-body p-4">
                         <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
 
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-
                         <form method="post">
                             {% csrf_token %}
 
