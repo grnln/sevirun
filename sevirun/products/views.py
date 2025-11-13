@@ -207,8 +207,11 @@ def render_create_edit_form(request, product=None, is_editing=False):
 @staff_member_required(login_url='login')
 def delete_product(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
-    product_name = product.name
-    product.is_deleted = True
-    product.save()
-    messages.success(request, f'El producto "{product_name}" ha sido eliminado correctamente.')
-    return redirect("products")
+    if request.method == 'POST':
+        product_name = product.name
+        product.is_deleted = True
+        product.save()
+        messages.success(request, f'El producto "{product_name}" ha sido eliminado correctamente.')
+        return redirect('products')
+    return render(request, 'products/product_confirm_delete.html', {'product': product})
+
