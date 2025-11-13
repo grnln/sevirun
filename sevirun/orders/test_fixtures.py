@@ -70,4 +70,13 @@ def order_and_items_list(order_list, sample_product):
         "unit_price": "55.90"
     })
 
+    OrderItem.objects.create(**{
+        "order": delivered_order,
+        "product": sample_product,
+        "size": 43,
+        "color": "Blue",
+        "quantity": 1,
+        "unit_price": "75.00"
+    })
+
     return delivered_order
