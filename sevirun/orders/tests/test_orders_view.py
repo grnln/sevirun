@@ -24,7 +24,8 @@ def test_sales_access_as_staff(client, staff_user):
     client.force_login(staff_user)
     url = reverse('orders')
     response = client.get(url)
-    assert response.status_code == 403
+    assert response.status_code == 302
+    assert response.url == reverse('sales')
 
 @pytest.mark.django_db
 def test_orders_are_of_client(client, regular_user, order_list):
@@ -54,7 +55,7 @@ def test_prices_are_computed(client, regular_user, order_and_items_list):
     url = reverse('orders')
     response = client.get(url)
 
-    expected_price = Decimal((55.90 * 2 + 5.5) * 1.21 * 0.9).quantize(Decimal("0.01"), rounding=ROUND_CEILING)
+    expected_price = Decimal((55.90 * 2 + 75.00 * 1 + 5.5) * 1.21 * 0.9).quantize(Decimal("0.01"), rounding=ROUND_CEILING)
     encoded_price = str(expected_price).replace('.', ',').encode()
 
     assert response.status_code == 200

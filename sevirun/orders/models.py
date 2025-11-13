@@ -41,7 +41,7 @@ class Order(models.Model):
     state = models.CharField(choices=OrderState, default=OrderState.PENDING, null=False)
 
     @property
-    def total_price(self):
+    def subtotal(self):
         result = Decimal(sum(item.total_price for item in self.items.all()))
         return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
@@ -65,13 +65,23 @@ class Order(models.Model):
         null=False
     )
 
+    tax_percentage = 21  # IVA
+
     @property
-    def subtotal(self):
-        total = self.total_price
+    def total_price(self):
+        subtotal = self.subtotal
         delivery = self.delivery_cost 
         discount = self.discount_percentage 
-        result = Decimal((total + delivery) * Decimal("1.21") * (100 - discount) / 100)
+        result = Decimal((subtotal + delivery) * Decimal(f"1.{int(self.tax_percentage)}") * (100 - discount) / 100)
         return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
+
+    @property
+    def items_count(self):
+        return self.items.count()
+
+    @property
+    def total_units(self):
+        return sum(item.quantity for item in self.items.all())
 
     def __str__(self):
         return f'''
@@ -95,6 +105,7 @@ class OrderItem(models.Model):
         choices=ShoeSize.choices,
         null=False
     )
+    color = models.CharField(max_length=30, null=False)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)], null=False)
     unit_price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
     
@@ -108,6 +119,7 @@ class OrderItem(models.Model):
                     order: {self.order.pk},
                     product: {self.product.pk},
                     size: {self.size},
+                    color: {self.color},
                     quantity: {self.quantity},
                     unit_price: {self.unit_price},
                     total_price: {self.total_price}

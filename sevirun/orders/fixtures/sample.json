@@ -48,6 +48,7 @@
       "order": 1,
       "product": 1,
       "size": 42,
+      "color": "Red",
       "quantity": 2,
       "unit_price": "55.90"
     }
@@ -59,6 +60,7 @@
       "order": 1,
       "product": 2,
       "size": 44,
+      "color": "Blue",
       "quantity": 1,
       "unit_price": "40.0"
     }
@@ -70,6 +72,7 @@
       "order": 2,
       "product": 2,
       "size": 44,
+      "color": "Black",
       "quantity": 1,
       "unit_price": "40.0"
     }
