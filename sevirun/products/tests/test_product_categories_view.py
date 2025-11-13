@@ -25,7 +25,7 @@ def test_product_categories_view(client):
     for key in ('brands', 'product_types', 'product_models', 'product_seasons', 'product_materials', 'product_sizes', 'product_colours'):
         assert key in response.context
 
-    assert any(t.name == 'categories.html' for t in response.templates)
+    assert any(t.name == 'products/categories.html' for t in response.templates)
 
     assert (len(response.context['brands']) == 1)
     assert (len(response.context['product_types']) == 1)
@@ -53,7 +53,7 @@ def test_empty_product_categories_view(client):
     for key in ('brands', 'product_types', 'product_models', 'product_seasons', 'product_materials', 'product_sizes', 'product_colours'):
         assert key in response.context
 
-    assert any(t.name == 'categories.html' for t in response.templates)
+    assert any(t.name == 'products/categories.html' for t in response.templates)
 
     assert (len(response.context['brands']) == 0)
     assert (len(response.context['product_types']) == 0)

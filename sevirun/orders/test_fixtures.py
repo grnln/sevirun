@@ -1,53 +1,8 @@
 import pytest
-from django.utils import timezone
-from users.models import AppUser
 from orders.models import *
 from products.models import *
-
-@pytest.fixture
-def staff_user(db):
-    user = AppUser.objects.create_user(
-        email="staff@example.com",
-        name="Staff",
-        surname="User",
-        phone_number="+34123456789",
-        address="Test Street 1",
-        city="City",
-        postal_code="12345",
-        password="test123",
-        is_staff=True
-    )
-    return user
-
-@pytest.fixture
-def regular_user(db):
-    user = AppUser.objects.create_user(
-        email="regular@example.com",
-        name="Regular",
-        surname="User",
-        phone_number="+34123456789",
-        address="Test Street 1",
-        city="City",
-        postal_code="12345",
-        password="test123",
-        is_staff=False
-    )
-    return user
-
-@pytest.fixture
-def regular_user_2(db):
-    user = AppUser.objects.create_user(
-        email="regular2@example.com",
-        name="Regular",
-        surname="User",
-        phone_number="+34123456789",
-        address="Test Street 1",
-        city="City",
-        postal_code="12345",
-        password="test123",
-        is_staff=False
-    )
-    return user
+from products.test_fixtures import *
+from users.test_fixtures import *
 
 @pytest.fixture
 def order_list(regular_user, regular_user_2):
@@ -77,7 +32,7 @@ def order_list(regular_user, regular_user_2):
     return [order1, order2]
 
 @pytest.fixture
-def order_and_items_list(order_list):
+def order_and_items_list(order_list, sample_product):
     delivered_order = order_list[0]
     brand = Brand.objects.create(name = 'Test Brand')
     product_model = ProductModel.objects.create(name = 'Model X', brand = brand)
@@ -90,7 +45,7 @@ def order_and_items_list(order_list):
 
     now = timezone.now()
 
-    fakeProduct = Product.objects.create(
+    sample_product = Product.objects.create(
         name = 'Test Product',
         short_description = 'Short desc',
         description = 'Long description',
@@ -108,7 +63,7 @@ def order_and_items_list(order_list):
 
     OrderItem.objects.create(**{
         "order": delivered_order,
-        "product": fakeProduct,
+        "product": sample_product,
         "size": size,
         "colour": colour,
         "quantity": 2,

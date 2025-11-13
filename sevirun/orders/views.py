@@ -8,7 +8,7 @@ from django.contrib import messages
 @staff_member_required(login_url='login')
 def index_sales(request):
     sales = Order.objects.filter(state="DE")
-    return render(request, 'sales_list.html', { "sales" : sales })
+    return render(request, 'orders/sales_list.html', { "sales" : sales })
 
 @login_required(login_url='login')
 def index_customer_orders(request):

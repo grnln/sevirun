@@ -53,10 +53,10 @@ class ProductColour(models.Model):
 
 # Product
 class Product(models.Model):
-    name = models.CharField(max_length = 255, null = False)
+    name = models.CharField(max_length = 255, null = False, blank=False)
     short_description = models.CharField(null = False, max_length = 255)
-    description = models.TextField(null = False)
-    picture = models.ImageField(upload_to = 'products/', null = False)
+    description = models.TextField(null = False, blank=False)
+    picture = models.ImageField(upload_to = 'products/', null = False, blank=False)
 
     price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
     price_on_sale = models.DecimalField(max_digits = 6, decimal_places = 2, null = True)
@@ -64,8 +64,10 @@ class Product(models.Model):
     is_available = models.BooleanField(null = False)
     is_highlighted = models.BooleanField(null = False)
     
-    created_at = models.DateTimeField(null = False)
-    updated_at = models.DateTimeField(null = False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    is_deleted = models.BooleanField(null = False, default=False)
 
     # Navigation attributes
     model = models.ForeignKey(ProductModel, on_delete = models.CASCADE, null = False)
@@ -77,6 +79,7 @@ class Product(models.Model):
         return f'''
                 {{
                     name: {self.name},
+                    short_description: {self.short_description},
                     description: {self.description},
                     picture: {self.picture},
                     price: {self.price},

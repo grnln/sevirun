@@ -17,15 +17,6 @@
                     <div class="card-body p-4">
                         <h2 class="card-title text-center mb-4">Crear usuario</h2>
 
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert {% if 'error' in message.tags %}alert-danger{% elif 'success' in message.tags %}alert-success{% elif 'warning' in message.tags %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-
                         <form method="post" class="admin-create-form">
                             {% csrf_token %}
                             <div class="row mb-3">

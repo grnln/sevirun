@@ -125,3 +125,68 @@ def test_logout(client):
 
     resp = client.get(reverse('home'))
     assert not resp.wsgi_request.user.is_authenticated
+
+@pytest.mark.django_db
+def test_profile_page_renders(client):
+    user = User.objects.create_user(
+        email="user1@user.com",
+        password="user"
+    )
+    client.force_login(user)
+    url = reverse('profile')
+    resp = client.get(url)
+    content = resp.content.decode().lower()
+
+    assert resp.status_code == 200
+    assert "<form" in content
+    assert 'name="email"' in content
+    assert 'name="password"' in content
+    assert 'name="name"' in content
+    assert 'name="surname"' in content
+    assert 'name="phone_number"' in content
+    assert 'name="address"' in content
+    assert 'name="city"' in content
+    assert 'name="postal_code"' in content
+    assert 'name="current_password"' in content
+    assert 'type="submit"' in content
+
+@pytest.mark.django_db
+def test_successful_profile_update(client):
+    user = User.objects.create_user(
+        email="user1@user.com",
+        password="user"
+    )
+    client.force_login(user)
+    url = reverse('profile')
+    modified_user_data = user_data
+    modified_user_data["email"] = "user3@user.com"
+    resp = client.post(url, modified_user_data)
+
+    assert resp.status_code == 200
+
+
+@pytest.mark.django_db
+def test_profile_update_existing_email_fails(client):
+    User.objects.create_user(
+        email="user1@user.com",
+        password="password123"
+    )
+
+    user2 = User.objects.create_user(
+        email="user2@user.com",
+        password="password456"
+    )
+
+    client.force_login(user2)
+
+    url = reverse('profile')
+    modified_user_data = user_data.copy()
+
+    modified_user_data["email"] = "user1@user.com"
+    modified_user_data["password"] = ""
+
+    resp = client.post(url, modified_user_data)
+    content = resp.content.decode().lower()
+
+    assert resp.status_code == 200
+    assert "ya existe una cuenta con ese email" in content
