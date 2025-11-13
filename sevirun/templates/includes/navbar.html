@@ -41,6 +41,7 @@
         <li class="nav-item"><a class="nav-link" href="/about/">Acerca de</a></li>
         <li class="nav-item"><a class="nav-link" href="/contact/">Contacto</a></li>
         {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="/accounts/profile">Mi Perfil</a></li>
             <li class="nav-item"><a class="nav-link" href="/accounts/logout">Cerrar Sesión</a></li>
         {% else %}
             <li class="nav-item"><a class="nav-link" href="/accounts/login">Identificarse</a></li>

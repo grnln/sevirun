@@ -8,6 +8,8 @@ from django.core.validators import validate_email
 
 from accounts.utils import authenticate
 
+from accounts.utils import obtain_attributes_from_request
+
 User = get_user_model()
 # Create your views here.
 def login_view(request):
@@ -53,12 +55,7 @@ def register(request):
                 messages.error(request, 'Ya existe una cuenta con ese email.')
                 return render(request, 'registration/register.html')
 
-            name = request.POST.get("name", "").strip()
-            surname = request.POST.get("surname", "").strip()
-            phone_number = request.POST.get("phone_number", "").strip()
-            address = request.POST.get("address", "").strip()
-            city = request.POST.get("city", "").strip()
-            postal_code = request.POST.get("postal_code", "").strip()
+            name, surname, phone_number, address, city, postal_code = obtain_attributes_from_request(request)
 
             try:
                 new_user = User.objects.create(
@@ -85,3 +82,65 @@ def register(request):
         return render(request, 'registration/register.html')
     else:
         return redirect('home')
+
+
+from django.contrib.auth import update_session_auth_hash
+
+
+def profile(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    if request.method == "POST":
+        email = request.POST.get("email", "").strip()
+        current_password = request.POST.get("current_password", "").strip()
+        new_password = request.POST.get("password", "").strip()
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, 'El email no es válido.')
+            return render(request, 'registration/profile.html')
+
+        if new_password:
+            if not current_password:
+                messages.error(request, 'Debes ingresar tu contraseña actual para cambiarla.')
+                return render(request, 'registration/profile.html')
+
+            if not request.user.check_password(current_password):
+                messages.error(request, 'La contraseña actual es incorrecta.')
+                return render(request, 'registration/profile.html')
+
+        existing_user = User.objects.filter(email=email).exclude(id=request.user.id).first()
+        if existing_user:
+            messages.error(request, 'Ya existe una cuenta con ese email.')
+            return render(request, 'registration/profile.html')
+
+        name, surname, phone_number, address, city, postal_code = obtain_attributes_from_request(request)
+
+        if not all([name, surname, phone_number, address, city, postal_code]):
+            messages.error(request, 'Por favor completa todos los campos requeridos.')
+            return render(request, 'registration/profile.html')
+
+        try:
+            user = request.user
+            user.name = name
+            user.surname = surname
+            user.phone_number = phone_number
+            user.address = address
+            user.city = city
+            user.postal_code = postal_code
+            user.email = email
+            if new_password:
+                user.set_password(new_password)
+            user.save()
+            update_session_auth_hash(request, user)
+
+            messages.success(request, 'Tu perfil se ha actualizado correctamente.')
+            return redirect('profile')
+
+        except IntegrityError:
+            messages.error(request, 'No ha podido actualizarse el perfil. Vuelva a intentarlo.')
+            return render(request, 'registration/profile.html')
+
+    return render(request, 'registration/profile.html')
