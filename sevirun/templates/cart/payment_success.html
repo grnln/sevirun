@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 p-4">
+    <section class="payment-start-section mx-auto mt-5 p-4 border rounded shadow-sm" style="max-width: 720px;">
+        <div class="d-flex gap-3 align-items-start">
+            <div class="fs-1 text-success me-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-bag-check-fill" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0m-.646 5.354a.5.5 0 0 0-.708-.708L7.5 10.793 6.354 9.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
+                </svg>
+            </div>
+            <div class="w-100">
+                <h2 class="h5 mb-3 fw-bold text-center">Pago realizado con éxito</h2>
+                {% if o.payment_method == "CC" %}
+                    <p class="mb-3 text-muted">¡Gracias! Hemos recibido el pago de tu pedido. Recibirás un correo de confirmación con los detalles del pedido.</p>
+                {% else %}
+                    <p class="mb-3 text-muted">¡Gracias! Hemos registrado tu pedido. Recibirás un correo de confirmación con los detalles del pedido y las instrucciones para el pago contra reembolso.</p>
+                {% endif %}
+                <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center align-items-center text-center">
+                    <a href="{% url 'products' %}" class="btn btn-primary d-inline-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1h1a.5.5 0 0 1 .485.379L2.89 5H14.5a.5.5 0 0 1 .49.598l-1.5 6A.5.5 0 0 1 12.5 12H4a.5.5 0 0 1-.491-.408L1.01 2H.5a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 1a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                        </svg>
+                        Seguir comprando
+                    </a>
+
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-primary d-inline-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4z"/>
+                        </svg>
+                        Ver pedido
+                    </a>
+                </div>
+
+                <hr class="my-3">
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
