@@ -144,3 +144,13 @@ MEDIA_ROOT = BASE_DIR / 'media'             # carpeta donde se guardan los archi
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Datos demo para usar el sandbox de Redsys
+REDSYS_CONFIG = {
+    'MERCHANT_CODE': '999008881',  # Código de comercio de pruebas
+    'TERMINAL': '001',
+    'SECRET_KEY': 'sq7HjrUOBfKmC576ILgskD5srU870gJ7',  # Clave de pruebas
+    'CURRENCY': '978',  # EUR
+    'TRANSACTION_TYPE': '0',  # Autorización
+    'REDSYS_URL': 'https://sis-t.redsys.es:25443/sis/realizarPago',     # Entorno de pruebas
+}
