@@ -118,8 +118,8 @@ def payment_notification(request, order_id):
             # Actualizar el pedido
             try:
                 order_obj = Order.objects.get(id=int(order_id))
-                if order_obj.estado == 'PE':
-                    order_obj.estado = 'PR'
+                if order_obj.state == 'PE':
+                    order_obj.state = 'PR'
                     order_obj.save()
                     
             except Order.DoesNotExist:
