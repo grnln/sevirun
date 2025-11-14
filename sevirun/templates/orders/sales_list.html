@@ -27,9 +27,13 @@
                                                 <span class="product-quantity">x{{ i.quantity }}</span>
                                                 <div class="product-details">
                                                     <span class="product-name">{{ i.product.name }}</span>
-                                                    <span class="product-meta">Talla {{ i.size }}</span>
+                                                    <span class="product-meta">Talla {{ i.size.name }}</span>
                                                 </div>
                                                 <span class="product-price">{{ i.total_price }}€</span>
+                                            </li>
+                                        {% empty %}
+                                            <li class="no-products">
+                                                <span>No hay productos en este pedido.</span>
                                             </li>
                                         {% endfor %}
                                     </ul>
@@ -46,7 +50,7 @@
                                         <span class="summary-label">Método de pago:</span> {{ s.get_payment_method_display }}
                                     </div>
                                     <div class="subtotal">
-                                        Subtotal: {{ s.subtotal }}€
+                                        Total (IVA {{ s.tax_percentage }}%): {{ s.total_price }}€
                                     </div>
                                 </div>
                             </div>

@@ -3,8 +3,6 @@ from django.test import TestCase
 
 from users.models import AppUser
 
-
-# Create your tests here.
 class UsersManagersTests(TestCase):
 
     def test_create_user(self):
@@ -39,3 +37,5 @@ class UsersManagersTests(TestCase):
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
                 email="super@user.com", password="superuser", is_superuser=False)
+
+

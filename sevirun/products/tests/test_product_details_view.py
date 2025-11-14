@@ -66,7 +66,7 @@ def test_product_details_status_and_context(client):
     assert response.status_code == 200
     for key in ('product', 'sizes', 'colours', 'stock_list', 'product_available'):
         assert key in response.context
-    assert any(t.name == 'product_detail.html' for t in response.templates)
+    assert any(t.name == 'products/product_detail.html' for t in response.templates)
 
 
 @pytest.mark.django_db

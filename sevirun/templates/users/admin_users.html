@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/admin_users.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0 fw-bold">Lista de usuarios:</h2>
+            <a href="{% url 'admin_create_user' %}" class="btn btn-success btn-sm d-inline-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path d="M8 0a.5.5 0 0 1 .5.5V7.5H15.5a.5.5 0 0 1 0 1H8.5V15.5a.5.5 0 0 1-1 0V8.5H.5a.5.5 0 0 1 0-1H7.5V.5A.5.5 0 0 1 8 0z"/>
+                </svg>
+                <span class="d-none d-sm-inline ms-1">Crear usuario</span>
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Apellidos</th>
+                        <th scope="col">Correo electrónico</th>
+                        <th scope="col">Teléfono</th>
+                        <th scope="col">Dirección</th>
+                        <th scope="col">Ciudad</th>
+                        <th scope="col">Código postal</th>
+                        <th scope="col">Fecha de registro</th>
+                        <th scope="col">Rol</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <th scope="row">{{ user.name|default:"" }}</th>
+                        <td>{{ user.surname|default:"" }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phone_number|default:"" }}</td>
+                        <td>{{ user.address|default:"" }}</td>
+                        <td>{{ user.city|default:"" }}</td>
+                        <td>{{ user.postal_code|default:"" }}</td>
+                        <td>{{ user.date_joined|date:"Y-m-d H:i" }}</td>
+                        <td>{% if user.is_staff %}Administrador{% else %}Cliente{% endif %}</td>
+                        <td class="align-middle">
+                            <div class="action-buttons d-flex justify-content-center flex-wrap">
+                                <a href="{% url 'admin_edit_user' user.id %}" class="btn btn-sm btn-primary d-inline-flex align-items-center" title="Editar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                                    </svg>
+                                    <span class="d-none d-sm-inline btn-text">Editar</span>
+                                </a>
+                                <a href="{% url 'admin_delete_user' user.id %}" class="btn btn-sm btn-danger d-inline-flex align-items-center ms-2" title="Eliminar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                    </svg>
+                                    <span class="d-none d-sm-inline btn-text">Eliminar</span>
+                                </a>
+                            </div>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+{% endblock %}

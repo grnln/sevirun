@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-4">
+    <aside class = "ml-4 mb-4">
+        <a href = "{% url 'admin_users' %}" class = "text-dark">← Volver</a>
+    </aside>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center mb-4">Editar usuario</h2>
+
+                        <form method="post" class="admin-edit-form">
+                            {% csrf_token %}
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="surname" class="form-label">Apellidos</label>
+                                    <input type="text" class="form-control" id="surname" name="surname" value="{{ user.surname }}" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone_number" class="form-label">Número de teléfono</label>
+                                    <input type="tel" class="form-control" id="phone_number" name="phone_number" value="{{ user.phone_number }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="address" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="address" name="address" value="{{ user.address }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">Ciudad</label>
+                                    <input type="text" class="form-control" id="city" name="city" value="{{ user.city }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="postal_code" class="form-label">Código postal</label>
+                                    <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ user.postal_code }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">Nueva contraseña</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Dejar en blanco para mantener">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3 align-items-center">
+                                <label class="col-sm-3 col-form-label mb-0">Rol: {% if user.is_staff %}Administrador{% else %}Cliente{% endif %}</label>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Guardar cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</main>
+{% endblock %}

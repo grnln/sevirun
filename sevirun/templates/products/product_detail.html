@@ -53,51 +53,62 @@
 
                 <p class="short_description">{{ product.short_description }}</p>
                 
-                {% if product.is_available %}
-                <div class="mb-3 product-pickers">
-                    {% if sizes %}
-                        <div class="picker">
-                            <label for="size-select" class="form-label">Talla</label>
-                            <select id="size-select" class="form-select" {% if not product.is_available %}disabled{% endif %}>
-                                <option value="">Selecciona talla</option>
-                                {% for s in sizes %}
-                                    <option value="{{ s.size__id }}" data-stock="{{ s.total }}" data-original-text="{{ s.size__name }}" {% if s.total == 0 %}disabled{% endif %}>
-                                        {{ s.size__name }}{% if s.total == 0 %} (Agotado){% endif %}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    {% endif %}
-
-                    {% if colours %}
-                        <div class="picker">
-                            <label for="color-select" class="form-label">Color</label>
-                            <select id="color-select" class="form-select" {% if not product.is_available %}disabled{% endif %}>
-                                <option value="">Selecciona color</option>
-                                {% for c in colours %}
-                                    <option value="{{ c.colour__id }}" data-stock="{{ c.total }}" data-original-text="{{ c.colour__name }}" {% if c.total == 0 %}disabled{% endif %}>
-                                        {{ c.colour__name }}{% if c.total == 0 %} (Agotado){% endif %}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    {% endif %}
-                </div>
-                {% endif %}
-
-                <div class="mb-3">
+                {% if not user.is_staff and not user.is_superuser %}
                     {% if product.is_available %}
-                        <button class="btn btn-primary" type="button" aria-label="Añadir al carrito">
-                            <svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-cart"/></svg>
-                            Añadir al carrito
-                        </button>
-                    {% else %}
-                        <button class="btn btn-secondary" type="button" disabled aria-disabled="true">
-                            <svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-cart"/></svg>
-                            Añadir al carrito
-                        </button>
+                        <div class="mb-3 product-pickers">
+                            {% if sizes %}
+                                <div class="picker">
+                                    <label for="size-select" class="form-label">Talla</label>
+                                    <select id="size-select" class="form-select" {% if not product.is_available %}disabled{% endif %}>
+                                        <option value="">Selecciona talla</option>
+                                        {% for s in sizes %}
+                                            <option value="{{ s.size__id }}" data-stock="{{ s.total }}" data-original-text="{{ s.size__name }}" {% if s.total == 0 %}disabled{% endif %}>
+                                                {{ s.size__name }}{% if s.total == 0 %} (Agotado){% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
+
+                            {% if colours %}
+                                <div class="picker">
+                                    <label for="color-select" class="form-label">Color</label>
+                                    <select id="color-select" class="form-select" {% if not product.is_available %}disabled{% endif %}>
+                                        <option value="">Selecciona color</option>
+                                        {% for c in colours %}
+                                            <option value="{{ c.colour__id }}" data-stock="{{ c.total }}" data-original-text="{{ c.colour__name }}" {% if c.total == 0 %}disabled{% endif %}>
+                                                {{ c.colour__name }}{% if c.total == 0 %} (Agotado){% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
+                        </div>
                     {% endif %}
-                </div>
+
+                    <div class="mb-3">
+                        {% if product.is_available %}
+                            <button class="btn btn-primary" type="button" aria-label="Añadir al carrito">
+                                <svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-cart"/></svg>
+                                Añadir al carrito
+                            </button>
+                        {% else %}
+                            <button class="btn btn-secondary" type="button" disabled aria-disabled="true">
+                                <svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-cart"/></svg>
+                                Añadir al carrito
+                            </button>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="mb-3">
+                        <a href="{% url 'edit_product' product.pk %}" class="btn btn-warning d-inline-flex align-items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                            </svg>
+                            Editar Producto
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
 

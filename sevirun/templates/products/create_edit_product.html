@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/admin_create_user.css' %}">
+{% endblock %}
+
+{% block content %}
+{% load l10n %}
+
+<main class="container py-4">
+    <aside class = "ml-4 mb-4">
+        <a href="{% if from %}{{ from }}{% else %}{% url 'home' %}{% endif %}" class="text-dark">← Volver</a>
+    </aside>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">{% if is_editing %}Editar Producto{% else %}Crear Producto{% endif %}</h2>
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="picture" class="form-label">Imagen</label>
+                                    <input type="file" class="form-control" id="picture" name="picture" accept="image/*" onchange="previewImage(event)">
+                                    
+                                    {% if product and product.picture %}
+                                    <div class="mt-3">
+                                        <p class="text-muted">Imagen actual:</p>
+                                        <img id="preview" src="{{ product.picture.url }}" style="max-width: 200px; max-height: 200px;">
+                                    </div>
+                                    {% else %}
+                                    <img id="preview" style="display:none; max-width: 200px; max-height: 200px; margin-top: 10px;">
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <script>
+                            function previewImage(event) {
+                                const preview = document.getElementById('preview');
+                                const file = event.target.files[0];
+                                
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        preview.src = e.target.result;
+                                        preview.style.display = 'block';
+                                    }
+                                    reader.readAsDataURL(file);
+                                }
+                            }
+                            </script>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="name" class="form-label">Nombre del producto</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nombre" required value="{{ product.name|default:'' }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="short_description" class="form-label">Descripción (corta)</label>
+                                    <textarea class="form-control" id="short_description" name="short_description" placeholder="Descripción (corta)" required>{{ product.short_description|default:'' }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="description" class="form-label">Descripción</label>
+                                    <textarea class="form-control" id="description" name="description" placeholder="Descripción" required>{{ product.description|default:'' }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="price" class="form-label">Precio</label>
+                                    <input type="number" class="form-control" id="price" name="price" min="0" required step="0.01" value="{{ product.price|unlocalize|default_if_none:'' }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="price_on_sale" class="form-label">Precio (de oferta)</label>
+                                    <input type="number" class="form-control" id="price_on_sale" name="price_on_sale" min="0" step="0.01" value="{{ product.price_on_sale|unlocalize|default_if_none:'' }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="is_available" name="is_available" {% if product.is_available|default_if_none:True %}checked{% endif %}>
+                                        <label class="form-check-label" for="is_available">
+                                            Disponible
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="is_highlighted" name="is_highlighted" {% if product.is_highlighted|default_if_none:False %}checked{% endif %}>
+                                        <label class="form-check-label" for="is_highlighted">
+                                            Destacado
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="model" class="form-label">Modelo</label>
+                                    <select id="model" name="model" class="form-select" required>
+                                        <option value="">Selecciona un modelo</option>
+                                        {% for model in models %}
+                                            <option value="{{ model.id }}" {% if product.model_id == model.id %}selected{% endif %}>
+                                                {{ model.name }} - {{ model.brand.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="type" class="form-label">Tipo</label>
+                                    <select id="type" name="type" class="form-select" required>
+                                        <option value="">Selecciona un tipo</option>
+                                        {% for type in types %}
+                                            <option value="{{ type.id }}" {% if product.type_id == type.id %}selected{% endif %}>
+                                                {{ type.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="season" class="form-label">Temporada</label>
+                                    <select id="season" name="season" class="form-select" required value="{{ product.season|default:'' }}">
+                                        <option value="">Selecciona una temporada</option>
+                                        {% for season in seasons %}
+                                            <option value="{{ season.id }}" {% if product.season_id == season.id %}selected{% endif %}>
+                                                {{ season.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="material" class="form-label">Material</label>
+                                    <select id="material" name="material" class="form-select" required value="{{ product.material|default:'' }}">
+                                        <option value="">Selecciona un material</option>
+                                        {% for material in materials %}
+                                            <option value="{{ material.id }}" {% if product.material_id == material.id %}selected{% endif %}>
+                                                {{ material.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>     
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">{% if is_editing %}Guardar Producto{% else %}Crear Producto{% endif %}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</main>
+{% endblock %}
