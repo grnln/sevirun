@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from .models import Product
+from products.models import Product
 from django.http import HttpResponse
 
 def home(request):
-    products = Product.objects.all().filter(featured=True)
+    products = Product.objects.all().filter(is_highlighted=True)
     context = {
         'products': products,
     }

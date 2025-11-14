@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from users.models import AppUser
-from products.models import Product
+from products.models import *
 from decimal import Decimal, ROUND_CEILING
 
 phone_validator = RegexValidator(
@@ -20,19 +20,6 @@ class OrderState(models.TextChoices):
 class PaymentMethod(models.TextChoices):
     CREDIT_CARD = "CC", _("Tarjeta de crédito")
     CASH = "CA", _("Contrareembolso")
-
-class ShoeSize(models.IntegerChoices):
-    EU_36 = 36, _("EU 36")
-    EU_37 = 37, _("EU 37")
-    EU_38 = 38, _("EU 38")
-    EU_39 = 39, _("EU 39")
-    EU_40 = 40, _("EU 40")
-    EU_41 = 41, _("EU 41")
-    EU_42 = 42, _("EU 42")
-    EU_43 = 43, _("EU 43")
-    EU_44 = 44, _("EU 44")
-    EU_45 = 45, _("EU 45")
-    EU_46 = 46, _("EU 46")
 
 class Order(models.Model):
     client = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, null=False)
@@ -100,11 +87,8 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.DO_NOTHING, null=False, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, null=False)
-    size = models.IntegerField(
-        choices=ShoeSize.choices,
-        null=False
-    )
-    color = models.CharField(max_length=30, null=False)
+    size = models.ForeignKey(ProductSize, on_delete = models.DO_NOTHING, null = False)
+    colour = models.ForeignKey(ProductColour, on_delete = models.DO_NOTHING, null = False)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)], null=False)
     unit_price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
     
@@ -117,8 +101,8 @@ class OrderItem(models.Model):
                 {{
                     order: {self.order.pk},
                     product: {self.product.pk},
-                    size: {self.size},
-                    color: {self.color},
+                    size: {self.size.pk},
+                    colour: {self.colour.pk},
                     quantity: {self.quantity},
                     unit_price: {self.unit_price},
                     total_price: {self.total_price}

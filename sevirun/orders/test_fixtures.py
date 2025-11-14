@@ -34,12 +34,38 @@ def order_list(regular_user, regular_user_2):
 @pytest.fixture
 def order_and_items_list(order_list, sample_product):
     delivered_order = order_list[0]
+    brand = Brand.objects.create(name = 'Test Brand')
+    product_model = ProductModel.objects.create(name = 'Model X', brand = brand)
+    product_type = ProductType.objects.create(name = 'Shoes')
+    season = ProductSeason.objects.create(name = 'Summer')
+    material = ProductMaterial.objects.create(name = 'Leather')
+
+    size = ProductSize.objects.create(name = '42')
+    colour = ProductColour.objects.create(name = 'Red')
+
+    now = timezone.now()
+
+    sample_product = Product.objects.create(
+        name = 'Test Product',
+        short_description = 'Short desc',
+        description = 'Long description',
+        price = '19.99',
+        price_on_sale = '6.99',
+        is_available = True,
+        is_highlighted = False,
+        created_at = now,
+        updated_at = now,
+        model = product_model,
+        type = product_type,
+        season = season,
+        material = material,
+    )
 
     OrderItem.objects.create(**{
         "order": delivered_order,
         "product": sample_product,
-        "size": 42,
-        "color": "Red",
+        "size": size,
+        "colour": colour,
         "quantity": 2,
         "unit_price": "55.90"
     })

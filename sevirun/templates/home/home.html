@@ -33,13 +33,13 @@
         {% for p in products %}
             <div class="col-6 col-md-4">
                 <div class="card p-2 h-100 bg-white text-dark">
-                    {% if p.image %}
-                        <img src="{{ p.image.url }}" class="card-img-top rounded" alt="{{ p.name }}">
+                    {% if p.picture %}
+                        <img src="{{ p.picture.url }}" class="card-img-top rounded" alt="{{ p.name }}">
                     {% else %}
-                        <img src="{% static 'images/product-placeholder.png' %}" class="card-img-top rounded" alt="Producto">
+                        <img src="{% static 'images/test_image.jpg' %}" class="card-img-top rounded" alt="Producto">
                     {% endif %}
                     <div class="card-body p-2">
-                        <h5 class="card-title mb-1 fs-6">{{ p.title }}</h5>
+                        <h5 class="card-title mb-1 fs-6">{{ p.name }}</h5>
                         <p class="text-muted mb-1 small">{{ p.description }}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <strong>{{ p.price }} €</strong>
