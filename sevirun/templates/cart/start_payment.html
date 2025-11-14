@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+        <form id="redsysForm" action="{{ redsys_url }}" method="post">
+            <input type="hidden" name="Ds_SignatureVersion" value="{{ signature_version }}">
+            <input type="hidden" name="Ds_MerchantParameters" value="{{ merchant_parameters }}">
+            <input type="hidden" name="Ds_Signature" value="{{ signature }}">
+            
+            <button type="submit" class="btn-pagar" id="btnPagar">
+                Proceder al Pago
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Redirigiendo a la pasarela de pago...</p>
+        </div>
+    </div>
+</main>
+
+    <script>
+        document.getElementById('redsysForm').addEventListener('submit', function() {
+            document.getElementById('btnPagar').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+        });
+    </script>
+{% endblock %}

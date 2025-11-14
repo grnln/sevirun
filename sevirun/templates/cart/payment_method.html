@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+    <section class="payment-start-section mx-auto mt-5 p-4 border rounded" style="max-width: 600px;">
+        <h2 class="h5 mb-3 fw-bold">Selecciona el método de pago</h2>
+        <div class="d-flex flex-column gap-3">
+            <a href="{% url 'start_payment' order_id=order.id %}" class="btn btn-primary btn-lg">Pagar con Tarjeta</a>
+            <button class="btn btn-secondary btn-lg" disabled>Pagar por Contrareembolso</button>
+        </div>
+    </section>
+</main>
+{% endblock %}

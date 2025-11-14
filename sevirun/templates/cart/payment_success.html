@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+    <section class="payment-success-section mx-auto mt-5 p-4 border rounded bg-white shadow-sm" style="max-width: 720px;">
+        <div class="d-flex gap-3 align-items-start">
+            <div class="fs-1 text-success me-2">&#10004;</div>
+            <div class="w-100">
+                <h2 class="h4 mb-2">Pago realizado con éxito</h2>
+                <p class="mb-3 text-muted">¡Gracias! Hemos recibido el pago de tu pedido. A continuación tienes un resumen y opciones para continuar.</p>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h3 class="h6 mb-2">Resumen del pedido</h3>
+                        <p class="mb-1"><strong>Pedido:</strong> <span class="text-break">#{{ order.id }}</span></p>
+                        <p class="mb-1"><strong>Importe:</strong> {{ order.total|floatformat:2 }} €</p>
+                        {% if order.codigo_transaccion %}
+                        <p class="mb-1"><strong>Código de transacción:</strong> {{ order.codigo_transaccion }}</p>
+                        {% endif %}
+                        {% if order.estado %}
+                        <p class="mb-0"><strong>Estado:</strong> {{ order.get_estado_display|default:order.estado }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">Ver pedido</a>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">Seguir comprando</a>
+                </div>
+
+                <hr class="my-3">
+
+                <p class="small text-muted">Recibirás un correo de confirmación con los detalles del pedido. Si tienes cualquier duda, contacta con soporte: <a href="mailto:soporte@sevirun.example">soporte@sevirun.example</a>.</p>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
