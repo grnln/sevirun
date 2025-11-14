@@ -43,6 +43,9 @@ def order_and_items_list(order_list, sample_product):
     size = ProductSize.objects.create(name = '42')
     colour = ProductColour.objects.create(name = 'Red')
 
+    size2 = ProductSize.objects.create(name = '43')
+    colour2 = ProductColour.objects.create(name = 'Blue')
+
     now = timezone.now()
 
     sample_product = Product.objects.create(
@@ -73,8 +76,8 @@ def order_and_items_list(order_list, sample_product):
     OrderItem.objects.create(**{
         "order": delivered_order,
         "product": sample_product,
-        "size": 43,
-        "color": "Blue",
+        "size": size2,
+        "colour": colour2,
         "quantity": 1,
         "unit_price": "75.00"
     })
