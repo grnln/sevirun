@@ -69,6 +69,12 @@
                                         <div class="subtotal">
                                             Total (IVA {{ order.tax_percentage }}%): {{ order.total_price }}€
                                         </div>
+
+                                        {% if order.state == "PE" %}
+                                            <div class="payment-action mt-4 d-flex justify-content-center">
+                                                <a href="{% url 'payment_method' order_id=order.id %}" class="btn btn-primary w-50">Proceder al pago</a>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
