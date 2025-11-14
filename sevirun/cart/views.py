@@ -43,9 +43,9 @@ def start_payment(request, order_id):
         "Ds_Merchant_Currency": currency,
         "Ds_Merchant_TransactionType": transaction_type,
         "Ds_Merchant_Terminal": terminal,
-        "Ds_Merchant_MerchantURL": request.build_absolute_uri(reverse('pay_notification', args=[order_id])),
-        "Ds_Merchant_UrlOK": request.build_absolute_uri(reverse('redsys_ok', args=[order_id])),
-        "Ds_Merchant_UrlKO": request.build_absolute_uri(reverse('redsys_ko', args=[order_id])),
+        "Ds_Merchant_MerchantURL": request.build_absolute_uri(reverse('payment_notification', args=[order_id])),
+        "Ds_Merchant_UrlOK": request.build_absolute_uri(reverse('payment_ok', args=[order_id])),
+        "Ds_Merchant_UrlKO": request.build_absolute_uri(reverse('payment_ko', args=[order_id])),
     }
     
     # Generar un número de pedido único para Redsys - Se podría usar otro método
@@ -119,7 +119,7 @@ def payment_notification(request, order_id):
             try:
                 order_obj = Order.objects.get(id=int(order_id))
                 if order_obj.estado == 'PE':
-                    order_obj.estado = 'PA'
+                    order_obj.estado = 'PR'
                     order_obj.save()
                     
             except Order.DoesNotExist:
@@ -162,8 +162,19 @@ def payment_method(request, order_id):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
         return redirect('home')
     
-    if order.estado != 'PE':
+    if order.state != 'PE':
         messages.info(request, "El pedido ya ha sido pagado o no está pendiente de pago.")
         return redirect('home')
     
+    if request.method == 'POST' and request.POST.get('method') == 'card':
+        order.payment_method = 'CC'
+        order.save()
+        return start_payment(request, order_id)
+    
+    if request.method == 'POST' and request.POST.get('method') == 'cod':
+        order.payment_method = 'CA'
+        order.state = 'PR'
+        order.save()
+        return redirect('payment_ok', order_id=order_id)
+
     return render(request, 'cart/payment_method.html', {"order": order})

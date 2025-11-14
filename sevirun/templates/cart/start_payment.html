@@ -7,27 +7,73 @@
 
 {% block content %}
 <main class="container py-4">
-        <form id="redsysForm" action="{{ redsys_url }}" method="post">
-            <input type="hidden" name="Ds_SignatureVersion" value="{{ signature_version }}">
-            <input type="hidden" name="Ds_MerchantParameters" value="{{ merchant_parameters }}">
-            <input type="hidden" name="Ds_Signature" value="{{ signature }}">
-            
-            <button type="submit" class="btn-pagar" id="btnPagar">
-                Proceder al Pago
-            </button>
-        </form>
+    <div class="d-flex justify-content-center align-items-start">
+        <section class="payment-start-section mx-auto mt-5 p-4 border rounded shadow-sm" style="max-width: 600px;">
+            <div class="card-body text-center">
+                <h2 class="h4 mb-2">Proceder al pago</h2>
+                <p id="explanation" class="text-muted my-4">Serás redirigido a la pasarela de pago segura para completar la transacción.</p>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Redirigiendo a la pasarela de pago...</p>
-        </div>
+                <div id="loading" class="my-3 d-none" aria-hidden="true">
+                    <div class="d-flex justify-content-center align-items-center gap-2">
+                        <div class="text-muted">Redirigiendo a la pasarela de pago…</div>
+                    </div>
+                </div>
+
+                <form id="redsysForm" action="{{ redsys_url }}" method="post" class="mb-0" aria-hidden="true">
+                    <input type="hidden" name="Ds_SignatureVersion" value="{{ signature_version }}">
+                    <input type="hidden" name="Ds_MerchantParameters" value="{{ merchant_parameters }}">
+                    <input type="hidden" name="Ds_Signature" value="{{ signature }}">
+                </form>
+
+                <div id="autoLoading" class="my-3">
+                    <div class="d-flex flex-column align-items-center gap-2">
+                        <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+                        <small class="text-muted">Si no se redirige automáticamente, espera unos segundos.</small>
+                    </div>
+                </div>
+
+                <!-- Fallback for users without JavaScript -->
+                <noscript>
+                    <div class="mt-3 text-center">
+                        <p class="text-muted">Tu navegador no tiene JavaScript activado. Pulsa el botón para continuar al pago.</p>
+                        <form action="{{ redsys_url }}" method="post">
+                            <input type="hidden" name="Ds_SignatureVersion" value="{{ signature_version }}">
+                            <input type="hidden" name="Ds_MerchantParameters" value="{{ merchant_parameters }}">
+                            <input type="hidden" name="Ds_Signature" value="{{ signature }}">
+                            <button type="submit" class="btn btn-primary">Continuar al pago</button>
+                        </form>
+                    </div>
+                </noscript>
+            </div>
+        </section>
     </div>
 </main>
 
-    <script>
-        document.getElementById('redsysForm').addEventListener('submit', function() {
-            document.getElementById('btnPagar').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
+<script>
+    (function(){
+        var form = document.getElementById('redsysForm');
+        var loading = document.getElementById('loading');
+        var explanation = document.getElementById('explanation');
+        var autoLoading = document.getElementById('autoLoading');
+
+        // Auto-submit the form shortly after DOM is ready. Show loading UI.
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // show loading visuals
+                if (explanation) explanation.classList.add('d-none');
+                if (loading) { loading.classList.remove('d-none'); loading.removeAttribute('aria-hidden'); }
+                if (autoLoading) autoLoading.classList.remove('d-none');
+
+                // small delay to ensure UI is visible and the browser can process layout
+                setTimeout(function() {
+                    if (form) form.submit();
+                }, 250);
+            } catch (err) {
+                // If auto-submit fails, leave the page visible so user can act (noscript fallback exists)
+                console.error('Auto-submit failed', err);
+            }
         });
-    </script>
+    })();
+</script>
+
 {% endblock %}
