@@ -1,0 +1,66 @@
+
+.state-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    text-transform: none;
+    vertical-align: middle;
+}
+
+.order-state-PE { background-color: #f59e0b; } /* Pendiente */
+.order-state-PA { background-color: #10b981; } /* Pagado */
+.order-state-PR { background-color: #5d3bf6; } /* En proceso */
+.order-state-SH { background-color: #06c6d4; } /* Enviado */
+.order-state-DE { background-color: #a716c7; } /* Entregado */
+.order-state-CA { background-color: #ef4444; } /* Cancelado */
+
+.card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(16, 24, 40, 0.12);
+    padding: 24px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+    color: #1f2937;
+}
+
+.card-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.order-products {
+    color: #374151;
+    font-weight: 600;
+}
+
+.order-total {
+    background: #f8fafc;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 2px 6px rgba(2,6,23,0.04);
+    margin-left: auto;
+    align-self: center;
+}
+
+@media (max-width: 768px) {
+    .card-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}

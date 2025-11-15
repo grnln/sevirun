@@ -47,7 +47,8 @@
     "fields": {
       "order": 1,
       "product": 1,
-      "size": 42,
+      "size": 1,
+      "colour": 1,
       "quantity": 2,
       "unit_price": "55.90"
     }
@@ -58,7 +59,8 @@
     "fields": {
       "order": 1,
       "product": 2,
-      "size": 44,
+      "size": 2,
+      "colour": 2,
       "quantity": 1,
       "unit_price": "40.0"
     }
@@ -69,7 +71,8 @@
     "fields": {
       "order": 2,
       "product": 2,
-      "size": 44,
+      "size": 2,
+      "colour": 1,
       "quantity": 1,
       "unit_price": "40.0"
     }

@@ -42,7 +42,7 @@ class AppUser(AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return f'{{name: {self.name + self.surname}, email: {self.email}}}'
+        return f'{{Full name: {self.name + " " +  self.surname}, Email: {self.email}}}'
 
     def has_perm(self, perm, obj=None):
         return self.is_superuser

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro</title>
+</head>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container-xl">
+        <div class="row justify-content-center align-items-center mb-5">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">Registrarse</h2>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nombre" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="surname" class="form-label">Apellidos</label>
+                                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Apellidos" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone_number" class="form-label">Número de teléfono</label>
+                                    <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Teléfono" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="address" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Dirección" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">Ciudad</label>
+                                    <input type="text" class="form-control" id="city" name="city" placeholder="Ciudad" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="postal_code" class="form-label">Código postal</label>
+                                    <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Código postal" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Registrarse</button>
+                            </div>
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <small class="text-muted">¿Ya tienes una cuenta? <a href="/accounts/login">Inicia Sesión</a></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
+</html>

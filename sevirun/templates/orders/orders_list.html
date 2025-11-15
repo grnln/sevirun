@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel = "stylesheet" href = "{% static 'css/orders_list.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main class = "container py-4">
+        <aside class = "ml-4 mb-4">
+            <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
+        </aside>
+        <section>
+            <h2 class = "h5 mb-3 fw-bold">Mis pedidos:</h2>
+            <div class = "row g-3">
+                {% if orders %}
+                    {% for o in orders %}
+                        <div class = "col-12 col-md-6 col-lg-6">
+                            <div class = "card h-100">
+                                <div class = "card-header">
+                                    Pedido #{{ o.pk }}  <span class="state-badge order-state-{{ o.state }}">{{ o.get_state_display }}</span>
+                                </div>
+                                <div class = "card-body d-flex flex-column">
+                                    <p>
+                                        <strong>Fecha de pedido:</strong> {{ o.created_at }}
+                                    </p>
+                                    <p>
+                                        <strong>Dirección:</strong> {{ o.shipping_address }}
+                                    </p>
+                                    <p class="d-flex align-items-center justify-content-start gap-3">
+                                        <span class="order-products"><strong>Productos:</strong> {{ o.total_units }}</span>
+                                        <span class="order-total"><strong>Total:</strong> {{ o.total_price }}€</span>
+                                    </p>
+                                    <a href = "{% url 'order_detail' o.pk %}" class = "btn btn-primary mt-auto">Ver detalles</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No tienes pedidos.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+{% endblock %}

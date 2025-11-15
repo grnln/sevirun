@@ -1,0 +1,236 @@
+.card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(16, 24, 40, 0.12);
+    padding: 24px;
+}
+
+.card-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e5e7eb;
+    color: #1f2937;
+}
+
+.card-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.products-section {
+    padding-right: 16px;
+}
+
+.section-title {
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #374151;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.products-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.products-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #f3f4f6;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.products-list li:last-child {
+    border-bottom: none;
+}
+
+.product-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 12px;
+}
+
+.product-item:last-child {
+    border-bottom: none;
+}
+
+.product-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.product-name {
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.product-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.product-meta-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap; /* allow wrapping on very small screens */
+}
+
+/* Add a subtle separator between meta items when they sit inline */
+.product-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+.product-meta + .product-meta {
+    padding-left: 10px;
+    margin-left: 6px;
+    border-left: 1px solid #e5e7eb;
+}
+
+.product-quantity {
+    background-color: #e5e7eb;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.product-price {
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+}
+
+.summary-section {
+    background-color: #f9fafb;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid #3b82f6;
+}
+
+/* Split summary into two blocks: contact and price */
+.summary-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.summary-block {
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+.block-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #111827;
+}
+
+.summary-item {
+    margin-bottom: 10px;
+    color: #4b5563;
+    line-height: 1.6;
+}
+
+.summary-item:last-child {
+    margin-bottom: 0;
+}
+
+.summary-label {
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.subtotal {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 2px solid #e5e7eb;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+
+.state-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    text-transform: none;
+    vertical-align: middle;
+}
+
+.order-state-PE { background-color: #f59e0b; } /* Pendiente */
+.order-state-PA { background-color: #10b981; } /* Pagado */
+.order-state-PR { background-color: #5d3bf6; } /* En proceso */
+.order-state-SH { background-color: #06c6d4; } /* Enviado */
+.order-state-DE { background-color: #a716c7; } /* Entregado */
+.order-state-CA { background-color: #ef4444; } /* Cancelado */
+
+.total-items {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid rgba(15,23,42,0.04);
+    border-radius: 8px;
+}
+
+.total-items-count {
+    color: #374151;
+    font-weight: 600;
+}
+
+.total-items-price {
+    font-weight: 800;
+    color: #0f172a;
+    background: #f8fafc;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(15,23,42,0.04);
+}
+
+@media (max-width: 576px) {
+    .total-items {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    .total-items-price {
+        margin-left: 0;
+        text-align: right;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .products-section {
+        padding-right: 0;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+}

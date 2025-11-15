@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-4">
+    <h2 class="h5 mb-3 fw-bold">Confirmar eliminación</h2>
+    <div class="card p-3">
+        <p>¿Eliminar al usuario <strong>{{ user.email }}</strong>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+            <a href="{% url 'admin_users' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</main>
+{% endblock %}

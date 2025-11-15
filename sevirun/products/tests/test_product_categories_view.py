@@ -8,7 +8,7 @@ from pathlib import Path
 from products.models import *
 
 @pytest.mark.django_db
-def test_products_status_and_context(client):
+def test_product_categories_view(client):
     brand = Brand.objects.create(name = 'Test Brand')
     product_model = ProductModel.objects.create(name = 'Model X', brand = brand)
     product_type = ProductType.objects.create(name = 'Shoes')
@@ -25,7 +25,7 @@ def test_products_status_and_context(client):
     for key in ('brands', 'product_types', 'product_models', 'product_seasons', 'product_materials', 'product_sizes', 'product_colours'):
         assert key in response.context
 
-    assert any(t.name == 'categories.html' for t in response.templates)
+    assert any(t.name == 'products/categories.html' for t in response.templates)
 
     assert (len(response.context['brands']) == 1)
     assert (len(response.context['product_types']) == 1)
@@ -44,7 +44,7 @@ def test_products_status_and_context(client):
     assert (bytearray(colour.name, encoding = 'utf-8') in response.content)
 
 @pytest.mark.django_db
-def test_products_status_and_context(client):
+def test_empty_product_categories_view(client):
     url = reverse('categories')
     response = client.get(url)
 
@@ -53,7 +53,7 @@ def test_products_status_and_context(client):
     for key in ('brands', 'product_types', 'product_models', 'product_seasons', 'product_materials', 'product_sizes', 'product_colours'):
         assert key in response.context
 
-    assert any(t.name == 'categories.html' for t in response.templates)
+    assert any(t.name == 'products/categories.html' for t in response.templates)
 
     assert (len(response.context['brands']) == 0)
     assert (len(response.context['product_types']) == 0)

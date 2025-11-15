@@ -1,7 +1,9 @@
 import pytest
 from django.urls import reverse
+from django.utils import timezone
 from collections.abc import Iterable
-from home.models import Product
+from products.models import *
+from datetime import datetime
 
 @pytest.mark.django_db
 def test_home_status_and_context(client):
@@ -25,14 +27,36 @@ def test_home_shows_no_products_message(client):
 
 @pytest.mark.django_db
 def test_home_shows_no_featured_products_message(client):
-    Product.objects.create(
-        title='Zapato de prueba',
+    brand = Brand.objects.create(name = 'Marca de prueba')
+    product_model = ProductModel.objects.create(name = 'Modelo de prueba', brand = brand)
+    product_type = ProductType.objects.create(name = 'Tipo de prueba')
+    season = ProductSeason.objects.create(name = 'Temporada de prueba')
+    material = ProductMaterial.objects.create(name = 'Material de prueba')
+
+    size = ProductSize.objects.create(name = 'Talla de prueba')
+    colour = ProductColour.objects.create(name = 'Color de prueba')
+    
+    product = Product.objects.create(
+        name='Zapato de prueba',
         description='Un zapato cómodo',
-        image='products/dummy.png',
+        picture='products/dummy.png',
         price='49.99',
-        featured=False,
+        is_highlighted=False,
+        is_available = True,
+        created_at = timezone.now(),
+        updated_at = timezone.now(),
+        model = product_model,
+        type = product_type,
+        season = season,
+        material = material
     )
     
+    ProductStock.objects.create(
+        stock = 10,
+        product = product,
+        size = size,
+        colour = colour
+    )
     url = reverse('home')
     resp = client.get(url)
 
@@ -42,19 +66,41 @@ def test_home_shows_no_featured_products_message(client):
 
 @pytest.mark.django_db
 def test_home_shows_products_list_when_present(client):
-    product = Product.objects.create(
-        title='Zapato de prueba',
-        description='Un zapato cómodo',
-        image='products/dummy.png',
-        price='49.99',
-        featured=True,
-    )
+    brand = Brand.objects.create(name = 'Marca de prueba')
+    product_model = ProductModel.objects.create(name = 'Modelo de prueba', brand = brand)
+    product_type = ProductType.objects.create(name = 'Tipo de prueba')
+    season = ProductSeason.objects.create(name = 'Temporada de prueba')
+    material = ProductMaterial.objects.create(name = 'Material de prueba')
 
+    size = ProductSize.objects.create(name = 'Talla de prueba')
+    colour = ProductColour.objects.create(name = 'Color de prueba')
+    
+    product = Product.objects.create(
+        name='Zapato de prueba',
+        description='Un zapato cómodo',
+        picture='products/dummy.png',
+        price='49.99',
+        is_highlighted=True,
+        is_available = True,
+        created_at = timezone.now(),
+        updated_at = timezone.now(),
+        model = product_model,
+        type = product_type,
+        season = season,
+        material = material
+    )
+    
+    ProductStock.objects.create(
+        stock = 10,
+        product = product,
+        size = size,
+        colour = colour
+    )
     url = reverse('home')
     resp = client.get(url)
 
     assert resp.status_code == 200
-    assert product.title.encode() in resp.content
+    assert product.name.encode() in resp.content
 
 @pytest.mark.django_db
 def test_about_us_is_shown(client):

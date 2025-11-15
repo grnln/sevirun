@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/admin_create_user.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main class="container py-4">
+    <aside class = "ml-4 mb-4">
+        <a href = "{% url 'admin_users' %}" class = "text-dark">← Volver</a>
+    </aside>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">Crear usuario</h2>
+
+                        <form method="post" class="admin-create-form">
+                            {% csrf_token %}
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nombre" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="surname" class="form-label">Apellidos</label>
+                                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Apellidos" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Correo electrónico" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone_number" class="form-label">Número de teléfono</label>
+                                    <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Teléfono" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="address" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Dirección" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">Ciudad</label>
+                                    <input type="text" class="form-control" id="city" name="city" placeholder="Ciudad" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="postal_code" class="form-label">Código postal</label>
+                                    <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Código postal" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label for="is_staff" class="form-label">Rol</label>
+                                    <select id="is_staff" name="is_staff" class="form-select">
+                                        <option value="0" selected>Cliente</option>
+                                        <option value="1">Administrador</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Crear usuario</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</main>
+{% endblock %}

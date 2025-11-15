@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel = "stylesheet" href = "{% static 'css/order_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class = "container py-4">
+    <aside class = "ml-4 mb-4">
+        <a href = "{% url 'orders' %}" class = "text-dark">← Volver</a>
+    </aside>
+    <div class="card-header">Pedido #{{ order.pk }} -  <span class="state-badge order-state-{{ order.state }}">{{ order.get_state_display }}</span></div>
+                            
+                            <div class="card-content">
+                                <div class="products-section">
+                                    <div class="section-title">Productos</div>
+                                    <ul class="products-list">
+                                        {% for i in order.items.all %}
+                                            <li class="product-item">
+                                                <span class="product-quantity">x{{ i.quantity }}</span>
+                                                <div class="product-details">
+                                                    <span class="product-name">{{ i.product.name }}</span>
+                                                    <div class="product-meta-row">
+                                                        <span class="product-meta">Talla: {{ i.size.name }}</span>
+                                                        <span class="product-meta">Color: {{ i.colour.name }}</span>
+                                                    </div>
+                                                </div>
+                                                <span class="product-price">{{ i.total_price }}€</span>
+                                            </li>
+                                        {% empty %}
+                                            <li class="no-products">
+                                                <span>No hay productos en este pedido.</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+
+                                    <div class="total-items">
+                                        <div class="total-items-count"><strong>Número de productos:</strong> {{ order.total_units }}</div>
+                                        <div class="total-items-price"><strong>Subtotal:</strong> {{ order.subtotal }}€</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="summary-section">
+                                    <div class="summary-block contact-block">
+                                        <div class="block-title">Información de contacto</div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Fecha de pedido:</span> {{ order.created_at }}
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Dirección de envío:</span> {{ order.shipping_address }}
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Teléfono:</span> {{ order.phone_number }}
+                                        </div>
+                                    </div>
+
+                                    <div class="summary-block price-block">
+                                        <div class="block-title">Resumen del precio</div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Gastos de envío:</span> {{ order.delivery_cost }}€
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Descuento aplicado:</span> {{ order.discount_percentage }}%
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-label">Método de pago:</span> {{ order.get_payment_method_display }}
+                                        </div>
+                                        <div class="subtotal">
+                                            Total (IVA {{ order.tax_percentage }}%): {{ order.total_price }}€
+                                        </div>
+
+                                        {% if order.state == "PE" %}
+                                            <div class="payment-action mt-4 d-flex justify-content-center">
+                                                <a href="{% url 'payment_method' order_id=order.id %}" class="btn btn-primary w-50">Proceder al pago</a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+</main>
+
+{% endblock %}

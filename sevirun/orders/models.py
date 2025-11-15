@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from users.models import AppUser
-from products.models import Product
+from products.models import *
 from decimal import Decimal, ROUND_CEILING
 
 phone_validator = RegexValidator(
@@ -12,7 +12,6 @@ phone_validator = RegexValidator(
 
 class OrderState(models.TextChoices):
     PENDING = "PE", _("Pendiente")
-    PAID = "PA", _("Pagado")
     PROCESSING = "PR", _("En proceso")
     SHIPPED = "SH", _("Enviado")
     DELIVERED = "DE", _("Entregado")
@@ -22,26 +21,13 @@ class PaymentMethod(models.TextChoices):
     CREDIT_CARD = "CC", _("Tarjeta de crédito")
     CASH = "CA", _("Contrareembolso")
 
-class ShoeSize(models.IntegerChoices):
-    EU_36 = 36, _("EU 36")
-    EU_37 = 37, _("EU 37")
-    EU_38 = 38, _("EU 38")
-    EU_39 = 39, _("EU 39")
-    EU_40 = 40, _("EU 40")
-    EU_41 = 41, _("EU 41")
-    EU_42 = 42, _("EU 42")
-    EU_43 = 43, _("EU 43")
-    EU_44 = 44, _("EU 44")
-    EU_45 = 45, _("EU 45")
-    EU_46 = 46, _("EU 46")
-
 class Order(models.Model):
     client = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, null=False)
     created_at = models.DateTimeField(null = False)
     state = models.CharField(choices=OrderState, default=OrderState.PENDING, null=False)
 
     @property
-    def total_price(self):
+    def subtotal(self):
         result = Decimal(sum(item.total_price for item in self.items.all()))
         return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
@@ -65,13 +51,23 @@ class Order(models.Model):
         null=False
     )
 
+    tax_percentage = 21  # IVA
+
     @property
-    def subtotal(self):
-        total = self.total_price
+    def total_price(self):
+        subtotal = self.subtotal
         delivery = self.delivery_cost 
         discount = self.discount_percentage 
-        result = Decimal((total + delivery) * Decimal("1.21") * (100 - discount) / 100)
+        result = Decimal((subtotal + delivery) * Decimal(f"1.{int(self.tax_percentage)}") * (100 - discount) / 100)
         return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
+
+    @property
+    def items_count(self):
+        return self.items.count()
+
+    @property
+    def total_units(self):
+        return sum(item.quantity for item in self.items.all())
 
     def __str__(self):
         return f'''
@@ -91,10 +87,8 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.DO_NOTHING, null=False, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, null=False)
-    size = models.IntegerField(
-        choices=ShoeSize.choices,
-        null=False
-    )
+    size = models.ForeignKey(ProductSize, on_delete = models.DO_NOTHING, null = False)
+    colour = models.ForeignKey(ProductColour, on_delete = models.DO_NOTHING, null = False)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)], null=False)
     unit_price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
     
@@ -107,7 +101,8 @@ class OrderItem(models.Model):
                 {{
                     order: {self.order.pk},
                     product: {self.product.pk},
-                    size: {self.size},
+                    size: {self.size.pk},
+                    colour: {self.colour.pk},
                     quantity: {self.quantity},
                     unit_price: {self.unit_price},
                     total_price: {self.total_price}
