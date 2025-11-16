@@ -10,6 +10,15 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def temp_subtotal(self):
+        allItems = self.items.all()
+        temp_price = 0
+        for item in allItems:
+            item_price = item.product.price_on_sale if item.product.price_on_sale else item.product.price
+            temp_price += item.quantity * item_price
+        return temp_price
+
     def __str__(self):
         return f'''
                 {{
@@ -20,9 +29,15 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=False, related_name="items")
+    colour = models.ForeignKey(ProductColour, on_delete=models.DO_NOTHING, null=False)
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, null=False)
     size = models.ForeignKey(ProductSize, on_delete = models.DO_NOTHING, null = False)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(99)], null=False)
+
+    @property
+    def temp_price(self):
+        temp_price = self.product.price_on_sale if self.product.price_on_sale else self.product.price
+        return temp_price * self.quantity
 
     def __str__(self):
         return f'''
@@ -31,5 +46,6 @@ class CartItem(models.Model):
                     product: {self.product.pk},
                     size: {self.size.pk},
                     quantity: {self.quantity},
+                    colour: {self.colour}
                 }}
                 '''
