@@ -1,0 +1,42 @@
+[
+  {
+    "model": "cart.Cart",
+    "pk": 1,
+    "fields": {
+      "client": 100,
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "cart.Cart",
+    "pk": 2,
+    "fields": {
+      "client": 104,
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "cart.CartItem",
+    "pk": 1,
+    "fields": {
+      "cart": 1,
+      "colour": 1,
+      "product": 1,
+      "size": 1,
+      "quantity": 2
+    }
+  },
+  {
+    "model": "cart.CartItem",
+    "pk": 2,
+    "fields": {
+      "cart": 1,
+      "colour": 2,
+      "product": 1,
+      "size": 2,
+      "quantity": 1
+    }
+  }
+]

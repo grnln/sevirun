@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel = "stylesheet" href="{% static 'css/cart.css' %}?v={{ timestamp }}">
+    <link rel = "stylesheet" href = "{% static 'css/home.css' %}?v={{ timestamp }}">
+    <link rel = "stylesheet" href = "{% static 'css/order_detail.css' %}?v={{ timestamp }}">
+{% endblock %}
+
+{% block content %}
+    <main class = "container py-4" style="flex: 1; display: flex; flex-direction: column;">
+    <h1>Mi carrito</h1>
+
+    <hr/>
+
+    <div style="display: flex; flex-direction: row; flex: 1;">
+        <div class="products-section" style="flex: 3; display: flex; flex-direction: column;">
+            <div class="section-title">Productos</div>
+            {% if cart.items.all %}
+                <ul class="products-list">
+                {% for i in cart.items.all %}
+                    <li class="product-item" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid #eee;">
+                        <div class="product-quantity-controls">
+                            <button class="quantity-btn" onclick="">−</button>
+                            <span class="quantity-display">{{ i.quantity }}</span>
+                            <button class="quantity-btn" onclick="">+</button>
+                        </div>
+                        <div class="product-details" style="flex: 1;">
+                            <span class="product-name">{{ i.product.name }}</span>
+                            <div class="product-meta-row">
+                                <span class="product-meta">Talla: {{ i.size.name }}</span>
+                                <span class="product-meta">Color: {{ i.colour.name }}</span>
+                            </div>
+                        </div>
+<div class="item-price-block">
+    {% if i.product.price_on_sale %}
+        <div class="item-price-discount">
+            <span class="old-price">{{ i.product.price|floatformat:2 }}€</span>
+            <span class="new-price">{{ i.product.price_on_sale|floatformat:2 }}€</span>
+        </div>
+    {% else %}
+        <div class="item-price">
+            {{ i.product.price|floatformat:2 }}€
+        </div>
+    {% endif %}
+
+    <div class="item-subtotal">
+        x{{ i.quantity }} = {{ i.temp_price|floatformat:2 }}€
+    </div>
+</div>
+                        <button class="delete-btn" onclick="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13l-1 10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2L3 4h-.5a1 1 0 0 1 0-2H5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1h2.5a1 1 0 0 1 1 1zM6.118 4 6 5h4l-.118-1H6.118z"/>
+                            </svg>
+                        </button>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <div>
+                    <span>No hay productos en el carrito.</span>
+                </div>
+                <a class="btn btn-primary" style="width: 15%; margin: auto auto 0 auto;" href="{% url 'products' %}?from={{ request.path }}">Ver tienda</a>
+            {% endif %}
+        </div>
+        {% if cart.items.all %}
+            <div class="cart-summary" style="
+                flex: 2;
+                background: #f9fafb;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 1.5rem;
+                height: fit-content;
+            ">
+                <h3 style="margin-bottom: 1rem; font-size: 20px; font-weight: 600;">Resumen del pedido</h3>
+
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 16px;
+                    margin-bottom: 1rem;
+                ">
+                    <span>Subtotal:</span>
+                    <span style="font-weight: 700; color: #007bff;">{{ cart.temp_subtotal|floatformat:2 }}€</span>
+                </div>
+
+                <hr style="margin: 1rem 0;"/>
+
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <a class="btn btn-primary"
+                    href="{% url 'products' %}?from={{ request.path }}"
+                    style="width: 100%; text-align: center;">
+                        Realizar pedido
+                    </a>
+                    <a class="btn btn-secondary"
+                    href="{% url 'products' %}?from={{ request.path }}"
+                    style="width: 100%; text-align: center;">
+                        Seguir comprando
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            </div>
+        {% endif %}
+    </main>
+{% endblock %}

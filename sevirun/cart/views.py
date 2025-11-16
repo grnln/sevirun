@@ -17,7 +17,19 @@ from Crypto.Cipher import DES3
 import time
 import random
 from decimal import Decimal
+from .models import *
 
+# Cart views
+
+@login_required(login_url='login')
+def cart(request):
+    currentUser = request.user
+    cart = list(Cart.objects.filter(client=currentUser))
+    if len(cart) == 0:
+        cart = Cart.objects.create(cclient=currentUser)
+    return render(request, "cart/view_cart.html", { 'cart': Cart.objects.filter(client=currentUser)[0] })
+
+# Payment views
 # Example credit card for testing: 4548812049400004
 
 @login_required(login_url='/login/')
