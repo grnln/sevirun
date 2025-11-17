@@ -20,12 +20,20 @@ from decimal import Decimal
 
 # Example credit card for testing: 4548812049400004
 
-@login_required(login_url='/login/')
+@login_required(login_url='login')
 def start_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id)
 
     if order.client != request.user:
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
+        return redirect('home')
+    
+    if order.state != 'PE':
+        messages.info(request, "El pedido ya ha sido pagado o no está pendiente de pago.")
+        return redirect('home')
+    
+    if order.payment_method != 'CC':
+        messages.error(request, "El método de pago seleccionado no es válido para este pedido.")
         return redirect('home')
     
     config = getattr(settings, 'REDSYS_CONFIG', None) or {}
@@ -129,7 +137,7 @@ def payment_notification(request, order_id):
     else:
         return HttpResponse("Firma inválida", status=400)
 
-@login_required(login_url='/login/')
+@login_required(login_url='login')
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     if order.client != request.user:
@@ -137,7 +145,7 @@ def payment_success(request, order_id):
         return redirect('home')
     return render(request, 'cart/payment_success.html', {"order": order})
 
-@login_required(login_url='/login/')
+@login_required(login_url='login')
 def payment_error(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     if order.client != request.user:
@@ -145,7 +153,7 @@ def payment_error(request, order_id):
         return redirect('home')
     return render(request, 'cart/payment_error.html', {"order": order})
 
-@login_required(login_url='/login/')
+@login_required(login_url='login')
 @require_http_methods(['GET', 'POST'])
 def payment_method(request, order_id):
     try:
