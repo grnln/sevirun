@@ -34,7 +34,7 @@ def order_detail(request, order_id):
         messages.error(request, "El pedido al que intenta acceder no existe.")
         return redirect('orders')
 
-    if not request.user.is_staff and not (order.client == request.user):
+    if not (request.user.is_staff or request.user.is_superuser) and not (order.client == request.user):
         messages.error(request, "El pedido al que intenta acceder no es suyo.")
         return redirect('orders')
 
