@@ -25,10 +25,33 @@ from django.http import JsonResponse
 @login_required(login_url='login')
 def cart(request):
     currentUser = request.user
-    cart = list(Cart.objects.filter(client=currentUser))
-    if len(cart) == 0:
-        cart = Cart.objects.create(client=currentUser)
-    return render(request, "cart/view_cart.html", { 'cart': Cart.objects.get(client=currentUser) })
+    cart, created = Cart.objects.get_or_create(client=currentUser)
+    
+    return render(request, "cart/view_cart.html", { 'cart': cart })
+
+from django.shortcuts import get_object_or_404, redirect
+
+@login_required(login_url='login')
+def add_product_to_cart(request, product_id, colour_id, size_id):
+    currentUser = request.user
+    cart, created = Cart.objects.get_or_create(client=currentUser)
+
+    product = get_object_or_404(Product, id=product_id)
+    colour = get_object_or_404(ProductColour, id=colour_id)
+    size = get_object_or_404(ProductSize, id=size_id)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product,
+        colour=colour,
+        size=size,
+        defaults={'quantity': 1}
+    )
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    return redirect('cart') 
 
 @login_required(login_url='login')
 def update_quantity_ajax(request, item_id, action):
