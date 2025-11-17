@@ -14,11 +14,11 @@ class Cart(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=models.Q(client__isnull=False) | models.Q(session_id__isnull=False),
+                condition=models.Q(client__isnull=False) | models.Q(session_id__isnull=False),
                 name='cart_has_client_or_session'
             )
         ]
-
+        
     @property
     def temp_subtotal(self):
         allItems = self.items.all()
