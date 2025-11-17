@@ -18,6 +18,7 @@ import time
 import random
 from decimal import Decimal
 from .models import *
+from django.http import JsonResponse
 
 # Cart views
 
@@ -26,8 +27,41 @@ def cart(request):
     currentUser = request.user
     cart = list(Cart.objects.filter(client=currentUser))
     if len(cart) == 0:
-        cart = Cart.objects.create(cclient=currentUser)
-    return render(request, "cart/view_cart.html", { 'cart': Cart.objects.filter(client=currentUser)[0] })
+        cart = Cart.objects.create(client=currentUser)
+    return render(request, "cart/view_cart.html", { 'cart': Cart.objects.get(client=currentUser) })
+
+@login_required(login_url='login')
+def update_quantity_ajax(request, item_id, action):
+    item = get_object_or_404(CartItem, id=item_id, cart__client=request.user)
+
+    if action == "increase":
+        item.quantity += 1
+
+    elif action == "decrease":
+        if item.quantity > 1:
+            item.quantity -= 1
+        
+    elif action == "delete":
+        cart = item.cart
+        item.delete()
+
+        return JsonResponse({
+            "deleted": True,
+            "subtotal": float(cart.temp_subtotal),
+        })
+
+    item.save()
+
+    item_total = float(item.temp_price)
+
+    cart_total = float(item.cart.temp_subtotal)
+
+    return JsonResponse({
+        "deleted": False,
+        "quantity": item.quantity,
+        "item_total": item_total,
+        "subtotal": cart_total,
+    })
 
 # Payment views
 # Example credit card for testing: 4548812049400004
