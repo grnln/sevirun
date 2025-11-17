@@ -11,7 +11,11 @@
             <a href = "{% url 'home' %}" class = "text-dark">← Volver</a>
         </aside>
         <section>
-            <h2 class = "h5 mb-3 fw-bold">Mis pedidos:</h2>
+            {% if user.is_staff or user.is_superuser %}
+                <h2 class = "h5 mb-3 fw-bold">Pedidos:</h2>
+            {% else %}
+                <h2 class = "h5 mb-3 fw-bold">Mis pedidos:</h2>
+            {% endif %}
             <div class = "row g-3">
                 {% if orders %}
                     {% for o in orders %}
@@ -27,6 +31,22 @@
                                     <p>
                                         <strong>Dirección:</strong> {{ o.shipping_address }}
                                     </p>
+                                    {% if user.is_staff or user.is_superuser %}
+                                        <div>
+                                            <form method = "post" class = "d-flex mb-2">
+                                                {% csrf_token %}
+                                                <div class = "d-flex flex-column justify-content-center">
+                                                    <label for = "order-{{o.pk}}-state"><strong>Estado: </strong></label>
+                                                </div>
+                                                <select class = "form-select ms-2 me-4" name = "order-{{o.pk}}-state" id = "order-{{o.pk}}-state" value = "{{o.state}}">
+                                                    {% for s in states %}
+                                                        <option value = "{{s.0}}" {% if o.state == s.0 %}selected{% endif %}>{{s.1}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button type = "submit" class = "btn btn-primary mt-auto">Cambiar</button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
                                     <p class="d-flex align-items-center justify-content-start gap-3">
                                         <span class="order-products"><strong>Productos:</strong> {{ o.total_units }}</span>
                                         <span class="order-total"><strong>Total:</strong> {{ o.total_price }}€</span>

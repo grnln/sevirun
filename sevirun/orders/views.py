@@ -13,9 +13,18 @@ def index_sales(request):
 @login_required(login_url='login')
 def index_customer_orders(request):
     if request.user.is_staff or request.user.is_superuser:
-        return redirect('sales')
-    orders = Order.objects.filter(client=request.user).order_by('-created_at')
-    return render(request, 'orders/orders_list.html', { "orders" : orders })
+        orders = Order.objects.all().order_by('-created_at')
+
+        if request.method == 'POST':
+            for order in orders:
+                state = request.POST.get(f'order-{order.pk}-state', None)
+
+                if state != None:
+                    order.state = state.strip()
+                    order.save()
+    else:
+        orders = Order.objects.filter(client=request.user).order_by('-created_at')
+    return render(request, 'orders/orders_list.html', { "orders" : orders, "states": OrderState.choices })
 
 @login_required(login_url='login')
 def order_detail(request, order_id):
@@ -23,17 +32,18 @@ def order_detail(request, order_id):
         order = Order.objects.get(id=order_id)
     except Order.DoesNotExist:
         messages.error(request, "El pedido al que intenta acceder no existe.")
-        if request.user.is_staff:
-            return redirect('sales')
         return redirect('orders')
 
-    if request.user.is_staff:
-        messages.error(request, "Esta vista es sólo para clientes.")
-        return redirect('sales')
-    
-    if not (order.client == request.user):
+    if not request.user.is_staff and not (order.client == request.user):
         messages.error(request, "El pedido al que intenta acceder no es suyo.")
         return redirect('orders')
 
+    if request.method == 'POST' and (request.user.is_staff or request.user.is_superuser):
+        state = request.POST.get(f'order-{order.pk}-state', None)
+
+        if state != None:
+            order.state = state.strip()
+            order.save()
+            
     order_items = OrderItem.objects.filter(order=order)
-    return render(request, 'orders/order_detail.html', { "order": order, "order_items": order_items })
+    return render(request, 'orders/order_detail.html', { "order": order, "order_items": order_items, "states": OrderState.choices })
