@@ -19,22 +19,38 @@ import random
 from decimal import Decimal
 from .models import *
 from django.http import JsonResponse
+import uuid
 
 # Cart views
 
-@login_required(login_url='login')
+def get_or_create_cart(request):
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(client=request.user)
+    else:
+        if 'cart_session_id' not in request.session:
+            request.session['cart_session_id'] = str(uuid.uuid4())
+        
+        session_id = request.session['cart_session_id']
+        cart, created = Cart.objects.get_or_create(session_id=session_id)
+    return cart
+
+def get_user_cart(request):
+    try: 
+        if request.user.is_authenticated:
+            return Cart.objects.get(client=request.user)
+        else:
+            if 'cart_session_id' in request.session:
+                return Cart.objects.get(session_id=request.session['cart_session_id'])
+    except:
+        return None
+    return None
+
 def cart(request):
-    currentUser = request.user
-    cart, created = Cart.objects.get_or_create(client=currentUser)
-    
+    cart = get_or_create_cart(request)
     return render(request, "cart/view_cart.html", { 'cart': cart })
 
-from django.shortcuts import get_object_or_404, redirect
-
-@login_required(login_url='login')
 def add_product_to_cart(request, product_id, colour_id, size_id):
-    currentUser = request.user
-    cart, created = Cart.objects.get_or_create(client=currentUser)
+    cart = get_or_create_cart(request)
 
     product = get_object_or_404(Product, id=product_id)
     colour = get_object_or_404(ProductColour, id=colour_id)
@@ -53,9 +69,9 @@ def add_product_to_cart(request, product_id, colour_id, size_id):
 
     return redirect('cart') 
 
-@login_required(login_url='login')
 def update_quantity_ajax(request, item_id, action):
-    item = get_object_or_404(CartItem, id=item_id, cart__client=request.user)
+    cart = get_user_cart(request)
+    item = get_object_or_404(CartItem, id=item_id, cart=cart)
 
     if action == "increase":
         item.quantity += 1

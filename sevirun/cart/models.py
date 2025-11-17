@@ -6,9 +6,18 @@ from django.core.validators import MaxValueValidator, MinValueValidator, RegexVa
 # Create your models here.
 
 class Cart(models.Model):
-    client = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, null=False)
+    client = models.ForeignKey(AppUser, on_delete=models.CASCADE, null=True, blank=True)
+    session_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(client__isnull=False) | models.Q(session_id__isnull=False),
+                name='cart_has_client_or_session'
+            )
+        ]
 
     @property
     def temp_subtotal(self):
@@ -22,7 +31,7 @@ class Cart(models.Model):
     def __str__(self):
         return f'''
                 {{
-                    client: {self.client.pk},
+                    client: {self.client.pk if self.client else "anonymous"},
                     items: {[str(item) for item in self.items.all()]}
                 }}
                 '''
