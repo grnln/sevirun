@@ -107,6 +107,6 @@
         {% else %}
             </div>
         {% endif %}
-        <script src="{% static 'js/cart.js' %}"></script>
+        <script src="{% static 'js/cart.js' %}?v={{ timestamp }}"></script>
     </main>
 {% endblock %}
