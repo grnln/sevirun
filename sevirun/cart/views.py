@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render,  get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from orders.models import Order
+from orders.models import Order, OrderItem
 from django.http import HttpResponse
 from django.urls import reverse
 from django.conf import settings
@@ -20,6 +20,7 @@ from decimal import Decimal
 from .models import *
 from django.http import JsonResponse
 import uuid
+from django.utils import timezone
 
 # Cart views
 
@@ -101,6 +102,24 @@ def update_quantity_ajax(request, item_id, action):
         "item_total": item_total,
         "subtotal": cart_total,
     })
+
+def create_order_from_cart(request):
+    cart = get_user_cart(request)
+    cart_items = cart.items.all()
+
+    if len(cart_items) == 0:
+        messages.error(request, "El carrito está vacío.")
+        return redirect('cart')
+    
+    cart_client = cart.client if cart.client else None
+
+    order = Order.objects.create(client=cart_client, created_at=timezone.now(), state="PE", delivery_cost=0.0, discount_percentage=0.0)
+    for item in cart_items:
+        price = item.product.price_on_sale if item.product.price_on_sale else item.product.price
+        OrderItem.objects.create(order=order, product=item.product, size=item.size, colour=item.colour, quantity=item.quantity, unit_price=price)
+    cart.delete()
+
+    return redirect('order_detail', order_id=order.pk)
 
 # Payment views
 # Example credit card for testing: 4548812049400004

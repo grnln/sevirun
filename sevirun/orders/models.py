@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator, RegexVa
 from users.models import AppUser
 from products.models import *
 from decimal import Decimal, ROUND_CEILING
+from django.core.exceptions import ValidationError
 
 phone_validator = RegexValidator(
     regex=r'^\+?1?\d{9,15}$',
@@ -22,7 +23,7 @@ class PaymentMethod(models.TextChoices):
     CASH = "CA", _("Contrareembolso")
 
 class Order(models.Model):
-    client = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, null=False)
+    client = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, null=True, blank=True)
     created_at = models.DateTimeField(null = False)
     state = models.CharField(choices=OrderState, default=OrderState.PENDING, null=False)
 
@@ -44,11 +45,12 @@ class Order(models.Model):
         validators=[MinValueValidator(0.0), MaxValueValidator(100.00)]
     )
     payment_method = models.CharField(choices=PaymentMethod, default=PaymentMethod.CREDIT_CARD, null=False)
-    shipping_address = models.CharField(max_length = 255, null = False, blank=False)
+    shipping_address = models.CharField(max_length = 255, null = True, blank=True)
     phone_number = models.CharField(
         validators=[phone_validator],
         max_length=17,
-        null=False
+        null=True,
+        blank=True
     )
 
     tax_percentage = 21  # IVA
@@ -68,6 +70,30 @@ class Order(models.Model):
     @property
     def total_units(self):
         return sum(item.quantity for item in self.items.all())
+
+    def clean(self):
+        super().clean()
+        is_pending = self.state == OrderState.PENDING
+        
+        if not is_pending:
+            errors = {}
+            
+            if not self.shipping_address:
+                errors['shipping_address'] = (
+                    'Shipping address is required unless order state is pending.'
+                )
+            
+            if not self.phone_number:
+                errors['phone_number'] = (
+                    'Phone number is required unless order state is pending.'
+                )
+            
+            if errors:
+                raise ValidationError(errors)
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'''
