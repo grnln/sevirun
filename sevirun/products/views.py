@@ -136,8 +136,7 @@ def edit_product(request, product_id):
                 if value:
                     setattr(product, field, value)
             
-            if 'is_highlighted' in request.POST:
-                product.is_highlighted = request.POST.get('is_highlighted')
+            product.is_highlighted = request.POST.get('is_highlighted', False) == 'on'
             
             if 'picture' in request.FILES:
                 product.picture = request.FILES['picture']
