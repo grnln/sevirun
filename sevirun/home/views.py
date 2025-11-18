@@ -17,7 +17,3 @@ def about(request):
 
 def contact(request):
     return render(request, 'home/contact.html')
-
-# Placeholder views - remove when implementing actual functionality
-def cart(request):
-    return HttpResponse("Carrito — (implementar plantilla)")

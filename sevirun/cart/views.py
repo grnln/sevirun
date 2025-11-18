@@ -17,7 +17,92 @@ from Crypto.Cipher import DES3
 import time
 import random
 from decimal import Decimal
+from .models import *
+from django.http import JsonResponse
+import uuid
 
+# Cart views
+
+def get_or_create_cart(request):
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(client=request.user)
+    else:
+        if 'cart_session_id' not in request.session:
+            request.session['cart_session_id'] = str(uuid.uuid4())
+        
+        session_id = request.session['cart_session_id']
+        cart, created = Cart.objects.get_or_create(session_id=session_id)
+    return cart
+
+def get_user_cart(request):
+    try: 
+        if request.user.is_authenticated:
+            return Cart.objects.get(client=request.user)
+        else:
+            if 'cart_session_id' in request.session:
+                return Cart.objects.get(session_id=request.session['cart_session_id'])
+    except:
+        return None
+    return None
+
+def cart(request):
+    cart = get_or_create_cart(request)
+    return render(request, "cart/view_cart.html", { 'cart': cart })
+
+def add_product_to_cart(request, product_id, colour_id, size_id):
+    cart = get_or_create_cart(request)
+
+    product = get_object_or_404(Product, id=product_id)
+    colour = get_object_or_404(ProductColour, id=colour_id)
+    size = get_object_or_404(ProductSize, id=size_id)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product,
+        colour=colour,
+        size=size,
+        defaults={'quantity': 1}
+    )
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    return redirect('cart') 
+
+def update_quantity_ajax(request, item_id, action):
+    cart = get_user_cart(request)
+    item = get_object_or_404(CartItem, id=item_id, cart=cart)
+
+    if action == "increase":
+        item.quantity += 1
+
+    elif action == "decrease":
+        if item.quantity > 1:
+            item.quantity -= 1
+        
+    elif action == "delete":
+        cart = item.cart
+        item.delete()
+
+        return JsonResponse({
+            "deleted": True,
+            "subtotal": float(cart.temp_subtotal),
+        })
+
+    item.save()
+
+    item_total = float(item.temp_price)
+
+    cart_total = float(item.cart.temp_subtotal)
+
+    return JsonResponse({
+        "deleted": False,
+        "quantity": item.quantity,
+        "item_total": item_total,
+        "subtotal": cart_total,
+    })
+
+# Payment views
 # Example credit card for testing: 4548812049400004
 
 @login_required(login_url='login')

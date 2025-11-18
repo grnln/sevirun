@@ -2,6 +2,13 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.cart, name='cart'),
+    path("update-ajax/<int:item_id>/<str:action>/", 
+        views.update_quantity_ajax, 
+        name="update_quantity_ajax"),
+    path('add/<int:product_id>/<int:colour_id>/<int:size_id>/', 
+        views.add_product_to_cart, 
+        name='add_to_cart'),
     path('pay/method/<int:order_id>/', views.payment_method, name='payment_method'),
     path('pay/start/<int:order_id>/', views.start_payment, name='start_payment'),
     path('pay/ok/<int:order_id>/', views.payment_success, name='payment_ok'),

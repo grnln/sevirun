@@ -99,4 +99,19 @@
         updateSizesForColor();
         updateAddButton();
     });
+    
+    window.addToCartRedirect = function(productId) {
+        const sizeSelect = document.getElementById('size-select');
+        const colorSelect = document.getElementById('color-select');
+
+        const sizeId = sizeSelect ? sizeSelect.value : null;
+        const colorId = colorSelect ? colorSelect.value : null;
+
+        if (!sizeId || !colorId) {
+            alert("Por favor, selecciona talla y color antes de añadir al carrito.");
+            return;
+        }
+
+        window.location.href = `/cart/add/${productId}/${colorId}/${sizeId}/`;
+    };
 })();
