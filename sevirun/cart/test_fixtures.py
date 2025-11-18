@@ -9,6 +9,7 @@ import uuid
 def create_cart_item(sample_product):
     size = ProductSize.objects.create(name = '42')
     colour = ProductColour.objects.create(name = 'Red')
+    ProductStock.objects.create(product=sample_product, size=size, colour=colour, stock=10)
     def _create_cart_item(cart):
         return CartItem.objects.create(
             cart=cart,
