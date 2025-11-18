@@ -659,3 +659,31 @@ def test_delete_product(client, regular_user, auth_cart):
     assert response.status_code == 200
     assert isinstance(data, dict)
     assert len(auth_cart.items.all()) == 0
+
+@pytest.mark.django_db
+def test_create_order_from_cart(client, regular_user, auth_cart):
+    client.force_login(regular_user)
+
+    url = reverse('create_order_from_cart')
+    response = client.get(url)
+
+    createdOrder = Order.objects.filter(client=regular_user)[0]
+
+    assert response.status_code == 302
+    assert "/orders/detail" in response.url
+    assert createdOrder
+    assert len(createdOrder.items.all()) == 1
+    assert len(Cart.objects.all()) == 0
+
+@pytest.mark.django_db
+def test_create_order_from_empty_cart(client, regular_user):
+    client.force_login(regular_user)
+
+    url = reverse('cart')
+    client.get(url)
+
+    url = reverse('create_order_from_cart')
+    response = client.get(url)
+
+    assert response.status_code == 302
+    assert "cart" in response.url
