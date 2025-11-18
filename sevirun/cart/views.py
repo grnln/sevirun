@@ -24,6 +24,17 @@ from django.utils import timezone
 
 # Cart views
 
+def check_items_stock(cart):
+    cart.refresh_from_db()
+    items = cart.items.all()
+    for item in items:
+        stock = ProductStock.objects.filter(product=item.product, size=item.size, colour=item.colour)[0].stock
+        if item.quantity > stock:
+            item.quantity = stock
+            item.save()
+    cart.refresh_from_db()
+    return cart
+
 def get_or_create_cart(request):
     if request.user.is_authenticated:
         cart, created = Cart.objects.get_or_create(client=request.user)
@@ -33,6 +44,7 @@ def get_or_create_cart(request):
         
         session_id = request.session['cart_session_id']
         cart, created = Cart.objects.get_or_create(session_id=session_id)
+    cart = check_items_stock(cart)
     return cart
 
 def get_user_cart(request):
@@ -91,6 +103,9 @@ def update_quantity_ajax(request, item_id, action):
         })
 
     item.save()
+    cart.refresh_from_db()
+    cart = check_items_stock(cart)
+    item.refresh_from_db()
 
     item_total = float(item.temp_price)
 
