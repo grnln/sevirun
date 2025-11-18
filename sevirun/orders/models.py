@@ -11,7 +11,7 @@ phone_validator = RegexValidator(
 )
 
 class OrderState(models.TextChoices):
-    PENDING = "PE", _("Pendiente")
+    PENDING = "PE", _("Pendiente de pago")
     PROCESSING = "PR", _("En proceso")
     SHIPPED = "SH", _("Enviado")
     DELIVERED = "DE", _("Entregado")
