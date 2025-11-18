@@ -121,7 +121,6 @@
             "picture": "products/boots.jpg",
             "price": 49.99,
             "price_on_sale": 25.99,
-            "is_available": true,
             "is_highlighted": false,
             "created_at": "2025-01-01T00:00:00.000+01:00",
             "updated_at": "2025-01-01T00:00:00.000+01:00",
@@ -140,7 +139,6 @@
             "picture": "products/boots.jpg",
             "price": 49.99,
             "price_on_sale": null,
-            "is_available": false,
             "is_highlighted": true,
             "created_at": "2025-01-01T00:00:00.000+01:00",
             "updated_at": "2025-05-01T00:10:10.000+01:00",
@@ -159,7 +157,6 @@
             "picture": "products/trainers.jpg",
             "price": 29.99,
             "price_on_sale": 15.99,
-            "is_available": true,
             "is_highlighted": true,
             "created_at": "2025-01-01T00:00:00.000+01:00",
             "updated_at": "2025-01-01T00:10:10.000+01:00",
@@ -199,7 +196,7 @@
         "model": "products.ProductStock",
         "pk": 4,
         "fields": {
-            "stock": 25,
+            "stock": 0,
             "product": 2,
             "size": 1,
             "colour": 1
@@ -208,7 +205,7 @@
         "model": "products.ProductStock",
         "pk": 5,
         "fields": {
-            "stock": 45,
+            "stock": 0,
             "product": 2,
             "size": 1,
             "colour": 2
@@ -217,7 +214,7 @@
         "model": "products.ProductStock",
         "pk": 6,
         "fields": {
-            "stock": 65,
+            "stock": 0,
             "product": 2,
             "size": 2,
             "colour": 1
@@ -226,7 +223,7 @@
         "model": "products.ProductStock",
         "pk": 7,
         "fields": {
-            "stock": 85,
+            "stock": 0,
             "product": 2,
             "size": 2,
             "colour": 2
