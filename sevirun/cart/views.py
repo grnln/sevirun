@@ -112,14 +112,19 @@ def create_order_from_cart(request):
         return redirect('cart')
     
     cart_client = cart.client if cart.client else None
+    cart_session_id = cart.session_id if cart.session_id else None
 
-    order = Order.objects.create(client=cart_client, created_at=timezone.now(), state="PE", delivery_cost=0.0, discount_percentage=0.0)
+    order = Order.objects.create(client=cart_client, session_id=cart_session_id, created_at=timezone.now(), state="PE", delivery_cost=0.0, discount_percentage=0.0)
     for item in cart_items:
         price = item.product.price_on_sale if item.product.price_on_sale else item.product.price
         OrderItem.objects.create(order=order, product=item.product, size=item.size, colour=item.colour, quantity=item.quantity, unit_price=price)
     cart.delete()
 
-    return redirect('order_detail', order_id=order.pk)
+    if cart_client:
+        return redirect('order_detail', order_id=order.pk)
+    else:
+        # Should redirect to buying process when implemented, checking that order.session_id is request.session['cart_session_id']
+        return redirect('home')
 
 # Payment views
 # Example credit card for testing: 4548812049400004
