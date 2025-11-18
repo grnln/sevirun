@@ -7,6 +7,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from .forms import ProductFiltersForm
+from django.http import JsonResponse
+from django.urls import reverse
 
 def index(request):
     products = Product.objects.filter(is_deleted=False)
@@ -221,3 +223,65 @@ def catalog_management(request):
         'sizes': ProductSize.objects.all(),
         'colours': ProductColour.objects.all()
     })
+
+@staff_member_required(login_url='login')
+def create_brand(request):
+    if request.method == "POST":
+        name = request.POST.get("brandName")
+        if name:
+            Brand.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=brands")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_model(request):
+    if request.method == "POST":
+        name = request.POST.get("modelName")
+        brand = request.POST.get("brandSelect")
+        if name and brand:
+            brandObject = Brand.objects.get(pk=int(brand))
+            ProductModel.objects.create(name=name, brand=brandObject)
+        return redirect(f"{reverse('catalog_management')}?tab=models")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_type(request):
+    if request.method == "POST":
+        name = request.POST.get("typeName")
+        if name:
+            ProductType.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=types")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_material(request):
+    if request.method == "POST":
+        name = request.POST.get("materialName")
+        if name:
+            ProductMaterial.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=materials")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_size(request):
+    if request.method == "POST":
+        name = request.POST.get("sizeName")
+        if name:
+            ProductSize.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=sizes")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_colour(request):
+    if request.method == "POST":
+        name = request.POST.get("colourName")
+        if name:
+            ProductColour.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=colours")
+    
+    return redirect('catalog_management')

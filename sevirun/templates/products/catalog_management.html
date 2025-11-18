@@ -38,7 +38,7 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="colors-tab" data-bs-toggle="tab" data-bs-target="#colors" type="button">
+                <button class="nav-link" id="colours-tab" data-bs-toggle="tab" data-bs-target="#colours" type="button">
                     <i class="bi bi-palette"></i> Colores
                 </button>
             </li>
@@ -49,9 +49,10 @@
             <div class="tab-pane fade show active" id="brands" role="tabpanel">
                 <div class="form-section">
                     <h5 class="mb-3">Añadir Nueva Marca</h5>
-                    <form id="brandForm" class="row g-2">
+                    <form id="brandForm" class="row g-2" data-create-url="{% url 'create_brand' %}">
+                        {% csrf_token %}
                         <div class="col-md-6">
-                            <input type="text" class="form-control" placeholder="Nombre de la marca" id="brandName" required>
+                            <input type="text" class="form-control" placeholder="Nombre de la marca" id="brandName" name="brandName" required>
                         </div>
                         <div class="col-md-6">
                             <button type="submit" class="btn btn-success w-100">
@@ -97,11 +98,20 @@
             <div class="tab-pane fade" id="models" role="tabpanel">
                 <div class="form-section">
                     <h5 class="mb-3">Añadir Nuevo Modelo</h5>
-                    <form id="modelForm" class="row g-2">
+                    <form id="modelForm" class="row g-2" data-create-url="{% url 'create_model' %}">
+                        {% csrf_token %}
                         <div class="col-md-6">
-                            <input type="text" class="form-control" placeholder="Nombre del modelo" id="modelName" required>
+                            <input type="text" class="form-control" placeholder="Nombre del modelo" id="modelName" name="modelName" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <select class="form-select" id="brandSelect" name="brandSelect" required>
+                                <option value="">Seleccionar marca...</option>
+                                {% for brand in brands %}
+                                    <option value="{{ brand.id }}">{{ brand.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <button type="submit" class="btn btn-success w-100">
                                 <i class="bi bi-plus-circle"></i> Añadir Modelo
                             </button>
@@ -146,9 +156,10 @@
             <div class="tab-pane fade" id="types" role="tabpanel">
                 <div class="form-section">
                     <h5 class="mb-3">Añadir Nuevo Tipo</h5>
-                    <form id="typeForm" class="row g-2">
+                    <form id="typeForm" class="row g-2" data-create-url="{% url 'create_type' %}">
+                        {% csrf_token %}
                         <div class="col-md-6">
-                            <input type="text" class="form-control" placeholder="Nombre del tipo" id="typeName" required>
+                            <input type="text" class="form-control" placeholder="Nombre del tipo" id="typeName" name="typeName" required>
                         </div>
                         <div class="col-md-6">
                             <button type="submit" class="btn btn-success w-100">
@@ -193,9 +204,10 @@
             <div class="tab-pane fade" id="materials" role="tabpanel">
                 <div class="form-section">
                     <h5 class="mb-3">Añadir Nuevo Material</h5>
-                    <form id="materialForm" class="row g-2">
+                    <form id="materialForm" class="row g-2" data-create-url="{% url 'create_material' %}">
+                        {% csrf_token %}
                         <div class="col-md-6">
-                            <input type="text" class="form-control" placeholder="Nombre del material" id="materialName" required>
+                            <input type="text" class="form-control" placeholder="Nombre del material" id="materialName" name="materialName" required>
                         </div>
                         <div class="col-md-6">
                             <button type="submit" class="btn btn-success w-100">
@@ -240,9 +252,10 @@
             <div class="tab-pane fade" id="sizes" role="tabpanel">
                 <div class="form-section">
                     <h5 class="mb-3">Añadir Nueva Talla</h5>
-                    <form id="sizeForm" class="row g-2">
+                    <form id="sizeForm" class="row g-2" data-create-url="{% url 'create_size' %}">
+                        {% csrf_token %}
                         <div class="col-md-6">
-                            <input type="text" class="form-control" placeholder="Talla (ej: XL, 42)" id="sizeName" required>
+                            <input type="text" class="form-control" placeholder="Talla (ej: XL, 42)" id="sizeName" name="sizeName" required>
                         </div>
                         <div class="col-md-6">
                             <button type="submit" class="btn btn-success w-100">
@@ -284,12 +297,13 @@
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="colors" role="tabpanel">
+            <div class="tab-pane fade" id="colours" role="tabpanel">
                 <div class="form-section">
                     <h5 class="mb-3">Añadir Nuevo Color</h5>
-                    <form id="colorForm" class="row g-2">
+                    <form id="colourForm" class="row g-2" data-create-url="{% url 'create_colour' %}">
+                        {% csrf_token %}
                         <div class="col-md-6">
-                            <input type="text" class="form-control" placeholder="Nombre del color" id="colorName" required>
+                            <input type="text" class="form-control" placeholder="Nombre del color" id="colourName" name="colourName" required>
                         </div>
                         <div class="col-md-6">
                             <button type="submit" class="btn btn-success w-100">
@@ -331,5 +345,6 @@
                 </div>
             </div>
         </div>
+        <script src="{% static 'js/product-crud.js' %}?v=2"></script>
     </main>
 {% endblock %}

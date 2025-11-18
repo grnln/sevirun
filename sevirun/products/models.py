@@ -75,7 +75,7 @@ class Product(models.Model):
     is_deleted = models.BooleanField(null = False, default=False)
 
     # Navigation attributes
-    model = models.ForeignKey(ProductModel, on_delete = models.CASCADE, null = False)
+    model = models.ForeignKey(ProductModel, on_delete = models.CASCADE, null = False, related_name='products')
     type = models.ForeignKey(ProductType, on_delete = models.CASCADE, null = False, related_name='products')
     season = models.ForeignKey(ProductSeason, on_delete = models.CASCADE, null = False)
     material = models.ForeignKey(ProductMaterial, on_delete = models.CASCADE, null = False, related_name='products')
