@@ -210,3 +210,14 @@ def delete_product(request, product_id):
         return redirect('products')
     return render(request, 'products/product_confirm_delete.html', {'product': product})
 
+@staff_member_required(login_url='login')
+def catalog_management(request):
+
+    return render(request, 'products/catalog_management.html', {
+        'brands': Brand.objects.all(),
+        'models': ProductModel.objects.all(),
+        'types': ProductType.objects.all(),
+        'materials': ProductMaterial.objects.all(),
+        'sizes': ProductSize.objects.all(),
+        'colours': ProductColour.objects.all()
+    })

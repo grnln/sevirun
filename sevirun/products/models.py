@@ -12,7 +12,7 @@ class Brand(models.Model):
 class ProductModel(models.Model):
     name = models.CharField(max_length = 32, null = False)
     picture = models.ImageField(upload_to = 'models/', null = True)
-    brand = models.ForeignKey(Brand, on_delete = models.CASCADE, null = False)
+    brand = models.ForeignKey(Brand, on_delete = models.CASCADE, null = False, related_name='models')
 
     def __str__(self):
         return f'{{name: {self.name}, brand: {self.brand.name}}}'
@@ -41,12 +41,18 @@ class ProductMaterial(models.Model):
 class ProductSize(models.Model):
     name = models.CharField(max_length = 4, null = False)
 
+    def product_count(self):
+        return self.productstock_set.filter(stock__gt=0).values('product').distinct().count()
+
     def __str__(self):
         return f'{{name: {self.name}}}'
 
 class ProductColour(models.Model):
     name = models.CharField(max_length = 16, null = False)
     picture = models.ImageField(upload_to = 'colours/', null = True)
+
+    def product_count(self):
+        return self.productstock_set.filter(stock__gt=0).values('product').distinct().count()
 
     def __str__(self):
         return f'{{name: {self.name}}}'
@@ -70,9 +76,9 @@ class Product(models.Model):
 
     # Navigation attributes
     model = models.ForeignKey(ProductModel, on_delete = models.CASCADE, null = False)
-    type = models.ForeignKey(ProductType, on_delete = models.CASCADE, null = False)
+    type = models.ForeignKey(ProductType, on_delete = models.CASCADE, null = False, related_name='products')
     season = models.ForeignKey(ProductSeason, on_delete = models.CASCADE, null = False)
-    material = models.ForeignKey(ProductMaterial, on_delete = models.CASCADE, null = False)
+    material = models.ForeignKey(ProductMaterial, on_delete = models.CASCADE, null = False, related_name='products')
     
     @property
     def is_available(self):
