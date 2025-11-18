@@ -605,6 +605,27 @@ def test_increase_product(client, regular_user, auth_cart):
     assert currentQuantity == previousQuantity + 1
 
 @pytest.mark.django_db
+def test_increase_product_without_more_stock(client, regular_user, auth_cart):
+    client.force_login(regular_user)
+    item = auth_cart.items.all()[0]
+    item.quantity = 10
+    item.save()
+
+    previousQuantity = item.quantity
+
+    url = reverse('update_quantity_ajax', args=[item.pk, 'increase'])
+    response = client.get(url)
+
+    item.refresh_from_db()
+    currentQuantity = item.quantity
+
+    data = response.json()
+
+    assert response.status_code == 200
+    assert isinstance(data, dict)
+    assert currentQuantity == previousQuantity
+
+@pytest.mark.django_db
 def test_decrease_product(client, regular_user, auth_cart):
     client.force_login(regular_user)
     item = auth_cart.items.all()[0]
