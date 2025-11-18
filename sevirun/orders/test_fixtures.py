@@ -54,7 +54,6 @@ def order_and_items_list(order_list, sample_product):
         description = 'Long description',
         price = Decimal("19.99"),
         price_on_sale = Decimal("6.99"),
-        is_available = True,
         is_highlighted = False,
         created_at = now,
         updated_at = now,

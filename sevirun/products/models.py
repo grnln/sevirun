@@ -61,7 +61,6 @@ class Product(models.Model):
     price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
     price_on_sale = models.DecimalField(max_digits = 6, decimal_places = 2, null = True)
     
-    is_available = models.BooleanField(null = False)
     is_highlighted = models.BooleanField(null = False)
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -74,7 +73,12 @@ class Product(models.Model):
     type = models.ForeignKey(ProductType, on_delete = models.CASCADE, null = False)
     season = models.ForeignKey(ProductSeason, on_delete = models.CASCADE, null = False)
     material = models.ForeignKey(ProductMaterial, on_delete = models.CASCADE, null = False)
-
+    
+    @property
+    def is_available(self):
+        stocks = ProductStock.objects.all().filter(product = self)
+        return (sum([s.stock for s in stocks]) > 0)
+    
     def __str__(self):
         return f'''
                 {{
