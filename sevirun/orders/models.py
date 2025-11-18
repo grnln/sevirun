@@ -24,7 +24,7 @@ class PaymentMethod(models.TextChoices):
 
 class Order(models.Model):
     client = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, null=True, blank=True)
-    session_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    session_id = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(null = False)
     state = models.CharField(choices=OrderState, default=OrderState.PENDING, null=False)
 
