@@ -18,6 +18,7 @@ import time
 import random
 from decimal import Decimal
 from .models import *
+from products.models import ProductStock
 from django.http import JsonResponse
 import uuid
 
@@ -213,6 +214,17 @@ def payment_notification(request, order_id):
                 order_obj = Order.objects.get(id=int(order_id))
                 if order_obj.state == 'PE':
                     order_obj.state = 'PR'
+                    for item in order_obj.items.all():
+                        stock_obj = ProductStock.objects.get(
+                            product=item.product,
+                            size=item.size,
+                            colour=item.colour,
+                        )
+                        if stock_obj.stock >= item.quantity:
+                            stock_obj.stock -= item.quantity
+                        else:
+                            stock_obj.stock = 0
+                        stock_obj.save()
                     order_obj.save()
                     
             except Order.DoesNotExist:
@@ -258,7 +270,23 @@ def payment_method(request, order_id):
     if order.state != 'PE':
         messages.info(request, "El pedido ya ha sido pagado o no está pendiente de pago.")
         return redirect('home')
-    
+
+    # Verify stock
+    if request.method == 'POST':
+        for item in order.items.all():
+            try:
+                stock = ProductStock.objects.get(
+                    product=item.product,
+                    size=item.size,
+                    colour=item.colour,
+                )
+            except ProductStock.DoesNotExist:
+                stock = None
+
+            if stock is None or stock.stock < item.quantity:
+                messages.error(request, f"No hay suficiente stock para el producto {item.product.name} en la talla {item.size.name} y color {item.colour.name}.")
+                return redirect('cart')
+
     if request.method == 'POST' and request.POST.get('method') == 'card':
         order.payment_method = 'CC'
         order.save()
@@ -267,6 +295,17 @@ def payment_method(request, order_id):
     if request.method == 'POST' and request.POST.get('method') == 'cod':
         order.payment_method = 'CA'
         order.state = 'PR'
+        for item in order.items.all():
+            stock = ProductStock.objects.get(
+                product=item.product,
+                size=item.size,
+                colour=item.colour,
+            )
+            if stock.stock >= item.quantity:
+                stock.stock -= item.quantity
+            else:
+                stock.stock = 0
+            stock.save()
         order.save()
         return redirect('payment_ok', order_id=order_id)
 
