@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/emails.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✓ Pedido Confirmado</h1>
+        </div>
+
+        <div class="content">
+            <div class="order-number">
+                <strong>Número de Pedido:</strong>
+                #{{ order.id }}
+                <div class="status-badge">{{ order.get_state_display }}</div>
+            </div>
+
+            <div class="greeting">
+                <p>Hola,</p>
+                <p>¡Gracias por tu pedido! Hemos recibido tu compra correctamente. A continuación encontrarás un resumen de los detalles.</p>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Productos Ordenados</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Tamaño / Color</th>
+                            <th style="text-align: center;">Cantidad</th>
+                            <th class="price-right">Precio Unitario</th>
+                            <th class="price-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td><strong>{{ item.product.name }}</strong></td>
+                            <td>{{ item.size.name }} / {{ item.colour.name }}</td>
+                            <td style="text-align: center;">{{ item.quantity }}</td>
+                            <td class="price-right">€{{ item.unit_price }}</td>
+                            <td class="price-right"><strong>€{{ item.total_price }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Resumen del Pedido</div>
+                <div class="summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>€{{ order.subtotal }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Envío:</span>
+                        <span>€{{ order.delivery_cost }}</span>
+                    </div>
+                    {% if order.discount_percentage > 0 %}
+                    <div class="summary-row">
+                        <span>Descuento ({{ order.discount_percentage }}%):</span>
+                        <span>-€{{ discount_amount }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="summary-row">
+                        <span>IVA ({{ order.tax_percentage }}%):</span>
+                        <span>€{{ tax_amount }}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>TOTAL:</span>
+                        <span>€{{ order.total_price }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if order.shipping_address %}
+            <div class="section">
+                <div class="section-title">Información de Envío</div>
+                <div class="shipping-info">
+                    <strong>Dirección de Envío:</strong>
+                    {{ order.shipping_address }}
+                    {% if order.phone_number %}
+                    <br><strong>Teléfono:</strong>
+                    {{ order.phone_number }}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="section">
+                <div class="section-title">Método de Pago</div>
+                <p style="font-size: 14px; color: #555; margin: 0;">{{ order.get_payment_method_display }}</p>
+            </div>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #666; font-size: 14px;">
+                <p>Si tienes preguntas sobre tu pedido, no dudes en contactarnos.</p>
+                <p>Gracias por comprar con nosotros.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 Sevirun. Todos los derechos reservados.</p>
+            <p>Este es un correo automático, por favor no respondas directamente.</p>
+        </div>
+    </div>
+</body>
+</html>

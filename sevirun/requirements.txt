@@ -4,3 +4,4 @@ django-bootstrap5==23.1.0
 pytest==7.4.0
 pytest-django==4.5.2
 pycryptodome==3.19.0
+resend==2.19.0
