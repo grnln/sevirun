@@ -49,6 +49,9 @@
                                     <div class="summary-item">
                                         <span class="summary-label">Método de pago:</span> {{ s.get_payment_method_display }}
                                     </div>
+                                    <div class = "summary-item">
+                                        <span class = "summary-label">Correo:</span> {% if s.client_email %}{{ s.client_email }}{% else %}{{s.client.email}}{% endif %}
+                                    </div>
                                     <div class="subtotal">
                                         Total (IVA {{ s.tax_percentage }}%): {{ s.total_price }}€
                                     </div>
