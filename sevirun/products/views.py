@@ -1,13 +1,11 @@
 from django.shortcuts import render
 from .models import *
-from django.http import HttpResponse
 from django.db.models import Sum
 from .models import Product
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from .forms import ProductFiltersForm
-from django.http import JsonResponse
 from django.urls import reverse
 
 def index(request):
@@ -83,7 +81,7 @@ def categories(request):
     return render(request, 'products/categories.html', context)
 
 def product_detail(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, pk=product_id)
     
     sizes = product.productstock_set.values('size__id', 'size__name')\
         .annotate(total=Sum('stock'))\
@@ -240,7 +238,7 @@ def create_model(request):
         name = request.POST.get("modelName")
         brand = request.POST.get("brandSelect")
         if name and brand:
-            brandObject = Brand.objects.get(pk=int(brand))
+            brandObject = get_object_or_404(Brand, pk=int(brand))
             ProductModel.objects.create(name=name, brand=brandObject)
         return redirect(f"{reverse('catalog_management')}?tab=models")
     
@@ -285,3 +283,58 @@ def create_colour(request):
         return redirect(f"{reverse('catalog_management')}?tab=colours")
     
     return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def delete_brand(request, brand_id):
+    brand = get_object_or_404(Brand, pk=brand_id)
+    if(len(brand.models.all()) > 0):
+        messages.error(request, 'Existen modelos de producto que son de esta marca!')
+        return redirect(f"{reverse('catalog_management')}?tab=brands")
+    brand.delete()
+    return redirect(f"{reverse('catalog_management')}?tab=brands")
+
+@staff_member_required(login_url='login')
+def delete_model(request, model_id):
+    model = get_object_or_404(ProductModel, pk=model_id)
+    if(len(model.products) > 0):
+        messages.error(request, 'Existen productos que son de este modelo!')
+        return redirect(f"{reverse('catalog_management')}?tab=models")
+    model.delete()
+    return redirect(f"{reverse('catalog_management')}?tab=models")
+
+@staff_member_required(login_url='login')
+def delete_type(request, type_id):
+    type = get_object_or_404(ProductType, pk=type_id)
+    if(len(type.products) > 0):
+        messages.error(request, 'Existen productos que son de este tipo!')
+        return redirect(f"{reverse('catalog_management')}?tab=types")
+    type.delete()
+    return redirect(f"{reverse('catalog_management')}?tab=types")
+
+@staff_member_required(login_url='login')
+def delete_material(request, material_id):
+    material = get_object_or_404(ProductMaterial, pk=material_id)
+    if(len(material.products) > 0):
+        messages.error(request, 'Existen productos que usan este material!')
+        return redirect(f"{reverse('catalog_management')}?tab=materials")
+    material.delete()
+    return redirect(f"{reverse('catalog_management')}?tab=materials")
+
+@staff_member_required(login_url='login')
+def delete_size(request, size_id):
+    size = get_object_or_404(ProductSize, pk=size_id)
+    if(size.product_count > 0):
+        messages.error(request, 'Existen productos que usan esta talla!')
+        return redirect(f"{reverse('catalog_management')}?tab=sizes")
+    size.delete()
+    return redirect(f"{reverse('catalog_management')}?tab=sizes")
+
+@staff_member_required(login_url='login')
+def delete_colour(request, colour_id):    
+    colour = get_object_or_404(ProductColour, pk=colour_id)
+    if(colour.product_count > 0):
+        messages.error(request, 'Existen productos que usan este color!')
+        return redirect(f"{reverse('catalog_management')}?tab=colours")
+    colour.delete()
+    return redirect(f"{reverse('catalog_management')}?tab=colours")
+    
