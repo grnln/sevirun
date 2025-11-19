@@ -66,7 +66,7 @@ def order_info(request, order_id):
             order.type = OrderType.SHOP
             order.shipping_address = "En tienda"
         order.phone_number = phone_number
-        order.email = email
+        order.client_email = email
         order.save()
         return redirect('payment_method', order_id=order.pk)
 
@@ -358,7 +358,7 @@ def payment_method(request, order_id):
         messages.info(request, "El pedido ya ha sido pagado o no está pendiente de pago.")
         return redirect('home')
 
-    if order.email is None or order.phone_number is None or (order.type == OrderType.HOME_DELIVERY and order.shipping_address is None):
+    if order.client_email is None or order.phone_number is None or (order.type == OrderType.HOME_DELIVERY and order.shipping_address is None):
         messages.error(request, "Debe completar la información del pedido antes de seleccionar el método de pago.")
         return redirect('order_info', order_id=order.pk)
 

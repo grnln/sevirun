@@ -31,6 +31,12 @@
                                     <p>
                                         <strong>Dirección:</strong> {% firstof o.shipping_address "Ninguna" %}
                                     </p>
+                                    <p>
+                                        <strong>Correo:</strong> {% if o.client_email %}{{ o.client_email }}{% else %}{{o.client.email}}{% endif %}
+                                    </p>
+                                    <p>
+                                        <strong>Modo de envío:</strong> {{o.get_type_display}}
+                                    </p>
                                     {% if user.is_staff or user.is_superuser %}
                                         <div>
                                             <form method = "post" class = "d-flex mb-2">

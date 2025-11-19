@@ -5,6 +5,7 @@ from users.models import AppUser
 from products.models import *
 from decimal import Decimal, ROUND_CEILING
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 phone_validator = RegexValidator(
     regex=r'^\+?1?\d{9,15}$',
@@ -12,7 +13,7 @@ phone_validator = RegexValidator(
 )
 
 class OrderState(models.TextChoices):
-    PENDING = "PE", _("Pendiente")
+    PENDING = "PE", _("Pendiente de pago")
     PROCESSING = "PR", _("En proceso")
     SHIPPED = "SH", _("Enviado")
     DELIVERED = "DE", _("Entregado")
@@ -31,6 +32,7 @@ class Order(models.Model):
     session_id = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(null = False)
     state = models.CharField(choices=OrderState, default=OrderState.PENDING, null=False)
+    client_email = models.EmailField(validators = [validate_email], null = True, blank = True)
     type = models.CharField(choices=OrderType, null=True, blank=True)
 
     class Meta:
@@ -60,7 +62,6 @@ class Order(models.Model):
     )
     payment_method = models.CharField(choices=PaymentMethod, default=PaymentMethod.CREDIT_CARD, null=False)
     shipping_address = models.CharField(max_length = 255, null = True, blank=True)
-    email = models.EmailField(AppUser, null=True, blank=True)
     phone_number = models.CharField(
         validators=[phone_validator],
         max_length=17,
