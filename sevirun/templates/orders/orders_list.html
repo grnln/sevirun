@@ -29,7 +29,7 @@
                                         <strong>Fecha de pedido:</strong> {{ o.created_at }}
                                     </p>
                                     <p>
-                                        <strong>Dirección:</strong> {{ o.shipping_address }}
+                                        <strong>Dirección:</strong> {% firstof o.shipping_address "Ninguna" %}
                                     </p>
                                     {% if user.is_staff or user.is_superuser %}
                                         <div>

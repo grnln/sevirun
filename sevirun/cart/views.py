@@ -1,9 +1,12 @@
+import re
+
 from django.contrib import messages
-from django.shortcuts import redirect, render,  get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.shortcuts import redirect,  get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, OrderType
 from django.http import HttpResponse
 from django.urls import reverse
 from django.conf import settings
@@ -24,6 +27,51 @@ import uuid
 from django.utils import timezone
 
 # Cart views
+
+def order_info(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    session_ok = order.session_id == request.session['cart_session_id']
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
+            messages.error(request, "El pedido al que intenta acceder no es suyo.")
+            return redirect('home')
+
+    if request.method == "POST":
+        print("llega al post")
+        method = request.POST.get("delivery_method")
+        address = request.POST.get("shipping_address").strip()
+        email = request.POST.get("email", "").strip()
+        phone_number = request.POST.get("phone_number", "").strip()
+        if phone_number == "" or email == "":
+            messages.error(request, "Debe completar todos los campos.")
+            return render(request, 'cart/order_info.html', {"order": order})
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, "El formato del email no es válido.")
+            return render(request, 'cart/order_info.html', {"order": order})
+        phone_pattern = re.compile(r'^\+?[\d\s\-]{9,15}$')
+        if not phone_pattern.match(phone_number):
+            messages.error(request, "El formato del teléfono no es válido.")
+            return render(request, 'cart/order_info.html', {"order": order})
+        if method == "home" and address == "":
+            messages.error(request, "Debe completar todos los campos.")
+            return render(request, 'cart/order_info.html', {"order": order})
+        if method == "home":
+            order.type = OrderType.HOME_DELIVERY
+            order.shipping_address = address
+            order.delivery_cost = 5.00
+        else:
+            order.type = OrderType.SHOP
+            order.shipping_address = "En tienda"
+        order.phone_number = phone_number
+        order.email = email
+        order.save()
+        return redirect('payment_method', order_id=order.pk)
+
+    return render(request, 'cart/order_info.html', {"order": order})
+
 
 def check_items_stock(cart):
     cart.refresh_from_db()
@@ -136,20 +184,17 @@ def create_order_from_cart(request):
         OrderItem.objects.create(order=order, product=item.product, size=item.size, colour=item.colour, quantity=item.quantity, unit_price=price)
     cart.delete()
 
-    if cart_client:
-        return redirect('order_detail', order_id=order.pk)
-    else:
-        # Should redirect to buying process when implemented, checking that order.session_id is request.session['cart_session_id']
-        return redirect('home')
+    return redirect('order_info', order_id=order.pk)
 
 # Payment views
 # Example credit card for testing: 4548812049400004
 
-@login_required(login_url='login')
 def start_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id)
 
-    if order.client != request.user:
+    session_ok = order.session_id == request.session['cart_session_id']
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
         return redirect('home')
     
@@ -273,23 +318,24 @@ def payment_notification(request, order_id):
     else:
         return HttpResponse("Firma inválida", status=400)
 
-@login_required(login_url='login')
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    if order.client != request.user:
-        messages.error(request, "El pedido al que intenta ver no es suyo.")
+    session_ok = order.session_id == request.session['cart_session_id']
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
+        messages.error(request, "El pedido al que intenta pagar no es suyo.")
         return redirect('home')
     return render(request, 'cart/payment_success.html', {"order": order})
 
-@login_required(login_url='login')
 def payment_error(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    if order.client != request.user:
-        messages.error(request, "El pedido al que intenta ver no es suyo.")
+    session_ok = order.session_id == request.session['cart_session_id']
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
+        messages.error(request, "El pedido al que intenta pagar no es suyo.")
         return redirect('home')
     return render(request, 'cart/payment_error.html', {"order": order})
 
-@login_required(login_url='login')
 @require_http_methods(['GET', 'POST'])
 def payment_method(request, order_id):
     try:
@@ -301,14 +347,20 @@ def payment_method(request, order_id):
     if request.user.is_staff:
         messages.error(request, "Esta vista es sólo para clientes.")
         return redirect('home')
-    
-    if not (order.client == request.user):
+
+    session_ok = order.session_id == request.session['cart_session_id']
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
         return redirect('home')
     
     if order.state != 'PE':
         messages.info(request, "El pedido ya ha sido pagado o no está pendiente de pago.")
         return redirect('home')
+
+    if order.email is None or order.phone_number is None or (order.type == OrderType.HOME_DELIVERY and order.shipping_address is None):
+        messages.error(request, "Debe completar la información del pedido antes de seleccionar el método de pago.")
+        return redirect('order_info', order_id=order.pk)
 
     # Verify stock
     if request.method == 'POST':
