@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 from django.test import override_settings
+from products.models import ProductStock
 import pytest
 pytest_plugins = ['orders.test_fixtures']
 from django.urls import reverse
@@ -113,6 +114,16 @@ def test_payment_method_post_card_selection(client, regular_user, order_and_item
     order.state = 'PE'
     order.save()
 
+    initial_stock = {}
+    for item in order.items.all():
+        ps = ProductStock.objects.create(
+            product=item.product,
+            size=item.size,
+            colour=item.colour,
+            stock=10
+        )
+        initial_stock[item.pk] = ps.stock
+
     url = reverse('payment_method', args=[order.id])
     with patch.object(cart_views, 'start_payment', return_value=HttpResponse(status=200)) as mock_start_payment:
         response = client.post(url, data={'method': 'card'})
@@ -130,6 +141,16 @@ def test_payment_method_post_cod_selection(client, regular_user, order_and_items
     order.client = regular_user
     order.save()
     url = reverse('payment_method', args=[order.id])
+    
+    initial_stock = {}
+    for item in order.items.all():
+        ps = ProductStock.objects.create(
+            product=item.product,
+            size=item.size,
+            colour=item.colour,
+            stock=10
+        )
+        initial_stock[item.pk] = ps.stock
 
     response = client.post(url, data={'method': 'cod'})
 
@@ -138,6 +159,9 @@ def test_payment_method_post_cod_selection(client, regular_user, order_and_items
     order.refresh_from_db()
     assert order.payment_method == 'CA'
     assert order.state == 'PR'
+    for item in order.items.all():
+        ps = ProductStock.objects.get(product=item.product, size=item.size, colour=item.colour)
+        assert ps.stock == initial_stock[item.pk] - item.quantity
 
 @pytest.mark.django_db
 def test_payment_method_invalid_post_selection(client, regular_user, order_and_items_list):
@@ -148,6 +172,40 @@ def test_payment_method_invalid_post_selection(client, regular_user, order_and_i
     response = client.post(url, data={'method': 'invalid_method'})
 
     assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_payment_method_insufficient_stock_redirects_to_cart(client, regular_user, order_and_items_list):
+    client.force_login(regular_user)
+    order = order_and_items_list
+    order.state = 'PE'
+    order.client = regular_user
+    order.save()
+
+    items = list(order.items.all())
+    
+    # Item with stock insufficient (quantity in fixture: 2)
+    ProductStock.objects.create(
+        product=items[0].product,
+        size=items[0].size,
+        colour=items[0].colour,
+        stock=1,
+    )
+    # Item with sufficient stock
+    ProductStock.objects.create(
+        product=items[1].product,
+        size=items[1].size,
+        colour=items[1].colour,
+        stock=10,
+    )
+
+    url = reverse('payment_method', args=[order.id])
+    response = client.post(url, data={'method': 'card'})
+
+    assert response.status_code == 302
+    assert response.url == reverse('cart')
+    order.refresh_from_db()
+    assert order.state == 'PE'
 
 # Payment start view tests
 
@@ -256,12 +314,23 @@ def test_start_payment_renders_with_signature_and_parameters(client, regular_use
 # Test cases for payment notifications:
 @pytest.mark.django_db
 @override_settings(REDSYS_CONFIG=_make_redsys_config())
-def test_post_valid_signature_updates_order(client, regular_user, order_list):
-    order = order_list[0]
+def test_payment_notification_post_valid_signature_updates_order(client, regular_user, order_and_items_list):
+    order = order_and_items_list
     order.state = 'PE'
     order.payment_method = 'CC'
     order.client = regular_user
     order.save()
+
+    initial_stock = {}
+    for item in order.items.all():
+        ps = ProductStock.objects.create(
+            product=item.product,
+            size=item.size,
+            colour=item.colour,
+            stock=10
+        )
+        initial_stock[item.pk] = ps.stock
+
     secret_key = settings.REDSYS_CONFIG['SECRET_KEY']
 
     payload = {"Ds_Order": str(order.id), "Ds_Response": "000"}
@@ -278,9 +347,13 @@ def test_post_valid_signature_updates_order(client, regular_user, order_list):
     order.refresh_from_db()
     assert order.state == 'PR'
 
+    for item in order.items.all():
+        ps = ProductStock.objects.get(product=item.product, size=item.size, colour=item.colour)
+        assert ps.stock == initial_stock[item.pk] - item.quantity
+
 @pytest.mark.django_db
 @override_settings(REDSYS_CONFIG=_make_redsys_config())
-def test_post_invalid_signature_returns_400(client, regular_user, order_list):
+def test_payment_notification_post_invalid_signature_returns_400(client, regular_user, order_list):
     order = order_list[0]
     order.state = 'PE'
     order.payment_method = 'CC'
@@ -307,7 +380,7 @@ def test_post_invalid_signature_returns_400(client, regular_user, order_list):
     assert order.state == 'PE'
 
 @pytest.mark.django_db
-def test_missing_params_returns_400(client, regular_user, order_list):
+def test_payment_notification_missing_params_returns_400(client, regular_user, order_list):
     order = order_list[0]
     order.state = 'PE'
     order.payment_method = 'CC'
@@ -320,7 +393,7 @@ def test_missing_params_returns_400(client, regular_user, order_list):
 
 
 @pytest.mark.django_db
-def test_get_not_allowed(client, regular_user, order_list):
+def test_payment_notification_get_not_allowed(client, regular_user, order_list):
     order = order_list[0]
     order.state = 'PE'
     order.payment_method = 'CC'
@@ -532,6 +605,27 @@ def test_increase_product(client, regular_user, auth_cart):
     assert currentQuantity == previousQuantity + 1
 
 @pytest.mark.django_db
+def test_increase_product_without_more_stock(client, regular_user, auth_cart):
+    client.force_login(regular_user)
+    item = auth_cart.items.all()[0]
+    item.quantity = 10
+    item.save()
+
+    previousQuantity = item.quantity
+
+    url = reverse('update_quantity_ajax', args=[item.pk, 'increase'])
+    response = client.get(url)
+
+    item.refresh_from_db()
+    currentQuantity = item.quantity
+
+    data = response.json()
+
+    assert response.status_code == 200
+    assert isinstance(data, dict)
+    assert currentQuantity == previousQuantity
+
+@pytest.mark.django_db
 def test_decrease_product(client, regular_user, auth_cart):
     client.force_login(regular_user)
     item = auth_cart.items.all()[0]
@@ -565,3 +659,31 @@ def test_delete_product(client, regular_user, auth_cart):
     assert response.status_code == 200
     assert isinstance(data, dict)
     assert len(auth_cart.items.all()) == 0
+
+@pytest.mark.django_db
+def test_create_order_from_cart(client, regular_user, auth_cart):
+    client.force_login(regular_user)
+
+    url = reverse('create_order_from_cart')
+    response = client.get(url)
+
+    createdOrder = Order.objects.filter(client=regular_user)[0]
+
+    assert response.status_code == 302
+    assert "/orders/detail" in response.url
+    assert createdOrder
+    assert len(createdOrder.items.all()) == 1
+    assert len(Cart.objects.all()) == 0
+
+@pytest.mark.django_db
+def test_create_order_from_empty_cart(client, regular_user):
+    client.force_login(regular_user)
+
+    url = reverse('cart')
+    client.get(url)
+
+    url = reverse('create_order_from_cart')
+    response = client.get(url)
+
+    assert response.status_code == 302
+    assert "cart" in response.url

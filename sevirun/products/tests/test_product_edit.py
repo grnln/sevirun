@@ -56,7 +56,6 @@ def test_product_edit(client, staff_user, valid_product, sample_product, remove_
         "description",
         "price",
         "price_on_sale",
-        "is_available",
         "is_highlighted",
         "model",
         "type",

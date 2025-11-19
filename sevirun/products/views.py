@@ -136,11 +136,7 @@ def edit_product(request, product_id):
                 if value:
                     setattr(product, field, value)
             
-            if 'is_available' in request.POST:
-                product.is_available = request.POST.get('is_available')
-
-            if 'is_highlighted' in request.POST:
-                product.is_highlighted = request.POST.get('is_highlighted')
+            product.is_highlighted = request.POST.get('is_highlighted', False) == 'on'
             
             if 'picture' in request.FILES:
                 product.picture = request.FILES['picture']
@@ -170,7 +166,6 @@ def create_product(request):
                 'picture': request.FILES.get('picture'),
                 'price': request.POST.get('price'),
                 'price_on_sale': request.POST.get('price_on_sale') or None,
-                'is_available': 'is_available' in request.POST,
                 'is_highlighted': 'is_highlighted' in request.POST,
                 'model': model,
                 'type': product_type,

@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render,  get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from orders.models import Order
+from orders.models import Order, OrderItem
 from django.http import HttpResponse
 from django.urls import reverse
 from django.conf import settings
@@ -18,10 +18,23 @@ import time
 import random
 from decimal import Decimal
 from .models import *
+from products.models import ProductStock
 from django.http import JsonResponse
 import uuid
+from django.utils import timezone
 
 # Cart views
+
+def check_items_stock(cart):
+    cart.refresh_from_db()
+    items = cart.items.all()
+    for item in items:
+        stock = ProductStock.objects.filter(product=item.product, size=item.size, colour=item.colour)[0].stock
+        if item.quantity > stock:
+            item.quantity = stock
+            item.save()
+    cart.refresh_from_db()
+    return cart
 
 def get_or_create_cart(request):
     if request.user.is_authenticated:
@@ -32,6 +45,7 @@ def get_or_create_cart(request):
         
         session_id = request.session['cart_session_id']
         cart, created = Cart.objects.get_or_create(session_id=session_id)
+    cart = check_items_stock(cart)
     return cart
 
 def get_user_cart(request):
@@ -90,6 +104,9 @@ def update_quantity_ajax(request, item_id, action):
         })
 
     item.save()
+    cart.refresh_from_db()
+    cart = check_items_stock(cart)
+    item.refresh_from_db()
 
     item_total = float(item.temp_price)
 
@@ -101,6 +118,29 @@ def update_quantity_ajax(request, item_id, action):
         "item_total": item_total,
         "subtotal": cart_total,
     })
+
+def create_order_from_cart(request):
+    cart = get_user_cart(request)
+    cart_items = cart.items.all()
+
+    if len(cart_items) == 0:
+        messages.error(request, "El carrito está vacío.")
+        return redirect('cart')
+    
+    cart_client = cart.client if cart.client else None
+    cart_session_id = cart.session_id if cart.session_id else None
+
+    order = Order.objects.create(client=cart_client, session_id=cart_session_id, created_at=timezone.now(), state="PE", delivery_cost=0.0, discount_percentage=0.0)
+    for item in cart_items:
+        price = item.product.price_on_sale if item.product.price_on_sale else item.product.price
+        OrderItem.objects.create(order=order, product=item.product, size=item.size, colour=item.colour, quantity=item.quantity, unit_price=price)
+    cart.delete()
+
+    if cart_client:
+        return redirect('order_detail', order_id=order.pk)
+    else:
+        # Should redirect to buying process when implemented, checking that order.session_id is request.session['cart_session_id']
+        return redirect('home')
 
 # Payment views
 # Example credit card for testing: 4548812049400004
@@ -213,6 +253,17 @@ def payment_notification(request, order_id):
                 order_obj = Order.objects.get(id=int(order_id))
                 if order_obj.state == 'PE':
                     order_obj.state = 'PR'
+                    for item in order_obj.items.all():
+                        stock_obj = ProductStock.objects.get(
+                            product=item.product,
+                            size=item.size,
+                            colour=item.colour,
+                        )
+                        if stock_obj.stock >= item.quantity:
+                            stock_obj.stock -= item.quantity
+                        else:
+                            stock_obj.stock = 0
+                        stock_obj.save()
                     order_obj.save()
                     
             except Order.DoesNotExist:
@@ -258,7 +309,23 @@ def payment_method(request, order_id):
     if order.state != 'PE':
         messages.info(request, "El pedido ya ha sido pagado o no está pendiente de pago.")
         return redirect('home')
-    
+
+    # Verify stock
+    if request.method == 'POST':
+        for item in order.items.all():
+            try:
+                stock = ProductStock.objects.get(
+                    product=item.product,
+                    size=item.size,
+                    colour=item.colour,
+                )
+            except ProductStock.DoesNotExist:
+                stock = None
+
+            if stock is None or stock.stock < item.quantity:
+                messages.error(request, f"No hay suficiente stock para el producto {item.product.name} en la talla {item.size.name} y color {item.colour.name}.")
+                return redirect('cart')
+
     if request.method == 'POST' and request.POST.get('method') == 'card':
         order.payment_method = 'CC'
         order.save()
@@ -267,6 +334,17 @@ def payment_method(request, order_id):
     if request.method == 'POST' and request.POST.get('method') == 'cod':
         order.payment_method = 'CA'
         order.state = 'PR'
+        for item in order.items.all():
+            stock = ProductStock.objects.get(
+                product=item.product,
+                size=item.size,
+                colour=item.colour,
+            )
+            if stock.stock >= item.quantity:
+                stock.stock -= item.quantity
+            else:
+                stock.stock = 0
+            stock.save()
         order.save()
         return redirect('payment_ok', order_id=order_id)
 
