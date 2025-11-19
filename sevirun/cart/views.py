@@ -22,6 +22,7 @@ from products.models import ProductStock
 from django.http import JsonResponse
 import uuid
 from django.utils import timezone
+from emails.emailService import send_order_confirmation_email
 
 # Cart views
 
@@ -276,6 +277,7 @@ def payment_notification(request, order_id):
 @login_required(login_url='login')
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id=order_id)
+    send_order_confirmation_email(order)
     if order.client != request.user:
         messages.error(request, "El pedido al que intenta ver no es suyo.")
         return redirect('home')
