@@ -75,6 +75,9 @@
                                         <div class = "summary-item">
                                             <span class = "summary-label">Correo:</span> {% if order.client_email %}{{ order.client_email }}{% else %}{{order.client.email}}{% endif %}
                                         </div>
+                                        <div class = "summary-item">
+                                            <span class = "summary-label">Modo de envío:</span> {{order.get_type_display}}
+                                        </div>
                                     </div>
 
                                     <div class="summary-block price-block">
