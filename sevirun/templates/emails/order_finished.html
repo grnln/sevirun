@@ -4,7 +4,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/emails.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .order-number {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-left: 4px solid #333;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .order-number strong {
+            display: block;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .greeting {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        th {
+            background-color: #f9f9f9;
+            text-align: left;
+            padding: 12px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 14px;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+            color: #555;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .price-right {
+            text-align: right;
+        }
+        .summary {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        .summary-row:last-child {
+            margin-bottom: 0;
+        }
+        .summary-row.total {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .shipping-info {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+        }
+        .shipping-info strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #e0e0e0;
+        }
+        .status-badge {
+            display: inline-block;
+            background-color: #ffc107;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -42,8 +178,8 @@
                             <td><strong>{{ item.product.name }}</strong></td>
                             <td>{{ item.size.name }} / {{ item.colour.name }}</td>
                             <td style="text-align: center;">{{ item.quantity }}</td>
-                            <td class="price-right">€{{ item.unit_price }}</td>
-                            <td class="price-right"><strong>€{{ item.total_price }}</strong></td>
+                            <td class="price-right">{{ item.unit_price }}€</td>
+                            <td class="price-right"><strong>{{ item.total_price }}€</strong></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -55,25 +191,25 @@
                 <div class="summary">
                     <div class="summary-row">
                         <span>Subtotal:</span>
-                        <span>€{{ order.subtotal }}</span>
+                        <span>&nbsp;{{ order.subtotal|floatformat:2 }}€</span>
                     </div>
                     <div class="summary-row">
                         <span>Envío:</span>
-                        <span>€{{ order.delivery_cost }}</span>
+                        <span>&nbsp;{{ order.delivery_cost|floatformat:2 }}€</span>
                     </div>
                     {% if order.discount_percentage > 0 %}
                     <div class="summary-row">
                         <span>Descuento ({{ order.discount_percentage }}%):</span>
-                        <span>-€{{ discount_amount }}</span>
+                        <span>&nbsp;-{{ discount_amount|floatformat:2 }}€</span>
                     </div>
                     {% endif %}
                     <div class="summary-row">
                         <span>IVA ({{ order.tax_percentage }}%):</span>
-                        <span>€{{ tax_amount }}</span>
+                        <span>&nbsp;{{ tax_amount|floatformat:2 }}€</span>
                     </div>
                     <div class="summary-row total">
                         <span>TOTAL:</span>
-                        <span>€{{ order.total_price }}</span>
+                        <span>&nbsp;{{ order.total_price|floatformat:2 }}€</span>
                     </div>
                 </div>
             </div>
@@ -82,11 +218,15 @@
             <div class="section">
                 <div class="section-title">Información de Envío</div>
                 <div class="shipping-info">
-                    <strong>Dirección de Envío:</strong>
-                    {{ order.shipping_address }}
+                    <p>
+                        <strong>Dirección de Envío:</strong>
+                        {{ order.shipping_address }}
+                    </p>
                     {% if order.phone_number %}
-                    <br><strong>Teléfono:</strong>
-                    {{ order.phone_number }}
+                    <p>
+                        <br><strong>Teléfono:</strong>
+                        {{ order.phone_number }}
+                    </p>
                     {% endif %}
                 </div>
             </div>
