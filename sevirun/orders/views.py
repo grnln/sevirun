@@ -53,7 +53,7 @@ def order_tracking(request, tracking_number):
         order = Order.objects.get(tracking_number=tracking_number)
     except Order.DoesNotExist:
         messages.error(request, "El pedido al que intenta acceder no existe.")
-        return redirect('orders')
+        return redirect('home')
             
     order_items = OrderItem.objects.filter(order=order)
     return render(request, 'orders/order_detail.html', { "order": order, "order_items": order_items, "states": OrderState.choices, 'is_tracking': True })
