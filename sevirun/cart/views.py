@@ -32,7 +32,7 @@ from emails.emailService import send_order_confirmation_email
 def order_info(request, order_id):
     order = get_object_or_404(Order, id=order_id)
 
-    session_ok = order.session_id == request.session['cart_session_id']
+    session_ok = order.session_id == request.session.get('cart_session_id')
     user_ok = request.user.is_authenticated and order.client == request.user
     if not (session_ok or user_ok):
             messages.error(request, "El pedido al que intenta acceder no es suyo.")
@@ -91,7 +91,7 @@ def get_or_create_cart(request):
         if 'cart_session_id' not in request.session:
             request.session['cart_session_id'] = str(uuid.uuid4())
         
-        session_id = request.session['cart_session_id']
+        session_id = request.session.get('cart_session_id')
         cart, created = Cart.objects.get_or_create(session_id=session_id)
     cart = check_items_stock(cart)
     return cart
@@ -192,7 +192,7 @@ def create_order_from_cart(request):
 def start_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id)
 
-    session_ok = order.session_id == request.session['cart_session_id']
+    session_ok = order.session_id == request.session.get('cart_session_id')
     user_ok = request.user.is_authenticated and order.client == request.user
     if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
@@ -320,7 +320,7 @@ def payment_notification(request, order_id):
 
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    session_ok = order.session_id == request.session['cart_session_id']
+    session_ok = order.session_id == request.session.get('cart_session_id')
     user_ok = request.user.is_authenticated and order.client == request.user
     if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
@@ -336,7 +336,7 @@ def payment_success(request, order_id):
 
 def payment_error(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    session_ok = order.session_id == request.session['cart_session_id']
+    session_ok = order.session_id == request.session.get('cart_session_id')
     user_ok = request.user.is_authenticated and order.client == request.user
     if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
@@ -355,7 +355,7 @@ def payment_method(request, order_id):
         messages.error(request, "Esta vista es sólo para clientes.")
         return redirect('home')
 
-    session_ok = order.session_id == request.session['cart_session_id']
+    session_ok = order.session_id == request.session.get('cart_session_id')
     user_ok = request.user.is_authenticated and order.client == request.user
     if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
