@@ -140,6 +140,50 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        .content {
+            padding: 30px;
+        }
+        .tracking-button-container {
+            text-align: center;
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 4px solid #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .tracking-button {
+            display: inline-block;
+            background-color: #333;
+            color: white !important;
+            padding: 14px 40px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .tracking-button:hover {
+            background-color: #555;
+        }
+        .tracking-number-section {
+            color: #333;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        .tracking-number-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .tracking-number-value {
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            color: #333;
+            padding: 8px 12px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -160,8 +204,19 @@
                 <p>¡Gracias por tu pedido! Hemos recibido tu compra correctamente. A continuación encontrarás un resumen de los detalles.</p>
             </div>
 
+            <div style="padding: 10px; padding-bottom: 30px;">
+                <div class="tracking-button-container">
+                    <a href="{{ tracking_url }}" class="tracking-button">📦 Seguimiento del Envío</a>
+                    <div class="tracking-number-section">
+                        <span class="tracking-number-label">Número de seguimiento:</span>
+                        <br/>
+                        <span class="tracking-number-value">{{ order.tracking_number }}</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="section">
-                <div class="section-title">Productos Ordenados</div>
+                <div class="section-title">Productos pedidos</div>
                 <table>
                     <thead>
                         <tr>

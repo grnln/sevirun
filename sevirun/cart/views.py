@@ -277,7 +277,13 @@ def payment_notification(request, order_id):
 @login_required(login_url='login')
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    send_order_confirmation_email(order)
+    if not order.tracking_number:
+        order.tracking_number = str(uuid.uuid4())
+        order.save()
+    tracking_url = request.build_absolute_uri(
+        reverse('order_tracking', kwargs={'tracking_number': order.tracking_number})
+    )
+    send_order_confirmation_email(order, tracking_url)
     if order.client != request.user:
         messages.error(request, "El pedido al que intenta ver no es suyo.")
         return redirect('home')

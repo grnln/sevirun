@@ -47,3 +47,13 @@ def order_detail(request, order_id):
             
     order_items = OrderItem.objects.filter(order=order)
     return render(request, 'orders/order_detail.html', { "order": order, "order_items": order_items, "states": OrderState.choices })
+
+def order_tracking(request, tracking_number):
+    try:
+        order = Order.objects.get(tracking_number=tracking_number)
+    except Order.DoesNotExist:
+        messages.error(request, "El pedido al que intenta acceder no existe.")
+        return redirect('orders')
+            
+    order_items = OrderItem.objects.filter(order=order)
+    return render(request, 'orders/order_detail.html', { "order": order, "order_items": order_items, "states": OrderState.choices, 'is_tracking': True })

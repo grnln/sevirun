@@ -35,6 +35,8 @@ class Order(models.Model):
     client_email = models.EmailField(validators = [validate_email], null = True, blank = True)
     type = models.CharField(choices=OrderType, null=True, blank=True)
 
+    tracking_number = models.CharField(max_length=255, null=True, blank=True, unique=True)
+
     class Meta:
         constraints = [
             models.CheckConstraint(
