@@ -38,7 +38,6 @@ def order_info(request, order_id):
             return redirect('home')
 
     if request.method == "POST":
-        print("llega al post")
         method = request.POST.get("delivery_method")
         address = request.POST.get("shipping_address").strip()
         email = request.POST.get("email", "").strip()
