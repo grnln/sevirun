@@ -1,23 +1,62 @@
 import hashlib
 import hmac
+
+from django.contrib.auth import get_user_model
 from django.test import override_settings
-from products.models import ProductStock
-import pytest
 pytest_plugins = ['orders.test_fixtures']
 from django.urls import reverse
-from orders.models import *
 from unittest.mock import patch
 import cart.views as cart_views
 from django.http import HttpResponse
 import base64
 import json
-from decimal import Decimal
 from Crypto.Cipher import DES3
 from Crypto.Random import get_random_bytes
 from django.conf import settings
-from cart.models import *
 from cart.test_fixtures import *
 from users.test_fixtures import *
+
+user_data = {
+    "email": "newuser@user.com",
+    "password": "newuser",
+    "name": "new",
+    "surname": "user",
+    "phone_number": "123456789",
+    "address": "Sample address",
+    "city": "Sample Town",
+    "postal_code": "38678"
+}
+
+user2_data = {
+    "email": "newuser2@user.com",
+    "password": "newuser2",
+    "name": "new",
+    "surname": "user",
+    "phone_number": "123456789",
+    "address": "Sample address",
+    "city": "Sample Town",
+    "postal_code": "38678"
+}
+
+not_delivered_order = {
+      "created_at": "2025-01-01T00:00:00.000+01:00",
+      "state": "PE",
+      "delivery_cost": Decimal("5.5"),
+      "discount_percentage": Decimal("10.0"),
+      "payment_method": "CC",
+      "shipping_address": "Fake street, 123, 12345, City, Country",
+      "phone_number": "+341234356789"
+}
+
+not_delivered_incomplete_order = {
+      "created_at": "2025-01-01T00:00:00.000+01:00",
+      "state": "PE",
+      "delivery_cost": Decimal("5.5"),
+      "discount_percentage": Decimal("10.0"),
+      "payment_method": "CC",
+      "shipping_address": "",
+      "phone_number": ""
+}
 
 def _make_redsys_config():
     # DES3 key must be 16 or 24 bytes when decoded; use 24 bytes here
@@ -43,6 +82,75 @@ def _make_signature_for_payload(order_str, payload_dict, secret_key):
     return merchant_parameters, signature
 
 # Payment method view tests
+User = get_user_model()
+
+@pytest.mark.django_db
+def test_order_info_access_with_authenticated_user(client, django_user_model):
+    user = django_user_model.objects.create_user(**user_data)
+    client.force_login(user)
+
+    session = client.session
+    session['cart_session_id'] = 'test_session_123'
+    session.save()
+
+    order = Order.objects.create(
+        client=user,
+        session_id='test_session',
+        created_at=timezone.now(),
+        **{k: v for k, v in not_delivered_order.items() if k not in ('created_at',)}
+    )
+
+    response = client.get(reverse('order_info', kwargs={'order_id': order.id}))
+    assert response.status_code == 200
+    assert response.context['order'] == order
+    assert "La tienda no contempla devoluciones online" in response.content.decode('utf-8')
+    assert "Fake street, 123, 12345, City, Country" in response.content.decode('utf-8')
+    assert "+341234356789" in response.content.decode('utf-8')
+    assert "newuser@user.com" in response.content.decode('utf-8')
+
+@pytest.mark.django_db
+def test_order_info_access_with_wrong_user(client, django_user_model):
+    user = django_user_model.objects.create_user(**user_data)
+    other_user = django_user_model.objects.create_user(**user2_data)
+    client.force_login(other_user)
+
+    session = client.session
+    session['cart_session_id'] = 'test_session_123'
+    session.save()
+
+    order = Order.objects.create(
+        client=user,
+        session_id='test_session',
+        created_at=timezone.now(),
+        **{k: v for k, v in not_delivered_order.items() if k not in ('created_at',)}
+    )
+
+    response = client.get(reverse('order_info', kwargs={'order_id': order.id}), follow=True)
+    print(response.content.decode('utf-8'))
+    assert response.status_code == 200
+    assert 'El pedido al que intenta acceder no es suyo.' in response.content.decode('utf-8')
+
+
+@pytest.mark.django_db
+def test_incomplete_order_info(client, django_user_model):
+    user = django_user_model.objects.create_user(**user_data)
+    client.force_login(user)
+
+    session = client.session
+    session['cart_session_id'] = 'test_session_123'
+    session.save()
+
+    order = Order.objects.create(
+        client=user,
+        session_id='test_session',
+        created_at=timezone.now(),
+        **{k: v for k, v in not_delivered_incomplete_order.items() if k not in ('created_at',)}
+    )
+
+    response = client.get(reverse('payment_method', kwargs={'order_id': order.id}), follow=True)
+    assert response.status_code == 200
+    assert 'Debe completar la información del pedido antes de seleccionar el método de pago.' in response.content.decode('utf-8')
+
 
 @pytest.mark.django_db
 def test_payment_method_access_as_unauthenticated(client):

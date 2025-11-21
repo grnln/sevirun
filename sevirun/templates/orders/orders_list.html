@@ -29,7 +29,7 @@
                                         <strong>Fecha de pedido:</strong> {{ o.created_at }}
                                     </p>
                                     <p>
-                                        <strong>Dirección:</strong> {{ o.shipping_address }}
+                                        <strong>Dirección:</strong> {% firstof o.shipping_address "Ninguna" %}
                                     </p>
                                     <p>
                                         <strong>Correo:</strong> {% if o.client_email %}{{ o.client_email }}{% else %}{{o.client.email}}{% endif %}

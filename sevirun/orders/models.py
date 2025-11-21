@@ -64,7 +64,6 @@ class Order(models.Model):
     )
     payment_method = models.CharField(choices=PaymentMethod, default=PaymentMethod.CREDIT_CARD, null=False)
     shipping_address = models.CharField(max_length = 255, null = True, blank=True)
-    email = models.EmailField(AppUser, null=True, blank=True)
     phone_number = models.CharField(
         validators=[phone_validator],
         max_length=17,
