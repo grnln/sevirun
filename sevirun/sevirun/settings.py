@@ -142,7 +142,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'      # para collectstatic (producción)
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'             # carpeta donde se guardan los archivos subidos
+
+# carpeta donde se guardan los archivos subidos
+if DEBUG:
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    MEDIA_ROOT = os.environ['SEVIRUN_MEDIA_DIR']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
