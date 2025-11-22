@@ -124,7 +124,7 @@ class Order(models.Model):
     def __str__(self):
         return f'''
                 {{
-                    client: {self.client.pk},
+                    client: {self.client.pk if self.client else "Anonymous"},
                     state: {self.state},
                     delivery_cost: {self.delivery_cost},
                     discount_percentage: {self.discount_percentage},
