@@ -6,6 +6,11 @@ from users.test_fixtures import *
 import uuid
 
 @pytest.fixture
+def delivery_cost():
+    delivery_cost = DeliveryCost.objects.create(delivery_cost=Decimal("4.99"))
+    return delivery_cost
+
+@pytest.fixture
 def create_cart_item(sample_product):
     size = ProductSize.objects.create(name = '42')
     colour = ProductColour.objects.create(name = 'Red')

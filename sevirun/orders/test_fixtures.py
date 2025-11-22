@@ -5,6 +5,11 @@ from products.test_fixtures import *
 from users.test_fixtures import *
 
 @pytest.fixture
+def delivery_cost():
+    delivery_cost = DeliveryCost.objects.create(cost=Decimal("4.99"))
+    return delivery_cost
+
+@pytest.fixture
 def order_list(regular_user, regular_user_2):
     delivered_order = {
         "client": regular_user,

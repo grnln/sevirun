@@ -2,7 +2,6 @@ import hashlib
 import hmac
 
 from django.contrib.auth import get_user_model
-from django.test import override_settings
 pytest_plugins = ['orders.test_fixtures']
 from django.urls import reverse
 from unittest.mock import patch
@@ -12,7 +11,6 @@ import base64
 import json
 from Crypto.Cipher import DES3
 from Crypto.Random import get_random_bytes
-from django.conf import settings
 from cart.test_fixtures import *
 from users.test_fixtures import *
 
@@ -709,7 +707,7 @@ def test_delete_product(client, regular_user, auth_cart):
     assert len(auth_cart.items.all()) == 0
 
 @pytest.mark.django_db
-def test_create_order_from_cart(client, regular_user, auth_cart):
+def test_create_order_from_cart(client, regular_user, auth_cart, delivery_cost):
     client.force_login(regular_user)
 
     url = reverse('create_order_from_cart')
