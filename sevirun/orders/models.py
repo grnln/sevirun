@@ -27,6 +27,14 @@ class OrderType(models.TextChoices):
     SHOP = "SP", _("En tienda")
     HOME_DELIVERY = "HD", _("A domicilio")
 
+class DeliveryCost(models.Model):
+    delivery_cost = models.DecimalField(
+        max_digits = 5,
+        decimal_places = 2,
+        null = False,
+        validators=[MinValueValidator(0.0)],
+    )
+
 class Order(models.Model):
     client = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, null=True, blank=True)
     session_id = models.CharField(max_length=255, null=True, blank=True)
@@ -116,7 +124,7 @@ class Order(models.Model):
     def __str__(self):
         return f'''
                 {{
-                    client: {self.client.pk},
+                    client: {self.client.pk if self.client else "Anonymous"},
                     state: {self.state},
                     delivery_cost: {self.delivery_cost},
                     discount_percentage: {self.discount_percentage},

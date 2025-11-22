@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel = "stylesheet" href = "{% static 'css/catalog_management.css' %}">
+    <link rel = "stylesheet" href = "{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-4">
+    <h1>Inventario de Productos</h1>
+    <hr/>
+    <aside class="ml-4 mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <a href="{{ from }}" class="text-dark">← Volver</a>
+        </div>
+        <div>
+            <a href="{% url 'create_stock' %}" class="btn btn-success btn-sm">
+                <i class="bi bi-plus-circle"></i> Añadir Stock
+            </a>
+        </div>
+    </aside>
+
+    <div class="content">
+        <div class="table-responsive">
+            <table class="table table-hover management-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Producto</th>
+                        <th class="text-center">Talla</th>
+                        <th class="text-center">Color</th>
+                        <th class="text-center" >Stock</th>
+                        <th style="width: 10rem;" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    {% for stock in stocks %}
+                        <tr>
+                            <td class="product-name">{{ stock.product.name }}</td>
+                            <td class="text-center">{{ stock.size.name }}</td>
+                            <td class="text-center">{{ stock.colour.name }}</td>
+                            <td class="text-center"><strong>{{ stock.stock }}</strong></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'edit_stock' stock.pk %}" class="btn btn-sm btn-outline-secondary" style="margin: auto;">
+                                        Editar
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="{% url 'delete_stock' stock.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;" onclick="return confirm('¿Seguro que quieres eliminar este stock?')">
+                                        Eliminar
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No hay productos en el inventario</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -28,6 +28,8 @@ import uuid
 from django.utils import timezone
 from emails.emailService import send_order_confirmation_email
 
+from orders.models import DeliveryCost
+
 # Cart views
 
 def order_info(request, order_id):
@@ -62,7 +64,7 @@ def order_info(request, order_id):
         if method == "home":
             order.type = OrderType.HOME_DELIVERY
             order.shipping_address = address
-            order.delivery_cost = 5.00
+            order.delivery_cost = DeliveryCost.objects.first().delivery_cost
         else:
             order.type = OrderType.SHOP
             order.shipping_address = "En tienda"
