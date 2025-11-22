@@ -109,6 +109,9 @@ def get_user_cart(request):
     return None
 
 def cart(request):
+    if request.user.is_staff:
+        messages.error(request, "Esta vista es sólo para clientes.")
+        return redirect('home')
     cart = get_or_create_cart(request)
     return render(request, "cart/view_cart.html", { 'cart': cart })
 
@@ -175,6 +178,10 @@ def create_order_from_cart(request):
     if len(cart_items) == 0:
         messages.error(request, "El carrito está vacío.")
         return redirect('cart')
+    
+    if request.user.is_staff:
+        messages.error(request, "Esta vista es sólo para clientes.")
+        return redirect('home')
     
     cart_client = cart.client if cart.client else None
     cart_session_id = cart.session_id if cart.session_id else None
