@@ -41,8 +41,7 @@ def test_home_shows_no_featured_products_message(client):
         description='Un zapato cómodo',
         picture='products/dummy.png',
         price='49.99',
-        is_highlighted=False,
-        is_available = True,
+        is_highlighted = False,
         created_at = timezone.now(),
         updated_at = timezone.now(),
         model = product_model,
@@ -52,7 +51,7 @@ def test_home_shows_no_featured_products_message(client):
     )
     
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product,
         size = size,
         colour = colour
@@ -80,8 +79,7 @@ def test_home_shows_products_list_when_present(client):
         description='Un zapato cómodo',
         picture='products/dummy.png',
         price='49.99',
-        is_highlighted=True,
-        is_available = True,
+        is_highlighted = True,
         created_at = timezone.now(),
         updated_at = timezone.now(),
         model = product_model,

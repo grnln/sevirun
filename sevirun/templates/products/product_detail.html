@@ -88,7 +88,8 @@
 
                     <div class="mb-3">
                         {% if product.is_available %}
-                            <button class="btn btn-primary" type="button" aria-label="Añadir al carrito">
+                            <button class="btn btn-primary" type="button" aria-label="Añadir al carrito"
+                                    onclick="addToCartRedirect({{ product.id }})">
                                 <svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-cart"/></svg>
                                 Añadir al carrito
                             </button>
@@ -164,6 +165,6 @@
     </section>
         {{ stock_list|json_script:"product-stock-data" }}
         {{ product_available|json_script:"product-available" }}
-        <script src="{% static 'js/product-detail.js' %}"></script>
+        <script src="{% static 'js/product-detail.js' %}?v={{ product.updated_at.timestamp }}"></script>
     </main>
 {% endblock %}

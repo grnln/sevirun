@@ -1,9 +1,12 @@
+import re
+
 from django.contrib import messages
-from django.shortcuts import redirect, render,  get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.shortcuts import redirect,  get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from orders.models import Order
+from orders.models import Order, OrderItem, OrderType
 from django.http import HttpResponse
 from django.urls import reverse
 from django.conf import settings
@@ -17,15 +20,190 @@ from Crypto.Cipher import DES3
 import time
 import random
 from decimal import Decimal
+from .models import *
+from products.models import ProductStock
+from django.http import JsonResponse
+import uuid
+from django.utils import timezone
+from emails.emailService import send_order_confirmation_email
 
+# Cart views
+
+def order_info(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    session_ok = order.session_id == request.session.get('cart_session_id')
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
+            messages.error(request, "El pedido al que intenta acceder no es suyo.")
+            return redirect('home')
+
+    if request.method == "POST":
+        method = request.POST.get("delivery_method")
+        address = request.POST.get("shipping_address").strip()
+        email = request.POST.get("email", "").strip()
+        phone_number = request.POST.get("phone_number", "").strip()
+        if phone_number == "" or email == "":
+            messages.error(request, "Debe completar todos los campos.")
+            return render(request, 'cart/order_info.html', {"order": order})
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, "El formato del email no es válido.")
+            return render(request, 'cart/order_info.html', {"order": order})
+        phone_pattern = re.compile(r'^\+?[\d\s\-]{9,15}$')
+        if not phone_pattern.match(phone_number):
+            messages.error(request, "El formato del teléfono no es válido.")
+            return render(request, 'cart/order_info.html', {"order": order})
+        if method == "home" and address == "":
+            messages.error(request, "Debe completar todos los campos.")
+            return render(request, 'cart/order_info.html', {"order": order})
+        if method == "home":
+            order.type = OrderType.HOME_DELIVERY
+            order.shipping_address = address
+            order.delivery_cost = 5.00
+        else:
+            order.type = OrderType.SHOP
+            order.shipping_address = "En tienda"
+        order.phone_number = phone_number
+        order.client_email = email
+        order.save()
+        return redirect('payment_method', order_id=order.pk)
+
+    return render(request, 'cart/order_info.html', {"order": order})
+
+
+def check_items_stock(cart):
+    cart.refresh_from_db()
+    items = cart.items.all()
+    for item in items:
+        stock = ProductStock.objects.filter(product=item.product, size=item.size, colour=item.colour)[0].stock
+        if item.quantity > stock:
+            item.quantity = stock
+            item.save()
+    cart.refresh_from_db()
+    return cart
+
+def get_or_create_cart(request):
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(client=request.user)
+    else:
+        if 'cart_session_id' not in request.session:
+            request.session['cart_session_id'] = str(uuid.uuid4())
+        
+        session_id = request.session.get('cart_session_id')
+        cart, created = Cart.objects.get_or_create(session_id=session_id)
+    cart = check_items_stock(cart)
+    return cart
+
+def get_user_cart(request):
+    try: 
+        if request.user.is_authenticated:
+            return Cart.objects.get(client=request.user)
+        else:
+            if 'cart_session_id' in request.session:
+                return Cart.objects.get(session_id=request.session['cart_session_id'])
+    except:
+        return None
+    return None
+
+def cart(request):
+    cart = get_or_create_cart(request)
+    return render(request, "cart/view_cart.html", { 'cart': cart })
+
+def add_product_to_cart(request, product_id, colour_id, size_id):
+    cart = get_or_create_cart(request)
+
+    product = get_object_or_404(Product, id=product_id)
+    colour = get_object_or_404(ProductColour, id=colour_id)
+    size = get_object_or_404(ProductSize, id=size_id)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product,
+        colour=colour,
+        size=size,
+        defaults={'quantity': 1}
+    )
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    return redirect('cart') 
+
+def update_quantity_ajax(request, item_id, action):
+    cart = get_user_cart(request)
+    item = get_object_or_404(CartItem, id=item_id, cart=cart)
+
+    if action == "increase":
+        item.quantity += 1
+
+    elif action == "decrease":
+        if item.quantity > 1:
+            item.quantity -= 1
+        
+    elif action == "delete":
+        cart = item.cart
+        item.delete()
+
+        return JsonResponse({
+            "deleted": True,
+            "subtotal": float(cart.temp_subtotal),
+        })
+
+    item.save()
+    cart.refresh_from_db()
+    cart = check_items_stock(cart)
+    item.refresh_from_db()
+
+    item_total = float(item.temp_price)
+
+    cart_total = float(item.cart.temp_subtotal)
+
+    return JsonResponse({
+        "deleted": False,
+        "quantity": item.quantity,
+        "item_total": item_total,
+        "subtotal": cart_total,
+    })
+
+def create_order_from_cart(request):
+    cart = get_user_cart(request)
+    cart_items = cart.items.all()
+
+    if len(cart_items) == 0:
+        messages.error(request, "El carrito está vacío.")
+        return redirect('cart')
+    
+    cart_client = cart.client if cart.client else None
+    cart_session_id = cart.session_id if cart.session_id else None
+
+    order = Order.objects.create(client=cart_client, session_id=cart_session_id, created_at=timezone.now(), state="PE", delivery_cost=0.0, discount_percentage=0.0)
+    for item in cart_items:
+        price = item.product.price_on_sale if item.product.price_on_sale else item.product.price
+        OrderItem.objects.create(order=order, product=item.product, size=item.size, colour=item.colour, quantity=item.quantity, unit_price=price)
+    cart.delete()
+
+    return redirect('order_info', order_id=order.pk)
+
+# Payment views
 # Example credit card for testing: 4548812049400004
 
-@login_required(login_url='/login/')
 def start_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id)
 
-    if order.client != request.user:
+    session_ok = order.session_id == request.session.get('cart_session_id')
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
+        return redirect('home')
+    
+    if order.state != 'PE':
+        messages.info(request, "El pedido ya ha sido pagado o no está pendiente de pago.")
+        return redirect('home')
+    
+    if order.payment_method != 'CC':
+        messages.error(request, "El método de pago seleccionado no es válido para este pedido.")
         return redirect('home')
     
     config = getattr(settings, 'REDSYS_CONFIG', None) or {}
@@ -120,6 +298,17 @@ def payment_notification(request, order_id):
                 order_obj = Order.objects.get(id=int(order_id))
                 if order_obj.state == 'PE':
                     order_obj.state = 'PR'
+                    for item in order_obj.items.all():
+                        stock_obj = ProductStock.objects.get(
+                            product=item.product,
+                            size=item.size,
+                            colour=item.colour,
+                        )
+                        if stock_obj.stock >= item.quantity:
+                            stock_obj.stock -= item.quantity
+                        else:
+                            stock_obj.stock = 0
+                        stock_obj.save()
                     order_obj.save()
                     
             except Order.DoesNotExist:
@@ -129,23 +318,31 @@ def payment_notification(request, order_id):
     else:
         return HttpResponse("Firma inválida", status=400)
 
-@login_required(login_url='/login/')
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    if order.client != request.user:
-        messages.error(request, "El pedido al que intenta ver no es suyo.")
+    session_ok = order.session_id == request.session.get('cart_session_id')
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
+        messages.error(request, "El pedido al que intenta pagar no es suyo.")
         return redirect('home')
+    if not order.tracking_number:
+        order.tracking_number = str(uuid.uuid4())
+        order.save()
+    tracking_url = request.build_absolute_uri(
+        reverse('order_tracking', kwargs={'tracking_number': order.tracking_number})
+    )
+    send_order_confirmation_email(order, tracking_url)
     return render(request, 'cart/payment_success.html', {"order": order})
 
-@login_required(login_url='/login/')
 def payment_error(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    if order.client != request.user:
-        messages.error(request, "El pedido al que intenta ver no es suyo.")
+    session_ok = order.session_id == request.session.get('cart_session_id')
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
+        messages.error(request, "El pedido al que intenta pagar no es suyo.")
         return redirect('home')
     return render(request, 'cart/payment_error.html', {"order": order})
 
-@login_required(login_url='/login/')
 @require_http_methods(['GET', 'POST'])
 def payment_method(request, order_id):
     try:
@@ -157,15 +354,37 @@ def payment_method(request, order_id):
     if request.user.is_staff:
         messages.error(request, "Esta vista es sólo para clientes.")
         return redirect('home')
-    
-    if not (order.client == request.user):
+
+    session_ok = order.session_id == request.session.get('cart_session_id')
+    user_ok = request.user.is_authenticated and order.client == request.user
+    if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
         return redirect('home')
     
     if order.state != 'PE':
         messages.info(request, "El pedido ya ha sido pagado o no está pendiente de pago.")
         return redirect('home')
-    
+
+    if order.client_email is None or order.phone_number is None or (order.type == OrderType.HOME_DELIVERY and order.shipping_address is None):
+        messages.error(request, "Debe completar la información del pedido antes de seleccionar el método de pago.")
+        return redirect('order_info', order_id=order.pk)
+
+    # Verify stock
+    if request.method == 'POST':
+        for item in order.items.all():
+            try:
+                stock = ProductStock.objects.get(
+                    product=item.product,
+                    size=item.size,
+                    colour=item.colour,
+                )
+            except ProductStock.DoesNotExist:
+                stock = None
+
+            if stock is None or stock.stock < item.quantity:
+                messages.error(request, f"No hay suficiente stock para el producto {item.product.name} en la talla {item.size.name} y color {item.colour.name}.")
+                return redirect('cart')
+
     if request.method == 'POST' and request.POST.get('method') == 'card':
         order.payment_method = 'CC'
         order.save()
@@ -174,6 +393,17 @@ def payment_method(request, order_id):
     if request.method == 'POST' and request.POST.get('method') == 'cod':
         order.payment_method = 'CA'
         order.state = 'PR'
+        for item in order.items.all():
+            stock = ProductStock.objects.get(
+                product=item.product,
+                size=item.size,
+                colour=item.colour,
+            )
+            if stock.stock >= item.quantity:
+                stock.stock -= item.quantity
+            else:
+                stock.stock = 0
+            stock.save()
         order.save()
         return redirect('payment_ok', order_id=order_id)
 

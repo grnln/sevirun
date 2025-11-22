@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/order_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+    <main class="container py-4">
+        <aside class="ml-4 mb-4">
+            <a href="{% url 'orders' %}" class="text-dark">← Volver</a>
+        </aside>
+        <div class="card-header">Pedido #{{ order.pk }}</div>
+        <div class="alert alert-warning" role="alert">
+        <strong>Aviso:</strong> La tienda no contempla devoluciones online.
+        </div>
+        <div class="card-content">
+            <div class="d-flex flex-column justify-content-between">
+                <div class="products-section">
+                    <div class="section-title">Productos</div>
+                    <ul class="products-list">
+                        {% for i in order.items.all %}
+                            <li class="product-item">
+                                <span class="product-quantity">x{{ i.quantity }}</span>
+                                <div class="product-details">
+                                    <span class="product-name">{{ i.product.name }}</span>
+                                    <div class="product-meta-row">
+                                        <span class="product-meta">Talla: {{ i.size.name }}</span>
+                                        <span class="product-meta">Color: {{ i.colour.name }}</span>
+                                    </div>
+                                </div>
+                                <span class="product-price">{{ i.total_price }}€</span>
+                            </li>
+                        {% empty %}
+                            <li class="no-products">
+                                <span>No hay productos en este pedido.</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="total-items">
+                        <div class="total-items-count"><strong>Número de productos:</strong> {{ order.total_units }}
+                        </div>
+                        <div class="total-items-price"><strong>Subtotal:</strong> <span id="subtotal">{{ order.subtotal }}</span>€</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-section">
+            <form method="post">
+                {% csrf_token %}
+                <div class="summary-block contact-block">
+                    <div class="block-title">Información de contacto</div>
+                    <div class="summary-item">
+                        <span class="summary-label">Fecha de pedido:</span> {{ order.created_at }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Método de entrega:</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="delivery_method" id="home_delivery" value="home"
+                                   checked>
+                            <label class="btn btn-outline-primary" for="home_delivery">
+                                <i class="bi bi-truck"></i> Envío a domicilio
+                            </label>
+
+                            <input type="radio" class="btn-check" name="delivery_method" id="store_pickup"
+                                   value="store">
+                            <label class="btn btn-outline-primary" for="store_pickup">
+                                <i class="bi bi-shop"></i> Recogida en tienda
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="shipping_address" class="form-label">Dirección de envío:</label>
+                        <input type="text" class="form-control" id="shipping_address" name="shipping_address" required
+                               value="{% firstof order.shipping_address user.address "" %}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Número de teléfono:</label>
+                        <input type="tel" class="form-control" id="phone_number" name="phone_number" required
+                               value="{% firstof order.phone_number user.phone_number "" %}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required
+                               value="{% firstof order.email user.email "" %}">
+                    </div>
+                </div>
+
+                <div class="summary-block price-block">
+                    <div class="block-title">Resumen del precio</div>
+                    <div class="flex flex-row summary-item">
+                        <span class="summary-label">Gastos de envío:</span> <span id="shipping_costs">0.00€</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Descuento aplicado:</span> <span id="discount">{{ order.discount_percentage }}</span>%
+                    </div>
+                    <div class="subtotal">
+                        Total (IVA <span id="tax">{{ order.tax_percentage }}</span>%): <span id="total_price"></span>
+                    </div>
+
+                    {% if not user.is_staff and not user.is_superuser and order.state == "PE" %}
+                        <div class="payment-action mt-4 d-flex justify-content-center">
+                            <button type="submit" class="btn btn-primary w-50">Guardar datos y proceder al pago</button>
+                        </div>
+                    {% endif %}
+                </div>
+            </form>
+            </div>
+        </div>
+        <script src="{% static 'js/details.js' %}"></script>
+    </main>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+.nav-tabs .nav-link {
+    color: #495057;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: #dee2e6;
+}
+
+.nav-tabs .nav-link.active {
+    border-color: #0d6efd;
+    color: #0d6efd;
+    background: none;
+}
+
+.form-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.management-table {
+    font-size: 0.95rem;
+}
+
+.badge-color {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}

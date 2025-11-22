@@ -30,12 +30,14 @@
                         Seguir comprando
                     </a>
 
+                    {% if user.is_authenticated %}
                     <a href="{% url 'order_detail' order.id %}" class="btn btn-primary d-inline-flex align-items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16" aria-hidden="true">
                             <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4z"/>
                         </svg>
                         Ver pedido
                     </a>
+                    {% endif %}
                 </div>
 
                 <hr class="my-3">

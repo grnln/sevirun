@@ -32,7 +32,6 @@ def test_products_status_and_context(client):
         picture = image,
         price = '19.99',
         price_on_sale = None,
-        is_available = True,
         is_highlighted = False,
         created_at = now,
         updated_at = now,
@@ -86,7 +85,6 @@ def test_products_show_prices(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = False,
         created_at = now,
         updated_at = now,
@@ -141,7 +139,6 @@ def test_products_show_badges(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -165,7 +162,6 @@ def test_products_show_badges(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -176,7 +172,7 @@ def test_products_show_badges(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size,
         colour = colour
@@ -224,7 +220,6 @@ def test_products_brand_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -248,7 +243,6 @@ def test_products_brand_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -259,7 +253,7 @@ def test_products_brand_filter(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size,
         colour = colour
@@ -309,7 +303,6 @@ def test_products_type_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -333,7 +326,6 @@ def test_products_type_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -344,7 +336,7 @@ def test_products_type_filter(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size,
         colour = colour
@@ -398,7 +390,6 @@ def test_products_model_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -422,7 +413,6 @@ def test_products_model_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -433,7 +423,7 @@ def test_products_model_filter(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size_2,
         colour = colour_2
@@ -487,7 +477,6 @@ def test_products_season_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -511,7 +500,6 @@ def test_products_season_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -522,7 +510,7 @@ def test_products_season_filter(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size_2,
         colour = colour_2
@@ -576,7 +564,6 @@ def test_products_material_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -600,7 +587,6 @@ def test_products_material_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -611,7 +597,7 @@ def test_products_material_filter(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size_2,
         colour = colour_2
@@ -665,7 +651,6 @@ def test_products_size_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -689,7 +674,6 @@ def test_products_size_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -700,7 +684,7 @@ def test_products_size_filter(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size_2,
         colour = colour_2
@@ -754,7 +738,6 @@ def test_products_colour_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -778,7 +761,6 @@ def test_products_colour_filter(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -789,7 +771,7 @@ def test_products_colour_filter(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size_2,
         colour = colour_2
@@ -856,7 +838,6 @@ def test_products_name_search(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -880,7 +861,6 @@ def test_products_name_search(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -891,7 +871,7 @@ def test_products_name_search(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size_2,
         colour = colour_2
@@ -945,7 +925,6 @@ def test_products_model_search(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -969,7 +948,6 @@ def test_products_model_search(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -980,7 +958,7 @@ def test_products_model_search(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size_2,
         colour = colour_2
@@ -1034,7 +1012,6 @@ def test_products_name_model_search(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = True,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -1058,7 +1035,6 @@ def test_products_name_model_search(client):
         picture = image,
         price = '19.99',
         price_on_sale = '6.99',
-        is_available = False,
         is_highlighted = True,
         created_at = now,
         updated_at = now,
@@ -1069,7 +1045,7 @@ def test_products_name_model_search(client):
     )
 
     ProductStock.objects.create(
-        stock = 10,
+        stock = 0,
         product = product_2,
         size = size_2,
         colour = colour_2

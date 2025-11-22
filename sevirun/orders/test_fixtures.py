@@ -10,8 +10,8 @@ def order_list(regular_user, regular_user_2):
         "client": regular_user,
         "created_at": "2025-01-01T00:00:00.000+01:00",
         "state": "DE",
-        "delivery_cost": "5.5",
-        "discount_percentage": "10.0",
+        "delivery_cost": Decimal("5.5"),
+        "discount_percentage": Decimal("10.0"),
         "payment_method": "CC",
         "shipping_address": "Fake street, 123, 12345, City, Country",
         "phone_number": "+341234356789"
@@ -20,8 +20,8 @@ def order_list(regular_user, regular_user_2):
       "client": regular_user_2,
       "created_at": "2025-01-01T00:00:00.000+01:00",
       "state": "PE",
-      "delivery_cost": "5.5",
-      "discount_percentage": "10.0",
+      "delivery_cost": Decimal("5.5"),
+      "discount_percentage": Decimal("10.0"),
       "payment_method": "CC",
       "shipping_address": "Fake street, 123, 12345, City, Country",
       "phone_number": "+341234356789"
@@ -43,15 +43,17 @@ def order_and_items_list(order_list, sample_product):
     size = ProductSize.objects.create(name = '42')
     colour = ProductColour.objects.create(name = 'Red')
 
+    size2 = ProductSize.objects.create(name = '43')
+    colour2 = ProductColour.objects.create(name = 'Blue')
+
     now = timezone.now()
 
     sample_product = Product.objects.create(
         name = 'Test Product',
         short_description = 'Short desc',
         description = 'Long description',
-        price = '19.99',
-        price_on_sale = '6.99',
-        is_available = True,
+        price = Decimal("19.99"),
+        price_on_sale = Decimal("6.99"),
         is_highlighted = False,
         created_at = now,
         updated_at = now,
@@ -67,16 +69,16 @@ def order_and_items_list(order_list, sample_product):
         "size": size,
         "colour": colour,
         "quantity": 2,
-        "unit_price": "55.90"
+        "unit_price": Decimal("55.90")
     })
 
     OrderItem.objects.create(**{
         "order": delivered_order,
         "product": sample_product,
-        "size": 43,
-        "color": "Blue",
+        "size": size2,
+        "colour": colour2,
         "quantity": 1,
-        "unit_price": "75.00"
+        "unit_price": Decimal("75.00")
     })
 
     return delivered_order

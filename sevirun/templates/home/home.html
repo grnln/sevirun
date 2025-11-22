@@ -24,6 +24,54 @@
         </aside>
     </section>
 
+    <!-- Tracking Number Section -->
+    <section class="mb-4" role="region" aria-label="Rastrear pedido">
+        <div class="card bg-light border-primary">
+            <div class="card-body">
+            <h2 class="card-title h5 fw-bold mb-3">Rastrear tu pedido</h2>
+            <p class="text-muted mb-3">Introduce tu número de seguimiento para rastrear el estado de tu envío.</p>
+            <form id="trackingForm" method="GET" class="d-flex gap-2">
+                <input 
+                    type="text" 
+                    id="trackingInput"
+                    class="form-control" 
+                    placeholder="Ej: SEV123456789" 
+                    required
+                />
+                <button type="submit" class="btn btn-primary">Rastrear</button>
+            </form>
+
+            <script>
+            document.getElementById("trackingForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                let code = document.getElementById("trackingInput").value;
+                window.location.href = `/orders/tracking/${code}/`;
+            });
+            </script>
+            </div>
+        </div>
+    </section>
+
+    <h2 class = "h5 mb-3 fw-bold">Buscar productos:</h2>
+    <aside class = "ml-4 mb-4 d-flex justify-content-center">
+        <div class = "card h-100 bg-white text-dark flex-fill">
+            <form class = "d-flex flex-column flex-fill" method = "GET" action = "{% url 'products' %}">
+                {% csrf_token %}
+                <div class = "d-flex flex-fill mb-4">
+                    <input type = "search" id = "product-search" name = "product-search" class = "form-control me-2" placeholder = "Introducir nombre o modelo"/>
+                    <button class = "btn btn-sm btn-primary" id = "product-search-button" type = "submit">
+                        <svg xmlns = "http://www.w3.org/2000/svg" width = "16" height = "16" fill = "currentColor" class = "bi bi-search" viewBox = "0 0 16 16">
+                            <path d = "M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class = "d-flex flex-fill justify-content-around">
+                    {{ filters }}
+                </div>
+            </form>
+        </div>
+    </aside>
+
   <!-- Productos destacados -->
   <section>
     <h2 class="h5 mb-3 fw-bold">Productos destacados:</h2>
