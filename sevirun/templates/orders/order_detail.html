@@ -53,7 +53,13 @@
                                                 </div>
                                                 <select class = "form-select ms-2 me-4" name = "order-{{order.pk}}-state" id = "order-{{order.pk}}-state" value = "{{order.state}}">
                                                     {% for s in states %}
-                                                        <option value = "{{s.0}}" {% if order.state == s.0 %}selected{% endif %}>{{s.1}}</option>
+                                                        {% if not order.shipping_address or not order.phone_number %}
+                                                            {% if s.0 == "PE" %}
+                                                                <option value = "{{s.0}}" {% if order.state == s.0 %}selected{% endif %}>{{s.1}}</option>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            <option value = "{{s.0}}" {% if order.state == s.0 %}selected{% endif %}>{{s.1}}</option>
+                                                        {% endif %}
                                                     {% endfor %}
                                                 </select>
                                                 <button type = "submit" class = "btn btn-primary mt-auto">Cambiar</button>
