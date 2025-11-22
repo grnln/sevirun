@@ -3,9 +3,8 @@ import resend
 from decimal import Decimal
 from django.template.loader import render_to_string
 
-resend.api_key = os.environ["RESEND_API_KEY"]
-
 def send_email(subject, html):
+    resend.api_key = os.environ["RESEND_API_KEY"]
     params = {
         "from": "Sevirun <sevirun@resend.dev>",
         "to": ["ignaciomorap04@gmail.com"],
@@ -15,6 +14,7 @@ def send_email(subject, html):
     email = resend.Emails.send(params)
 
 def send_order_confirmation_email(order, tracking_url):
+    resend.api_key = os.environ["RESEND_API_KEY"]
     html_content = render_to_string('emails/order_finished.html', {
         'order': order,
         'discount_amount': Decimal(order.subtotal + order.delivery_cost) * Decimal(order.discount_percentage) * Decimal(0.01),

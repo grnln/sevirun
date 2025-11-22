@@ -26,19 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!%g8za79#3o6b6hac-^smtfh)wf0_+-aspi4q!!uli#suvh=u8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.environ['SEVIRUN_ENVIRONMENT'] == 'Development')
 
 ALLOWED_HOSTS = [
-    'sevirun.onrender.com'
-    'localhost',
-    '127.0.0.1'
+    '*'
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -52,6 +49,9 @@ INSTALLED_APPS = [
     'cart'
 ]
 
+if DEBUG:
+    INSTALLED_APPS += 'django.contrib.admin',
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -147,13 +148,3 @@ MEDIA_ROOT = BASE_DIR / 'media'             # carpeta donde se guardan los archi
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Datos demo para usar el sandbox de Redsys
-REDSYS_CONFIG = {
-    'MERCHANT_CODE': '999008881',  # Código de comercio de pruebas
-    'TERMINAL': '001',
-    'SECRET_KEY': 'sq7HjrUOBfKmC576ILgskD5srU870gJ7',  # Clave de pruebas
-    'CURRENCY': '978',  # EUR
-    'TRANSACTION_TYPE': '0',  # Autorización
-    'REDSYS_URL': 'https://sis-t.redsys.es:25443/sis/realizarPago',     # Entorno de pruebas
-}

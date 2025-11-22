@@ -15,6 +15,7 @@ import base64
 import hmac
 import hashlib
 import json
+import os
 from django.shortcuts import render
 from Crypto.Cipher import DES3
 import time
@@ -206,13 +207,12 @@ def start_payment(request, order_id):
         messages.error(request, "El método de pago seleccionado no es válido para este pedido.")
         return redirect('home')
     
-    config = getattr(settings, 'REDSYS_CONFIG', None) or {}
-    secret_key = config.get('SECRET_KEY')
-    merchant_code = config.get('MERCHANT_CODE')
-    currency = config.get('CURRENCY')
-    transaction_type = config.get('TRANSACTION_TYPE')
-    terminal = config.get('TERMINAL')
-    redsys_url = config.get('REDSYS_URL')
+    secret_key = os.environ['REDSYS_SECRET_KEY']
+    merchant_code = os.environ['REDSYS_MERCHANT_CODE']
+    currency = os.environ['REDSYS_CURRENCY']
+    transaction_type = os.environ['REDSYS_TRANSACTION_TYPE']
+    terminal = os.environ['REDSYS_TERMINAL']
+    redsys_url = os.environ['REDSYS_URL']
 
     data = {
         "Ds_Merchant_Amount": "",
@@ -271,8 +271,7 @@ def payment_notification(request, order_id):
         return HttpResponse("Faltan datos", status=400)
 
 
-    config = getattr(settings, 'REDSYS_CONFIG', None) or {}
-    secret_key = config.get('SECRET_KEY')
+    secret_key = os.environ['REDSYS_SECRET_KEY']
 
     # Decodificar parámetros y generar firma local
     decoded = base64.b64decode(ds_merchant_parameters).decode("utf-8")
