@@ -7,7 +7,7 @@ from django.contrib import messages
 
 @staff_member_required(login_url='login')
 def index_sales(request):
-    sales = Order.objects.filter(state="DE")
+    sales = Order.objects.filter(state="DE").order_by('-created_at')
     return render(request, 'orders/sales_list.html', { "sales" : sales })
 
 @login_required(login_url='login')
@@ -62,6 +62,9 @@ def order_tracking(request, tracking_number):
 
 @staff_member_required(login_url='login')
 def delivery_cost(request):
+    if not request.user.is_staff:
+        return redirect('home')
+    
     delivery_cost = DeliveryCost.objects.first()
     if request.method == 'POST':
         try:

@@ -2,6 +2,7 @@ const homeDelivery = document.getElementById('home_delivery');
 const storePickup = document.getElementById('store_pickup');
 const shippingInput = document.getElementById('shipping_address');
 const shippingCosts = document.getElementById('shipping_costs');
+const realShippingCosts = document.getElementById('real_shipping_costs');
 const totalPrice = document.getElementById('total_price');
 const subtotalPrice = document.getElementById('subtotal');
 const taxElement = document.getElementById('tax'); // Renombrado para evitar conflicto
@@ -34,17 +35,15 @@ function calculateTotal(shippingFee) {
 
 
 function toggleShippingAddress() {
-    const DELIVERY_COST = 5.00;
+    const DELIVERY_COST = cleanAndParse(realShippingCosts);
 
     if (homeDelivery && storePickup) {
         if (homeDelivery.checked) {
-            console.log('Home Delivery');
-            console.log()
             shippingCosts.innerText = DELIVERY_COST.toFixed(2) + '€';
             shippingSection.style.display = 'block';
             shippingInput.required = true;
 
-            calculateTotal(DELIVERY_COST); // Recalcula con 5.00€
+            calculateTotal(DELIVERY_COST);
 
         } else if (storePickup.checked) {
             shippingSection.style.display = 'none';

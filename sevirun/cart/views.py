@@ -188,10 +188,14 @@ def create_order_from_cart(request):
     cart_client = cart.client if cart.client else None
     cart_session_id = cart.session_id if cart.session_id else None
 
-    order = Order.objects.create(client=cart_client, session_id=cart_session_id, created_at=timezone.now(), state="PE", delivery_cost=0.0)
+    delivery_cost = DeliveryCost.objects.first().delivery_cost
+    
+    order = Order.objects.create(client=cart_client, session_id=cart_session_id, created_at=timezone.now(), state="PE", delivery_cost=delivery_cost)
     for item in cart_items:
         price = item.product.price_on_sale if item.product.price_on_sale else item.product.price
         OrderItem.objects.create(order=order, product=item.product, size=item.size, colour=item.colour, quantity=item.quantity, unit_price=price)
+    
+    order.save()
     cart.delete()
 
     return redirect('order_info', order_id=order.pk)
