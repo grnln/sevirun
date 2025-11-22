@@ -12,6 +12,8 @@ def index_sales(request):
 
 @login_required(login_url='login')
 def index_customer_orders(request):
+    prev_page = request.GET.get('from', '/')
+
     if request.user.is_staff or request.user.is_superuser:
         orders = Order.objects.all().order_by('-created_at')
 
@@ -24,7 +26,7 @@ def index_customer_orders(request):
                     order.save()
     else:
         orders = Order.objects.filter(client=request.user).order_by('-created_at')
-    return render(request, 'orders/orders_list.html', { "orders" : orders, "states": OrderState.choices })
+    return render(request, 'orders/orders_list.html', { "orders" : orders, "states": OrderState.choices, 'from': prev_page })
 
 @login_required(login_url='login')
 def order_detail(request, order_id):

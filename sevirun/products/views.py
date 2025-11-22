@@ -199,6 +199,15 @@ def render_create_edit_form(request, product=None, is_editing=False):
     }
     return render(request, 'products/create_edit_product.html', context)
 
+def render_create_edit_stock_form(request, stock=None, is_editing=False):
+    return render(request, 'products/create_stock.html', {
+        'products': Product.objects.filter(is_deleted=False),
+        'colours': ProductColour.objects.all(),
+        'sizes': ProductSize.objects.all(),
+        'is_editing': is_editing,
+        'stock': stock
+    })
+
 def render_product_attribute_edit(request, attribute, attribute_name, has_logo = False, has_picture = False, has_brand = False):
     brands = []
     if has_brand:
@@ -225,6 +234,7 @@ def delete_product(request, product_id):
 
 @staff_member_required(login_url='login')
 def catalog_management(request):
+    prev_page = request.GET.get('from', '/')
 
     return render(request, 'products/catalog_management.html', {
         'brands': Brand.objects.all(),
@@ -232,7 +242,8 @@ def catalog_management(request):
         'types': ProductType.objects.all(),
         'materials': ProductMaterial.objects.all(),
         'sizes': ProductSize.objects.all(),
-        'colours': ProductColour.objects.all()
+        'colours': ProductColour.objects.all(),
+        'from': prev_page
     })
 
 @staff_member_required(login_url='login')
@@ -470,3 +481,68 @@ def edit_colour(request, colour_id):
             messages.error(request, f'Error al crear el color: {str(e)}')
             
     return render_product_attribute_edit(request, colour, 'color', has_picture=True)
+
+@staff_member_required(login_url='login')
+def product_stock_view(request):
+    prev_page = request.GET.get('from', '/')
+
+    return render(request, 'products/product_stock_view.html', {
+        'stocks': ProductStock.objects.all(),
+        'from': prev_page
+    })
+
+@staff_member_required(login_url='login')
+def create_stock(request):
+    if request.method == 'POST':
+        try:
+            product = get_object_or_404(Product, id=request.POST.get('product'))
+            colour = get_object_or_404(ProductColour, id=request.POST.get('colour'))
+            size = get_object_or_404(ProductSize, id=request.POST.get('size'))
+
+            data = {
+                'product': product,
+                'size': size,
+                'colour': colour,
+            }
+
+            required = ['product', 'size', 'colour']
+            if not all(data.get(field) for field in required):
+                messages.error(request, 'Por favor, completa todos los campos obligatorios.')
+                return redirect('create_stock')
+            
+            if ProductStock.objects.filter(**data).exists():
+                messages.error(request, 'Ya existe stock para este producto, color y talla.')
+                return redirect('create_stock')
+
+            productStock = ProductStock.objects.create(**data, stock=request.POST.get('stock') or 0)
+            productStock.save()
+            messages.success(request, f'Stock creado correctamente.')
+            return redirect('product_stock_view')
+            
+        except Exception as e:
+            messages.error(request, f'Error: {str(e)}')
+            return redirect('create_stock')
+    return render_create_edit_stock_form(request)
+
+@staff_member_required(login_url='login')
+def edit_stock(request, stock_id):
+    if request.method == 'POST':
+        try:
+            productStock = get_object_or_404(ProductStock, id=stock_id)
+            
+            if request.POST.get('stock'):
+                setattr(productStock, 'stock', request.POST.get('stock'))
+            
+            productStock.save()
+            messages.success(request, f'Stock editado correctamente.')
+            return redirect('product_stock_view')
+        
+        except Exception as e:
+            messages.error(request, f'Error al editar el stock: {str(e)}')
+    return render_create_edit_stock_form(request, stock=get_object_or_404(ProductStock, id=stock_id), is_editing=True)
+
+@staff_member_required(login_url='login')
+def delete_stock(request, stock_id):
+    stock = get_object_or_404(ProductStock, pk=stock_id)
+    stock.delete()
+    return redirect('product_stock_view')
