@@ -199,6 +199,19 @@ def render_create_edit_form(request, product=None, is_editing=False):
     }
     return render(request, 'products/create_edit_product.html', context)
 
+def render_product_attribute_edit(request, attribute, attribute_name, has_logo = False, has_picture = False, has_brand = False):
+    brands = []
+    if has_brand:
+        brands = Brand.objects.all()
+    context = {
+        'attribute': attribute,
+        'attribute_name': attribute_name,
+        'has_logo': has_logo,
+        'has_picture': has_picture,
+        'brands': brands
+    }
+    return render(request, 'products/edit_product_attribute.html', context)
+
 @staff_member_required(login_url='login')
 def delete_product(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
@@ -338,3 +351,122 @@ def delete_colour(request, colour_id):
     colour.delete()
     return redirect(f"{reverse('catalog_management')}?tab=colours")
     
+@staff_member_required(login_url='login')
+def edit_brand(request, brand_id):
+    brand = get_object_or_404(Brand, id=brand_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(brand, 'name', request.POST.get('name'))
+
+            if 'logo' in request.FILES:
+                brand.logo = request.FILES['logo']
+
+            brand.save()
+            messages.success(request, f'Marca "{brand.name}" editada correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=brands")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear la marca: {str(e)}')
+            
+    return render_product_attribute_edit(request, brand, 'marca', has_logo=True)
+
+@staff_member_required(login_url='login')
+def edit_model(request, model_id):
+    model = get_object_or_404(ProductModel, id=model_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(model, 'name', request.POST.get('name'))
+
+            if request.POST.get('brand'):
+                model.brand = get_object_or_404(Brand, id=request.POST.get('brand'))
+
+            if 'picture' in request.FILES:
+                model.picture = request.FILES['picture']
+
+            model.save()
+            messages.success(request, f'Modelo "{model.name}" editado correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=models")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear el modelo: {str(e)}')
+            
+    return render_product_attribute_edit(request, model, 'modelo', has_picture=True, has_brand=True)
+
+@staff_member_required(login_url='login')
+def edit_type(request, type_id):
+    type = get_object_or_404(ProductType, id=type_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(type, 'name', request.POST.get('name'))
+
+            if 'picture' in request.FILES:
+                type.picture = request.FILES['picture']
+
+            type.save()
+            messages.success(request, f'Tipo "{type.name}" editado correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=types")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear el tipo: {str(e)}')
+            
+    return render_product_attribute_edit(request, type, 'tipo', has_picture=True)
+
+@staff_member_required(login_url='login')
+def edit_material(request, material_id):
+    material = get_object_or_404(ProductMaterial, id=material_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(material, 'name', request.POST.get('name'))
+
+            if 'picture' in request.FILES:
+                material.picture = request.FILES['picture']
+
+            material.save()
+            messages.success(request, f'Material "{material.name}" editado correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=materials")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear el material: {str(e)}')
+            
+    return render_product_attribute_edit(request, material, 'material', has_picture=True)
+
+@staff_member_required(login_url='login')
+def edit_size(request, size_id):
+    size = get_object_or_404(ProductSize, id=size_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(size, 'name', request.POST.get('name'))
+
+            size.save()
+            messages.success(request, f'Talla "{size.name}" editada correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=sizes")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear la talla: {str(e)}')
+            
+    return render_product_attribute_edit(request, size, 'talla')
+
+@staff_member_required(login_url='login')
+def edit_colour(request, colour_id):    
+    colour = get_object_or_404(ProductColour, id=colour_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(colour, 'name', request.POST.get('name'))
+                        
+            if 'picture' in request.FILES:
+                colour.picture = request.FILES['picture']
+
+            colour.save()
+            messages.success(request, f'Color "{colour.name}" editado correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=colours")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear el color: {str(e)}')
+            
+    return render_product_attribute_edit(request, colour, 'color', has_picture=True)
