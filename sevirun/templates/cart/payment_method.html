@@ -40,6 +40,17 @@
                         </div>
                         <div class="total-items-price"><strong>Subtotal:</strong> <span id="subtotal">{{ order.subtotal }}</span>€</div>
                     </div>
+
+                    <div class="summary-block price-block">
+                    <div class="block-title">Resumen del precio</div>
+                    <div class="flex flex-row summary-item">
+                        <span class="summary-label">Gastos de envío:</span> <span id="shipping_costs">0.00€</span>
+                    </div>
+                    <div class="subtotal">
+                        Total (IVA <span id="tax">{{ order.tax_percentage }}</span>%): <span id="total_price">{{ order.total_price }}</span>
+                    </div>
+                </div>
+
                 </div>
             </div>
 

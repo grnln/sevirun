@@ -19,8 +19,7 @@ def send_order_confirmation_email(order, tracking_url, recipient):
     resend.api_key = os.environ["RESEND_API_KEY"]
     html_content = render_to_string('emails/order_finished.html', {
         'order': order,
-        'discount_amount': Decimal(order.subtotal + order.delivery_cost) * Decimal(order.discount_percentage) * Decimal(0.01),
-        'tax_amount': Decimal(order.subtotal + order.delivery_cost) * Decimal(100 - order.discount_percentage) * Decimal(order.tax_percentage) * Decimal(0.0001),
+        'tax_amount': Decimal(order.subtotal + order.delivery_cost) * Decimal(order.tax_percentage) * Decimal(0.01),
         'tracking_url': tracking_url
     })
     send_email("Your order has been confirmed", html_content, recipient)

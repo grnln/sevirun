@@ -56,12 +56,6 @@ class Order(models.Model):
         null = False,
         validators=[MinValueValidator(0.0)]
     )
-    discount_percentage = models.DecimalField(
-        max_digits = 5,
-        decimal_places = 2,
-        null = False,
-        validators=[MinValueValidator(0.0), MaxValueValidator(100.00)]
-    )
     payment_method = models.CharField(choices=PaymentMethod, default=PaymentMethod.CREDIT_CARD, null=False)
     shipping_address = models.CharField(max_length = 255, null = True, blank=True)
     phone_number = models.CharField(
@@ -77,8 +71,7 @@ class Order(models.Model):
     def total_price(self):
         subtotal = self.subtotal
         delivery = self.delivery_cost 
-        discount = self.discount_percentage 
-        result = Decimal((subtotal + delivery) * Decimal(f"1.{int(self.tax_percentage)}") * (100 - discount) / 100)
+        result = Decimal((subtotal + delivery) * Decimal(f"1.{int(self.tax_percentage)}"))
         return result.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
     @property
@@ -119,7 +112,6 @@ class Order(models.Model):
                     client: {self.client.pk},
                     state: {self.state},
                     delivery_cost: {self.delivery_cost},
-                    discount_percentage: {self.discount_percentage},
                     payment_method: {self.payment_method},
                     shipping_address: {self.shipping_address},
                     phone_number: {self.phone_number},

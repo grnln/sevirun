@@ -80,15 +80,15 @@
                                         <div class = "summary-item">
                                             <span class = "summary-label">Modo de envío:</span> {{order.get_type_display}}
                                         </div>
+                                        <div class = "summary-item">
+                                            <span class = "summary-label">Código de seguimiento:</span> {{order.tracking_number}}
+                                        </div>
                                     </div>
 
                                     <div class="summary-block price-block">
                                         <div class="block-title">Resumen del precio</div>
                                         <div class="summary-item">
                                             <span class="summary-label">Gastos de envío:</span> {{ order.delivery_cost }}€
-                                        </div>
-                                        <div class="summary-item">
-                                            <span class="summary-label">Descuento aplicado:</span> {{ order.discount_percentage }}%
                                         </div>
                                         <div class="summary-item">
                                             <span class="summary-label">Método de pago:</span> {{ order.get_payment_method_display }}

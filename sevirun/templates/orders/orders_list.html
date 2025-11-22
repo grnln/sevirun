@@ -37,6 +37,9 @@
                                     <p>
                                         <strong>Modo de envío:</strong> {{o.get_type_display}}
                                     </p>
+                                    <p>
+                                        <strong>Código de seguimiento:</strong> {{ o.tracking_number }}
+                                    </p>
                                     {% if user.is_staff or user.is_superuser %}
                                         <div>
                                             <form method = "post" class = "d-flex mb-2">

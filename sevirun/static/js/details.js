@@ -5,7 +5,6 @@ const shippingCosts = document.getElementById('shipping_costs');
 const totalPrice = document.getElementById('total_price');
 const subtotalPrice = document.getElementById('subtotal');
 const taxElement = document.getElementById('tax'); // Renombrado para evitar conflicto
-const discountElement = document.getElementById('discount'); // Renombrado para evitar conflicto
 
 const shippingSection = shippingInput.closest('.mb-3');
 
@@ -23,9 +22,8 @@ function cleanAndParse(element) {
 function calculateTotal(shippingFee) {
     const subtotal = cleanAndParse(subtotalPrice);
     const taxPercentage = cleanAndParse(taxElement);
-    const discountAmount = cleanAndParse(discountElement);
 
-    const baseTotal = subtotal + shippingFee - discountAmount;
+    const baseTotal = subtotal + shippingFee;
 
     const taxMultiplier = 1 + (taxPercentage / 100);
 

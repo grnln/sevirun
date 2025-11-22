@@ -44,7 +44,6 @@ not_delivered_order = {
       "created_at": "2025-01-01T00:00:00.000+01:00",
       "state": "PE",
       "delivery_cost": Decimal("5.5"),
-      "discount_percentage": Decimal("10.0"),
       "payment_method": "CC",
       "shipping_address": "Fake street, 123, 12345, City, Country",
       "phone_number": "+341234356789"
@@ -54,7 +53,6 @@ not_delivered_incomplete_order = {
       "created_at": "2025-01-01T00:00:00.000+01:00",
       "state": "PE",
       "delivery_cost": Decimal("5.5"),
-      "discount_percentage": Decimal("10.0"),
       "payment_method": "CC",
       "shipping_address": "",
       "phone_number": ""

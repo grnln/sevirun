@@ -11,7 +11,6 @@ def order_list(regular_user, regular_user_2):
         "created_at": "2025-01-01T00:00:00.000+01:00",
         "state": "DE",
         "delivery_cost": Decimal("5.5"),
-        "discount_percentage": Decimal("10.0"),
         "payment_method": "CC",
         "shipping_address": "Fake street, 123, 12345, City, Country",
         "phone_number": "+341234356789"
@@ -21,7 +20,6 @@ def order_list(regular_user, regular_user_2):
       "created_at": "2025-01-01T00:00:00.000+01:00",
       "state": "PE",
       "delivery_cost": Decimal("5.5"),
-      "discount_percentage": Decimal("10.0"),
       "payment_method": "CC",
       "shipping_address": "Fake street, 123, 12345, City, Country",
       "phone_number": "+341234356789"

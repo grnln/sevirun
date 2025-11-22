@@ -8,7 +8,6 @@
       "state": "PE",
       "type": "SP",
       "delivery_cost": "5.5",
-      "discount_percentage": "10.0",
       "payment_method": "CC",
       "shipping_address": "Fake street, 123, 12345, City, Country",
       "phone_number": "+341234356789"
@@ -23,7 +22,6 @@
       "state": "DE",
       "type": "HD",
       "delivery_cost": "5.5",
-      "discount_percentage": "10.0",
       "payment_method": "CC",
       "shipping_address": "Fake street, 123, 12345, City, Country",
       "phone_number": "+341234356789"
@@ -38,7 +36,6 @@
       "state": "CA",
       "type": "HD",
       "delivery_cost": "5.5",
-      "discount_percentage": "0.0",
       "payment_method": "CA",
       "shipping_address": "Fake street, 123, 12345, City, Country",
       "phone_number": "+341234356789"

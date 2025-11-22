@@ -252,12 +252,6 @@
                         <span>Envío:</span>
                         <span>&nbsp;{{ order.delivery_cost|floatformat:2 }}€</span>
                     </div>
-                    {% if order.discount_percentage > 0 %}
-                    <div class="summary-row">
-                        <span>Descuento ({{ order.discount_percentage }}%):</span>
-                        <span>&nbsp;-{{ discount_amount|floatformat:2 }}€</span>
-                    </div>
-                    {% endif %}
                     <div class="summary-row">
                         <span>IVA ({{ order.tax_percentage }}%):</span>
                         <span>&nbsp;{{ tax_amount|floatformat:2 }}€</span>

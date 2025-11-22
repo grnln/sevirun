@@ -44,9 +44,6 @@
                                         <span class="summary-label">Gastos de envío:</span> {{ s.delivery_cost }}€
                                     </div>
                                     <div class="summary-item">
-                                        <span class="summary-label">Descuento aplicado:</span> {{ s.discount_percentage }}%
-                                    </div>
-                                    <div class="summary-item">
                                         <span class="summary-label">Método de pago:</span> {{ s.get_payment_method_display }}
                                     </div>
                                     <div class = "summary-item">
@@ -54,6 +51,9 @@
                                     </div>
                                     <div class = "summary-item">
                                         <span class = "summary-label">Modo de envío:</span> {{s.get_type_display}}
+                                    </div>
+                                    <div class = "summary-item">
+                                        <span class = "summary-label">Código de seguimiento:</span> {{s.tracking_number}}
                                     </div>
                                     <div class="subtotal">
                                         Total (IVA {{ s.tax_percentage }}%): {{ s.total_price }}€
