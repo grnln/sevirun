@@ -71,8 +71,7 @@ def _make_redsys_config():
         'REDSYS_CURRENCY': '978',
         'REDSYS_TRANSACTION_TYPE': '0',
         'REDSYS_TERMINAL': '1',
-        'REDSYS_URL': 'https://example.redsys.test',
-        'RESEND_API_KEY': os.environ['RESEND_API_KEY']
+        'REDSYS_URL': 'https://example.redsys.test'
     }
 
 def _make_signature_for_payload(order_str, payload_dict, secret_key):
