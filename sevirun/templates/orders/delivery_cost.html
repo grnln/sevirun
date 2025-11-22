@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/admin_create_user.css' %}">
+{% endblock %}
+
+{% block content %}
+{% load l10n %}
+
+<main class="container py-4">
+    <aside class = "ml-4 mb-4">
+        <a href="{% if from %}{{ from }}{% else %}{% url 'home' %}{% endif %}" class="text-dark">← Volver</a>
+    </aside>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">Editar gastos de envío</h2>
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="delivery_cost" class="form-label">Coste</label>
+                                    <input type="number" class="form-control" id="delivery_cost" name="delivery_cost" min="0" step="0.01" value="{{ delivery_cost|unlocalize|default_if_none:'' }}">
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</main>
+{% endblock %}

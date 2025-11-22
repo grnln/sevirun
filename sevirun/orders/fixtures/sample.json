@@ -1,5 +1,12 @@
 [
   {
+    "model": "orders.DeliveryCost",
+    "pk": 1,
+    "fields": {
+      "delivery_cost": "5.0"
+    }
+  },
+  {
     "model": "orders.Order",
     "pk": 1,
     "fields": {

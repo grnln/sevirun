@@ -12,6 +12,8 @@ def index_sales(request):
 
 @login_required(login_url='login')
 def index_customer_orders(request):
+    prev_page = request.GET.get('from', '/')
+
     if request.user.is_staff or request.user.is_superuser:
         orders = Order.objects.all().order_by('-created_at')
 
@@ -24,7 +26,7 @@ def index_customer_orders(request):
                     order.save()
     else:
         orders = Order.objects.filter(client=request.user).order_by('-created_at')
-    return render(request, 'orders/orders_list.html', { "orders" : orders, "states": OrderState.choices })
+    return render(request, 'orders/orders_list.html', { "orders" : orders, "states": OrderState.choices, 'from': prev_page })
 
 @login_required(login_url='login')
 def order_detail(request, order_id):
@@ -57,3 +59,28 @@ def order_tracking(request, tracking_number):
             
     order_items = OrderItem.objects.filter(order=order)
     return render(request, 'orders/order_detail.html', { "order": order, "order_items": order_items, "states": OrderState.choices, 'is_tracking': True })
+
+@staff_member_required(login_url='login')
+def delivery_cost(request):
+    delivery_cost = DeliveryCost.objects.first()
+    if request.method == 'POST':
+        try:
+            fields = {
+                'delivery_cost': request.POST.get('delivery_cost'),
+            }
+            
+            for field, value in fields.items():
+                if value:
+                    setattr(delivery_cost, field, value)
+            
+            delivery_cost.save()
+            messages.success(request, f'Gastos de envío editados correctamente.')
+            return redirect('home')
+        
+        except Exception as e:
+            messages.error(request, f'Error al editar gastos de envío: {str(e)}')
+            
+    context = {
+        'delivery_cost': delivery_cost.delivery_cost
+    }
+    return render(request, 'orders/delivery_cost.html', context)

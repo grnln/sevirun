@@ -8,8 +8,10 @@ from django.db import IntegrityError
 
 @staff_member_required(login_url='login')
 def admin_users_view(request):
+    prev_page = request.GET.get('from', '/')
+
     users = AppUser.objects.all()
-    return render(request, 'users/admin_users.html', {'users': users})
+    return render(request, 'users/admin_users.html', {'users': users, 'from': prev_page})
 
 @staff_member_required(login_url='login')
 @require_http_methods(['GET', 'POST'])

@@ -26,5 +26,9 @@ urlpatterns = [
     path('edit_type/<int:type_id>/', views.edit_type, name="edit_type"),
     path('edit_material/<int:material_id>/', views.edit_material, name="edit_material"),
     path('edit_size/<int:size_id>/', views.edit_size, name="edit_size"),
-    path('edit_colour/<int:colour_id>/', views.edit_colour, name="edit_colour")
+    path('edit_colour/<int:colour_id>/', views.edit_colour, name="edit_colour"),
+    path('product_stock_view', views.product_stock_view, name="product_stock_view"),
+    path('create_stock', views.create_stock, name="create_stock"),
+    path('edit_stock/<int:stock_id>/', views.edit_stock, name="edit_stock"),
+    path('delete_stock/<int:stock_id>/', views.delete_stock, name="delete_stock"),
 ]
