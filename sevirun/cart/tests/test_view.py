@@ -84,6 +84,11 @@ def _make_signature_for_payload(order_str, payload_dict, secret_key):
 # Payment method view tests
 User = get_user_model()
 
+@pytest.fixture(autouse=True)
+def mock_send_email():
+    with patch('cart.views.send_order_confirmation_email') as mock:
+        yield mock
+
 @pytest.mark.django_db
 def test_order_info_access_with_authenticated_user(client, django_user_model):
     user = django_user_model.objects.create_user(**user_data)
@@ -242,7 +247,7 @@ def test_payment_method_post_card_selection(client, regular_user, order_and_item
         mock_start_payment.assert_called_once()
 
 @pytest.mark.django_db
-def test_payment_method_post_cod_selection(client, regular_user, order_and_items_list):
+def test_payment_method_post_cod_selection(client, regular_user, order_and_items_list, mock_send_email):
     client.force_login(regular_user)
     order = order_and_items_list
     order.state = 'PE'
@@ -270,9 +275,10 @@ def test_payment_method_post_cod_selection(client, regular_user, order_and_items
     for item in order.items.all():
         ps = ProductStock.objects.get(product=item.product, size=item.size, colour=item.colour)
         assert ps.stock == initial_stock[item.pk] - item.quantity
+    mock_send_email.assert_called_once()
 
 @pytest.mark.django_db
-def test_payment_method_invalid_post_selection(client, regular_user, order_and_items_list):
+def test_payment_method_invalid_post_selection(client, regular_user, order_and_items_list, mock_send_email):
     client.force_login(regular_user)
     order = order_and_items_list
     url = reverse('payment_method', args=[order.id])
@@ -280,10 +286,10 @@ def test_payment_method_invalid_post_selection(client, regular_user, order_and_i
     response = client.post(url, data={'method': 'invalid_method'})
 
     assert response.status_code == 302
-
+    mock_send_email.assert_not_called()
 
 @pytest.mark.django_db
-def test_payment_method_insufficient_stock_redirects_to_cart(client, regular_user, order_and_items_list):
+def test_payment_method_insufficient_stock_redirects_to_cart(client, regular_user, order_and_items_list, mock_send_email):
     client.force_login(regular_user)
     order = order_and_items_list
     order.state = 'PE'
@@ -314,6 +320,7 @@ def test_payment_method_insufficient_stock_redirects_to_cart(client, regular_use
     assert response.url == reverse('cart')
     order.refresh_from_db()
     assert order.state == 'PE'
+    mock_send_email.assert_not_called()
 
 # Payment start view tests
 
