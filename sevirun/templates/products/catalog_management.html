@@ -77,7 +77,10 @@
                                     <td class="text-center"><span class="badge bg-primary">{{ brand.models.all|length }}</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-outline-secondary" style="margin: auto;">Editar<i class="bi bi-pencil"></i></button>
+                                            <a href="{% url 'edit_brand' brand.pk %}" class="btn btn-sm btn-outline-secondary" style="margin: auto;">
+                                                Editar
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                             <a href="{% url 'delete_brand' brand.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;" onclick="return confirm('¿Seguro que quieres eliminar esta marca?')">
                                                 Eliminar
                                                 <i class="bi bi-trash"></i>
@@ -139,7 +142,10 @@
                                     <td class="text-center"><span class="badge bg-primary">{{ model.products.all|length }}</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-outline-secondary" style="margin: auto;">Editar<i class="bi bi-pencil"></i></button>
+                                            <a href="{% url 'edit_model' model.pk %}" class="btn btn-sm btn-outline-secondary" style="margin: auto;">
+                                                Editar
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                             <a href="{% url 'delete_model' model.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;" onclick="return confirm('¿Seguro que quieres eliminar este modelo de producto?')">
                                                 Eliminar
                                                 <i class="bi bi-trash"></i>
@@ -190,7 +196,10 @@
                                     <td class="text-center"><span class="badge bg-primary">{{ type.products.all|length }}</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-outline-secondary" style="margin: auto;">Editar<i class="bi bi-pencil"></i></button>
+                                            <a href="{% url 'edit_type' type.pk %}" class="btn btn-sm btn-outline-secondary" style="margin: auto;">
+                                                Editar
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                             <a href="{% url 'delete_type' type.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;" onclick="return confirm('¿Seguro que quieres eliminar este tipo de producto?')">
                                                 Eliminar
                                                 <i class="bi bi-trash"></i>
@@ -241,7 +250,10 @@
                                     <td class="text-center"><span class="badge bg-primary">{{ material.products.all|length }}</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-outline-secondary" style="margin: auto;">Editar<i class="bi bi-pencil"></i></button>
+                                            <a href="{% url 'edit_material' material.pk %}" class="btn btn-sm btn-outline-secondary" style="margin: auto;">
+                                                Editar
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                             <a href="{% url 'delete_material' material.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;" onclick="return confirm('¿Seguro que quieres eliminar este material?')">
                                                 Eliminar
                                                 <i class="bi bi-trash"></i>
@@ -292,7 +304,10 @@
                                     <td class="text-center"><span class="badge bg-primary">{{ size.product_count }}</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-outline-secondary" style="margin: auto;">Editar<i class="bi bi-pencil"></i></button>
+                                            <a href="{% url 'edit_size' size.pk %}" class="btn btn-sm btn-outline-secondary" style="margin: auto;">
+                                                Editar
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                             <a href="{% url 'delete_size' size.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;" onclick="return confirm('¿Seguro que quieres eliminar esta talla?')">
                                                 Eliminar
                                                 <i class="bi bi-trash"></i>
@@ -343,7 +358,10 @@
                                     <td class="text-center"><span class="badge bg-primary">{{ colour.product_count }}</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-outline-secondary" style="margin: auto;">Editar<i class="bi bi-pencil"></i></button>
+                                            <a href="{% url 'edit_colour' colour.pk %}" class="btn btn-sm btn-outline-secondary" style="margin: auto;">
+                                                Editar
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                             <a href="{% url 'delete_colour' colour.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;" onclick="return confirm('¿Seguro que quieres eliminar este color?')">
                                                 Eliminar
                                                 <i class="bi bi-trash"></i>
