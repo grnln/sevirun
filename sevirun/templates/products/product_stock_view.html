@@ -16,7 +16,7 @@
         </div>
         <div>
             <a href="{% url 'create_stock' %}" class="btn btn-success btn-sm">
-                <i class="bi bi-plus-circle"></i> Añadir Stock
+                <i class="bi bi-plus-circle"></i> Añadir inventario de producto
             </a>
         </div>
     </aside>
@@ -29,7 +29,7 @@
                         <th>Producto</th>
                         <th class="text-center">Talla</th>
                         <th class="text-center">Color</th>
-                        <th class="text-center" >Stock</th>
+                        <th class="text-center" >Unidades en inventario</th>
                         <th style="width: 10rem;" class="text-center">Acciones</th>
                     </tr>
                 </thead>
@@ -46,7 +46,7 @@
                                         Editar
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="{% url 'delete_stock' stock.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;" onclick="return confirm('¿Seguro que quieres eliminar este stock?')">
+                                    <a href="{% url 'delete_stock' stock.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;">
                                         Eliminar
                                         <i class="bi bi-trash"></i>
                                     </a>

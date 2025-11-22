@@ -16,14 +16,14 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-lg">
                     <div class="card-body p-4">
-                        <h2 class="card-title text-center mb-4">{% if is_editing %}Editar Stock{% else %}Crear Stock{% endif %}</h2>
+                        <h2 class="card-title text-center mb-4">{% if is_editing %}Editar inventario de producto{% else %}Añadir inventario de producto{% endif %}</h2>
 
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
 
                             <div class="row mb-3">
                                 <div class="col-md-12">
-                                    <label for="stock" class="form-label">Cantidad en stock</label>
+                                    <label for="stock" class="form-label">Cantidad de productos</label>
                                     <input type="number" class="form-control" id="stock" name="stock" min="0" required step="1" value="{{ stock.stock|unlocalize|default_if_none:'' }}">
                                 </div>
                             </div>
@@ -72,7 +72,7 @@
                             {% endif %}
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">{% if is_editing %}Guardar Stock{% else %}Crear Stock{% endif %}</button>
+                                <button type="submit" class="btn btn-primary btn-lg">{% if is_editing %}Guardar inventario{% else %}Crear inventario{% endif %}</button>
                             </div>
                         </form>
                     </div>

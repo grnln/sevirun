@@ -4,11 +4,15 @@
 <main class="container py-4">
     <h2 class="h5 mb-3 fw-bold">Confirmar eliminación</h2>
     <div class="card p-3">
-        <p>¿Eliminar el producto <strong>{{ product.name }}</strong>?</p>
+        <p>¿Eliminar el {{object_name}} <strong>{{ object.name }}</strong>?</p>
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Eliminar</button>
-            <a href="{% url 'products' %}" class="btn btn-secondary">Cancelar</a>
+            {% if cancel_target %}
+                <a href="{{ cancel_target }}" class="btn btn-secondary">Cancelar</a>
+            {% elif cancel_url %}
+                <a href="{% url cancel_url %}" class="btn btn-secondary">Cancelar</a>
+            {% endif %}
         </form>
     </div>
 </main>
