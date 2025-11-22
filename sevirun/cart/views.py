@@ -331,7 +331,11 @@ def payment_success(request, order_id):
     tracking_url = request.build_absolute_uri(
         reverse('order_tracking', kwargs={'tracking_number': order.tracking_number})
     )
-    send_order_confirmation_email(order, tracking_url)
+    if request.user.is_authenticated:
+        recipient = request.user.email
+    else:
+        recipient = order.client_email
+    send_order_confirmation_email(order, tracking_url, recipient)
     return render(request, 'cart/payment_success.html', {"order": order})
 
 def payment_error(request, order_id):
