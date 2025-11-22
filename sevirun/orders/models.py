@@ -27,6 +27,14 @@ class OrderType(models.TextChoices):
     SHOP = "SP", _("En tienda")
     HOME_DELIVERY = "HD", _("A domicilio")
 
+class DeliveryCost(models.Model):
+    delivery_cost = models.DecimalField(
+        max_digits = 5,
+        decimal_places = 2,
+        null = False,
+        validators=[MinValueValidator(0.0)],
+    )
+
 class Order(models.Model):
     client = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, null=True, blank=True)
     session_id = models.CharField(max_length=255, null=True, blank=True)
