@@ -28,6 +28,8 @@ import uuid
 from django.utils import timezone
 from emails.emailService import send_order_confirmation_email
 
+from orders.models import DeliveryCost
+
 # Cart views
 
 def order_info(request, order_id):
@@ -62,7 +64,7 @@ def order_info(request, order_id):
         if method == "home":
             order.type = OrderType.HOME_DELIVERY
             order.shipping_address = address
-            order.delivery_cost = 5.00
+            order.delivery_cost = DeliveryCost.objects.first().delivery_cost
         else:
             order.type = OrderType.SHOP
             order.shipping_address = "En tienda"
@@ -109,6 +111,9 @@ def get_user_cart(request):
     return None
 
 def cart(request):
+    if request.user.is_staff:
+        messages.error(request, "Esta vista es sólo para clientes.")
+        return redirect('home')
     cart = get_or_create_cart(request)
     return render(request, "cart/view_cart.html", { 'cart': cart })
 
@@ -175,6 +180,10 @@ def create_order_from_cart(request):
     if len(cart_items) == 0:
         messages.error(request, "El carrito está vacío.")
         return redirect('cart')
+    
+    if request.user.is_staff:
+        messages.error(request, "Esta vista es sólo para clientes.")
+        return redirect('home')
     
     cart_client = cart.client if cart.client else None
     cart_session_id = cart.session_id if cart.session_id else None
@@ -294,10 +303,10 @@ def payment_notification(request, order_id):
         if 0 <= response_int < 100:
             # Actualizar el pedido
             try:
-                order_obj = Order.objects.get(id=int(order_id))
-                if order_obj.state == 'PE':
-                    order_obj.state = 'PR'
-                    for item in order_obj.items.all():
+                order = Order.objects.get(id=int(order_id))
+                if order.state == 'PE':
+                    order.state = 'PR'
+                    for item in order.items.all():
                         stock_obj = ProductStock.objects.get(
                             product=item.product,
                             size=item.size,
@@ -308,7 +317,19 @@ def payment_notification(request, order_id):
                         else:
                             stock_obj.stock = 0
                         stock_obj.save()
-                    order_obj.save()
+                    order.save()
+
+                    if not order.tracking_number:
+                        order.tracking_number = str(uuid.uuid4())
+                        order.save()
+                        tracking_url = request.build_absolute_uri(
+                            reverse('order_tracking', kwargs={'tracking_number': order.tracking_number})
+                            )
+                    if request.user.is_authenticated:
+                        recipient = request.user.email
+                    else:
+                        recipient = order.client_email
+                    send_order_confirmation_email(order, tracking_url, recipient)
                     
             except Order.DoesNotExist:
                 pass
@@ -324,13 +345,9 @@ def payment_success(request, order_id):
     if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
         return redirect('home')
-    if not order.tracking_number:
-        order.tracking_number = str(uuid.uuid4())
-        order.save()
-    tracking_url = request.build_absolute_uri(
-        reverse('order_tracking', kwargs={'tracking_number': order.tracking_number})
-    )
-    send_order_confirmation_email(order, tracking_url)
+    if request.user.is_staff:
+        messages.error(request, "Esta vista es sólo para clientes.")
+        return redirect('home')
     return render(request, 'cart/payment_success.html', {"order": order})
 
 def payment_error(request, order_id):
@@ -339,6 +356,9 @@ def payment_error(request, order_id):
     user_ok = request.user.is_authenticated and order.client == request.user
     if not (session_ok or user_ok):
         messages.error(request, "El pedido al que intenta pagar no es suyo.")
+        return redirect('home')
+    if request.user.is_staff:
+        messages.error(request, "Esta vista es sólo para clientes.")
         return redirect('home')
     return render(request, 'cart/payment_error.html', {"order": order})
 
@@ -404,6 +424,19 @@ def payment_method(request, order_id):
                 stock.stock = 0
             stock.save()
         order.save()
+
+        if not order.tracking_number:
+            order.tracking_number = str(uuid.uuid4())
+            order.save()
+            tracking_url = request.build_absolute_uri(
+                reverse('order_tracking', kwargs={'tracking_number': order.tracking_number})
+                )
+        if request.user.is_authenticated:
+            recipient = request.user.email
+        else:
+            recipient = order.client_email
+        send_order_confirmation_email(order, tracking_url, recipient)
+        
         return redirect('payment_ok', order_id=order_id)
 
     return render(request, 'cart/payment_method.html', {"order": order})

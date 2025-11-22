@@ -24,34 +24,6 @@
         </aside>
     </section>
 
-    <!-- Tracking Number Section -->
-    <section class="mb-4" role="region" aria-label="Rastrear pedido">
-        <div class="card bg-light border-primary">
-            <div class="card-body">
-            <h2 class="card-title h5 fw-bold mb-3">Rastrear tu pedido</h2>
-            <p class="text-muted mb-3">Introduce tu número de seguimiento para rastrear el estado de tu envío.</p>
-            <form id="trackingForm" method="GET" class="d-flex gap-2">
-                <input 
-                    type="text" 
-                    id="trackingInput"
-                    class="form-control" 
-                    placeholder="Ej: SEV123456789" 
-                    required
-                />
-                <button type="submit" class="btn btn-primary">Rastrear</button>
-            </form>
-
-            <script>
-            document.getElementById("trackingForm").addEventListener("submit", function (e) {
-                e.preventDefault();
-                let code = document.getElementById("trackingInput").value;
-                window.location.href = `/orders/tracking/${code}/`;
-            });
-            </script>
-            </div>
-        </div>
-    </section>
-
     <h2 class = "h5 mb-3 fw-bold">Buscar productos:</h2>
     <aside class = "ml-4 mb-4 d-flex justify-content-center">
         <div class = "card h-100 bg-white text-dark flex-fill">
@@ -79,30 +51,78 @@
     <div class="row g-3">
     {% if products %}
         {% for p in products %}
-            <div class="col-6 col-md-4">
-                <div class="card p-2 h-100 bg-white text-dark">
-                    {% if p.picture %}
-                        <img src="{{ p.picture.url }}" class="card-img-top rounded" alt="{{ p.name }}">
-                    {% else %}
-                        <img src="{% static 'images/test_image.jpg' %}" class="card-img-top rounded" alt="Producto">
-                    {% endif %}
-                    <div class="card-body p-2">
-                        <h5 class="card-title mb-1 fs-6">{{ p.name }}</h5>
-                        <p class="text-muted mb-1 small">{{ p.description }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>{{ p.price }} €</strong>
-                            <a href="{% url 'product_detail' p.pk %}" class="btn btn-sm btn-primary">Ver</a>
+             <div class = "col-6 col-md-4">
+                <div class = "card p-2 h-100 bg-white text-dark">
+                    <img src = "{{ p.picture.url }}" class = "card-img-top rounded" style="margin: auto;" alt = "{{ p.name }}">
+                        <div class = "p-2" style="margin-top: auto;">
+                            <h5 class = "card-title mb-1 fs-6"><strong>{{p.name}}</strong></h5>
+
+                            <div class = "brand">
+                                {{ p.model.brand.name }}
+                            </div>
+                                    
+                            <div class = "mb-2">
+                                <span class = "badge bg-warning text-dark">Destacado</span>
+                                {% if p.is_available %}
+                                    <span class = "badge bg-success">Disponible</span>
+                                {% else %}
+                                    <span class = "badge bg-danger">No disponible</span>
+                                {% endif %}
+                            </div>
+
+                            <p class = "price">
+                                {% if p.price_on_sale %}
+                                    <span class = "text-muted text-decoration-line-through">{{ p.price }}€</span>
+                                    <span class = "ms-2 text-danger fw-bold">{{ p.price_on_sale }}€</span>
+                                {% else %}
+                                    <span class = "fw-bold">{{ p.price }}€</span>
+                                {% endif %}
+                            </p>
+                            <a href="{% url 'product_detail' p.pk %}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                </svg>
+                                Ver
+                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
         {% endfor %}
       
     {% else %}
         <p>No hay productos destacados disponibles en este momento.</p>
     {% endif %}
     </div>
-</section>
+    </section>
+
+    <!-- Tracking Number Section -->
+    <section class="mb-4 mt-5" role="region" aria-label="Rastrear pedido">
+        <div class="card bg-light border-primary">
+            <div class="card-body">
+            <h2 class="card-title h5 fw-bold mb-3">Rastrear tu pedido</h2>
+            <p class="text-muted mb-3">Introduce tu número de seguimiento para rastrear el estado de tu envío.</p>
+            <form id="trackingForm" method="GET" class="d-flex gap-2">
+                <input 
+                    type="text" 
+                    id="trackingInput"
+                    class="form-control" 
+                    placeholder="Ej: SEV123456789" 
+                    required
+                />
+                <button type="submit" class="btn btn-primary">Rastrear</button>
+            </form>
+
+            <script>
+            document.getElementById("trackingForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                let code = document.getElementById("trackingInput").value;
+                window.location.href = `/orders/tracking/${code}/`;
+            });
+            </script>
+            </div>
+        </div>
+    </section>
 
 </main>
 {% endblock %}

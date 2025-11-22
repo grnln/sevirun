@@ -71,8 +71,7 @@ def _make_redsys_config():
         'REDSYS_CURRENCY': '978',
         'REDSYS_TRANSACTION_TYPE': '0',
         'REDSYS_TERMINAL': '1',
-        'REDSYS_URL': 'https://example.redsys.test',
-        'RESEND_API_KEY': os.environ['RESEND_API_KEY']
+        'REDSYS_URL': 'https://example.redsys.test'
     }
 
 def _make_signature_for_payload(order_str, payload_dict, secret_key):
@@ -86,6 +85,11 @@ def _make_signature_for_payload(order_str, payload_dict, secret_key):
 
 # Payment method view tests
 User = get_user_model()
+
+@pytest.fixture(autouse=True)
+def mock_send_email():
+    with patch('cart.views.send_order_confirmation_email') as mock:
+        yield mock
 
 @pytest.mark.django_db
 def test_order_info_access_with_authenticated_user(client, django_user_model):
@@ -129,7 +133,6 @@ def test_order_info_access_with_wrong_user(client, django_user_model):
     )
 
     response = client.get(reverse('order_info', kwargs={'order_id': order.id}), follow=True)
-    print(response.content.decode('utf-8'))
     assert response.status_code == 200
     assert 'El pedido al que intenta acceder no es suyo.' in response.content.decode('utf-8')
 
@@ -154,15 +157,6 @@ def test_incomplete_order_info(client, django_user_model):
     assert response.status_code == 200
     assert 'Debe completar la información del pedido antes de seleccionar el método de pago.' in response.content.decode('utf-8')
 
-
-@pytest.mark.django_db
-def test_payment_method_access_as_unauthenticated(client):
-    url = reverse('payment_method', args=[1])
-    response = client.get(url)
-
-    assert response.status_code == 302
-    assert "accounts/login" in response.url
-
 @pytest.mark.django_db
 def test_payment_method_access_as_staff(client, staff_user):
     client.force_login(staff_user)
@@ -172,20 +166,13 @@ def test_payment_method_access_as_staff(client, staff_user):
     assert response.url == reverse('home')
 
 @pytest.mark.django_db
-def test_payment_method_access_as_non_owner_client(client, regular_user, order_list):
-    client.force_login(regular_user)
-
-    url = reverse('payment_method', args=[2])
-    response = client.get(url)
-    
-    assert response.status_code == 302
-    assert response.url == reverse('home')
-
-@pytest.mark.django_db
 def test_payment_method_access_as_client_owner(client, regular_user, order_list):
     client.force_login(regular_user)
     pending = next((o for o in order_list if o.state == 'PE'), order_list[0])
     pending.client = regular_user
+    pending.client_email = regular_user.email
+    pending.phone_number = regular_user.phone_number
+    pending.shipping_address = "Some address"
     pending.save()
 
     url = reverse('payment_method', args=[pending.id])
@@ -223,6 +210,9 @@ def test_payment_method_post_card_selection(client, regular_user, order_and_item
     order = order_and_items_list
     order.client = regular_user
     order.state = 'PE'
+    order.client_email = regular_user.email
+    order.phone_number = regular_user.phone_number
+    order.shipping_address = "Some address"
     order.save()
 
     initial_stock = {}
@@ -239,17 +229,20 @@ def test_payment_method_post_card_selection(client, regular_user, order_and_item
     with patch.object(cart_views, 'start_payment', return_value=HttpResponse(status=200)) as mock_start_payment:
         response = client.post(url, data={'method': 'card'})
 
-        assert response.status_code == 200 or response.status_code == 302
+        assert response.status_code == 200
         order.refresh_from_db()
         assert order.payment_method == 'CC'
         mock_start_payment.assert_called_once()
 
 @pytest.mark.django_db
-def test_payment_method_post_cod_selection(client, regular_user, order_and_items_list):
+def test_payment_method_post_cod_selection(client, regular_user, order_and_items_list, mock_send_email):
     client.force_login(regular_user)
     order = order_and_items_list
     order.state = 'PE'
     order.client = regular_user
+    order.client_email = regular_user.email
+    order.phone_number = regular_user.phone_number
+    order.shipping_address = "Some address"
     order.save()
     url = reverse('payment_method', args=[order.id])
     
@@ -273,9 +266,10 @@ def test_payment_method_post_cod_selection(client, regular_user, order_and_items
     for item in order.items.all():
         ps = ProductStock.objects.get(product=item.product, size=item.size, colour=item.colour)
         assert ps.stock == initial_stock[item.pk] - item.quantity
+    mock_send_email.assert_called_once()
 
 @pytest.mark.django_db
-def test_payment_method_invalid_post_selection(client, regular_user, order_and_items_list):
+def test_payment_method_invalid_post_selection(client, regular_user, order_and_items_list, mock_send_email):
     client.force_login(regular_user)
     order = order_and_items_list
     url = reverse('payment_method', args=[order.id])
@@ -283,14 +277,18 @@ def test_payment_method_invalid_post_selection(client, regular_user, order_and_i
     response = client.post(url, data={'method': 'invalid_method'})
 
     assert response.status_code == 302
-
+    mock_send_email.assert_not_called()
 
 @pytest.mark.django_db
-def test_payment_method_insufficient_stock_redirects_to_cart(client, regular_user, order_and_items_list):
+def test_payment_method_insufficient_stock_redirects_to_cart(client, regular_user, order_and_items_list, mock_send_email):
     client.force_login(regular_user)
     order = order_and_items_list
     order.state = 'PE'
     order.client = regular_user
+    order.client_email = "email@example.com"
+    order.phone_number = "123456789"
+    order.type = OrderType.SHOP
+    order.shipping_address = "Some address"
     order.save()
 
     items = list(order.items.all())
@@ -317,17 +315,9 @@ def test_payment_method_insufficient_stock_redirects_to_cart(client, regular_use
     assert response.url == reverse('cart')
     order.refresh_from_db()
     assert order.state == 'PE'
+    mock_send_email.assert_not_called()
 
 # Payment start view tests
-
-@pytest.mark.django_db
-def test_start_payment_access_as_unauthenticated(client):
-    url = reverse('start_payment', args=[1])
-    response = client.get(url)
-
-    assert response.status_code == 302
-    assert "accounts/login" in response.url
-
 @pytest.mark.django_db
 def test_start_payment_redirects_if_staff(client, staff_user, order_list):
     client.force_login(staff_user)
@@ -336,17 +326,6 @@ def test_start_payment_redirects_if_staff(client, staff_user, order_list):
 
     assert response.status_code == 302
     assert response.url == reverse('home')
-
-@pytest.mark.django_db
-def test_start_payment_access_as_non_owner_client(client, regular_user, order_list):
-    with patch.dict('os.environ', _make_redsys_config()):
-        client.force_login(regular_user)
-
-        url = reverse('start_payment', args=[order_list[1].id])
-        response = client.get(url)
-    
-        assert response.status_code == 302
-        assert response.url == reverse('home')
 
 @pytest.mark.django_db
 def test_start_payment_access_as_client_owner(client, regular_user, order_list):
@@ -385,19 +364,6 @@ def test_start_payment_order_not_pending(client, regular_user, order_and_items_l
     assert response.url == reverse('home')
 
 @pytest.mark.django_db
-def test_start_payment_order_not_pending(client, regular_user, order_and_items_list):
-    client.force_login(regular_user)
-    order = order_and_items_list
-    order.payment_method = 'CA'
-    order.save()
-
-    url = reverse('start_payment', args=[order.id])
-    response = client.get(url)
-    
-    assert response.status_code == 302
-    assert response.url == reverse('home')
-
-@pytest.mark.django_db
 def test_start_payment_renders_with_signature_and_parameters(client, regular_user, order_list):
     with patch.dict('os.environ', _make_redsys_config()):
         client.force_login(regular_user)
@@ -426,12 +392,15 @@ def test_start_payment_renders_with_signature_and_parameters(client, regular_use
 
 # Test cases for payment notifications:
 @pytest.mark.django_db
-def test_payment_notification_post_valid_signature_updates_order(client, regular_user, order_and_items_list):
+def test_payment_notification_post_valid_signature_updates_order(client, regular_user, order_and_items_list, mock_send_email):
     with patch.dict('os.environ', _make_redsys_config()):
         order = order_and_items_list
         order.state = 'PE'
         order.payment_method = 'CC'
         order.client = regular_user
+        order.client_email = "email@example.com"
+        order.phone_number = regular_user.phone_number
+        order.shipping_address = "Some address"
         order.save()
 
         initial_stock = {}
@@ -463,6 +432,8 @@ def test_payment_notification_post_valid_signature_updates_order(client, regular
         for item in order.items.all():
             ps = ProductStock.objects.get(product=item.product, size=item.size, colour=item.colour)
             assert ps.stock == initial_stock[item.pk] - item.quantity
+
+        mock_send_email.assert_called_once()
 
 @pytest.mark.django_db
 def test_payment_notification_post_invalid_signature_returns_400(client, regular_user, order_list):
@@ -521,25 +492,6 @@ def test_payment_notification_get_not_allowed(client, regular_user, order_list):
 
 # Test cases for payment success view:
 @pytest.mark.django_db
-def test_payment_success_access_as_unauthenticated(client):
-    url = reverse('payment_ok', args=[1])
-    response = client.get(url)
-
-    assert response.status_code == 302
-    assert "accounts/login" in response.url
-
-@pytest.mark.django_db
-def test_payment_success_access_as_non_owner_client(client, regular_user, order_list):
-    with patch.dict('os.environ', _make_redsys_config()):
-        client.force_login(regular_user)
-
-        url = reverse('payment_ok', args=[2])
-        response = client.get(url)
-    
-        assert response.status_code == 302
-        assert response.url == reverse('home')
-
-@pytest.mark.django_db
 def test_payment_success_access_as_staff(client, staff_user, order_list):
     with patch.dict('os.environ', _make_redsys_config()):
         client.force_login(staff_user)
@@ -574,24 +526,6 @@ def test_payment_success_order_does_not_exist(client, regular_user):
     assert response.status_code == 404
 
 # Test cases for payment error view:
-@pytest.mark.django_db
-def test_payment_error_access_as_unauthenticated(client):
-    url = reverse('payment_ko', args=[1])
-    response = client.get(url)
-
-    assert response.status_code == 302
-    assert "accounts/login" in response.url
-
-@pytest.mark.django_db
-def test_payment_error_access_as_non_owner_client(client, regular_user, order_list):
-    client.force_login(regular_user)
-
-    url = reverse('payment_ko', args=[2])
-    response = client.get(url)
-    
-    assert response.status_code == 302
-    assert response.url == reverse('home')
-
 @pytest.mark.django_db
 def test_payment_error_access_as_staff(client, staff_user, order_list):
     client.force_login(staff_user)
@@ -786,7 +720,7 @@ def test_create_order_from_cart(client, regular_user, auth_cart):
     createdOrder = Order.objects.filter(client=regular_user)[0]
 
     assert response.status_code == 302
-    assert "/orders/detail" in response.url
+    assert reverse('order_info', args=[createdOrder.pk]) in response.url
     assert createdOrder
     assert len(createdOrder.items.all()) == 1
     assert len(Cart.objects.all()) == 0

@@ -20,5 +20,15 @@ urlpatterns = [
     path('delete_type/<int:type_id>/', views.delete_type, name='delete_type'),
     path('delete_material/<int:material_id>/', views.delete_material, name='delete_material'),
     path('delete_size/<int:size_id>/', views.delete_size, name='delete_size'),
-    path('delete_colour/<int:colour_id>/', views.delete_colour, name='delete_colour')
+    path('delete_colour/<int:colour_id>/', views.delete_colour, name='delete_colour'),
+    path('edit_brand/<int:brand_id>/', views.edit_brand, name="edit_brand"),
+    path('edit_model/<int:model_id>/', views.edit_model, name="edit_model"),
+    path('edit_type/<int:type_id>/', views.edit_type, name="edit_type"),
+    path('edit_material/<int:material_id>/', views.edit_material, name="edit_material"),
+    path('edit_size/<int:size_id>/', views.edit_size, name="edit_size"),
+    path('edit_colour/<int:colour_id>/', views.edit_colour, name="edit_colour"),
+    path('product_stock_view', views.product_stock_view, name="product_stock_view"),
+    path('create_stock', views.create_stock, name="create_stock"),
+    path('edit_stock/<int:stock_id>/', views.edit_stock, name="edit_stock"),
+    path('delete_stock/<int:stock_id>/', views.delete_stock, name="delete_stock"),
 ]

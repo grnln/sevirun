@@ -7,9 +7,6 @@
 
 {% block content %}
     <main class="container py-4">
-        <aside class="ml-4 mb-4">
-            <a href="{% url 'orders' %}" class="text-dark">← Volver</a>
-        </aside>
         <div class="card-header">Pedido #{{ order.pk }}</div>
         <div class="alert alert-warning" role="alert">
         <strong>Aviso:</strong> La tienda no contempla devoluciones online.
