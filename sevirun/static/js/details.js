@@ -6,6 +6,8 @@ const realShippingCosts = document.getElementById('real_shipping_costs');
 const totalPrice = document.getElementById('total_price');
 const subtotalPrice = document.getElementById('subtotal');
 const shippingSection = shippingInput.closest('.mb-3');
+const taxSection = document.getElementById('tax_amount');
+const taxPercentage = document.getElementById('tax');
 
 function cleanAndParse(element) {
     if (!element || !element.innerText) return 0;
@@ -20,10 +22,13 @@ function cleanAndParse(element) {
 
 function calculateTotal(shippingFee) {
     const subtotal = cleanAndParse(subtotalPrice);
+    const taxRate = cleanAndParse(taxPercentage);
 
     const baseTotal = subtotal + shippingFee;
+    const taxTotal = baseTotal - baseTotal / (1 + (taxRate / 100));
 
     totalPrice.innerText = baseTotal.toFixed(2).replace('.', ',') + '€';
+    taxSection.innerText = taxTotal.toFixed(2).replace('.', ',') + '€';
 }
 
 

@@ -68,6 +68,7 @@ def order_info(request, order_id):
         else:
             order.type = OrderType.SHOP
             order.shipping_address = "En tienda"
+            order.delivery_cost = 0.0
         order.phone_number = phone_number
         order.client_email = email
         order.save()

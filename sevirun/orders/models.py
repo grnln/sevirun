@@ -78,7 +78,7 @@ class Order(models.Model):
     @property
     def tax_amount(self):
         total = self.total_price
-        tax = Decimal(total * self.tax_percentage / 100)
+        tax = total - Decimal(total / Decimal(1 + (self.tax_percentage / 100)))
         return tax.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
     @property
