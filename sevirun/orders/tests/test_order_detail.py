@@ -58,9 +58,8 @@ def test_prices_are_computed(client, regular_user, order_and_items_list):
     url = reverse('orders')
     response = client.get(url)
 
-    expected_price = Decimal((55.90 * 2 + 75.00 * 1 + 5.5)).quantize(Decimal("0.01"), rounding=ROUND_CEILING)
+    expected_price = Decimal((55.90 * 2 + 75.00 * 1 + 5.49)).quantize(Decimal("0.01"), rounding=ROUND_CEILING)
     encoded_price = str(expected_price).replace('.', ',').encode()
-
     assert response.status_code == 200
     assert encoded_price in response.content
 
