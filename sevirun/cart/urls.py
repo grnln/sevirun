@@ -6,7 +6,7 @@ urlpatterns = [
     path("update-ajax/<int:item_id>/<str:action>/", 
         views.update_quantity_ajax, 
         name="update_quantity_ajax"),
-    path('add/<int:product_id>/<int:colour_id>/<int:size_id>/', 
+    path('add/<int:product_id>/<int:colour_id>/<int:size_id>/<int:quantity>', 
         views.add_product_to_cart, 
         name='add_to_cart'),
     path('create-order', views.create_order_from_cart, name='create_order_from_cart'),

@@ -103,6 +103,7 @@
     window.addToCartRedirect = function(productId) {
         const sizeSelect = document.getElementById('size-select');
         const colorSelect = document.getElementById('color-select');
+        const quantity = document.getElementById('quantity').value;
 
         const sizeId = sizeSelect ? sizeSelect.value : null;
         const colorId = colorSelect ? colorSelect.value : null;
@@ -112,6 +113,6 @@
             return;
         }
 
-        window.location.href = `/cart/add/${productId}/${colorId}/${sizeId}/`;
+        window.location.href = `/cart/add/${productId}/${colorId}/${sizeId}/${quantity}`;
     };
 })();

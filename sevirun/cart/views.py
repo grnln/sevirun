@@ -118,23 +118,32 @@ def cart(request):
     cart = get_or_create_cart(request)
     return render(request, "cart/view_cart.html", { 'cart': cart })
 
-def add_product_to_cart(request, product_id, colour_id, size_id):
+def add_product_to_cart(request, product_id, colour_id, size_id, quantity):
     cart = get_or_create_cart(request)
 
     product = get_object_or_404(Product, id=product_id)
     colour = get_object_or_404(ProductColour, id=colour_id)
     size = get_object_or_404(ProductSize, id=size_id)
 
+    if not quantity:
+        quantity = 1
+
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
         product=product,
         colour=colour,
         size=size,
-        defaults={'quantity': 1}
+        defaults={'quantity': quantity}
     )
     if not created:
-        cart_item.quantity += 1
+        cart_item.quantity += quantity
         cart_item.save()
+    
+    cart = check_items_stock(cart)
+
+    currentQuantity = cart.items.get(id=cart_item.id).quantity
+    if currentQuantity < quantity:
+        messages.info(request, "Ha intentado añadir más productos de los disponibles.")
 
     return redirect('cart') 
 

@@ -83,6 +83,16 @@
                                     </select>
                                 </div>
                             {% endif %}
+
+                            <div class="col-md-2">
+                                <label for="quantity" class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="quantity" name="stock" min="0" required step="1" value="1">
+                            </div>
+                            
+                            <script src="{% static 'js/check-integer-input.js' %}?v=3"></script>
+                            <script>
+                                validateIntegerInput('quantity');
+                            </script>
                         </div>
                     {% endif %}
 
@@ -165,6 +175,6 @@
     </section>
         {{ stock_list|json_script:"product-stock-data" }}
         {{ product_available|json_script:"product-available" }}
-        <script src="{% static 'js/product-detail.js' %}?v={{ product.updated_at.timestamp }}"></script>
+        <script src="{% static 'js/product-detail.js' %}"></script>
     </main>
 {% endblock %}
