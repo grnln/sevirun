@@ -5,7 +5,6 @@ from django.template.loader import render_to_string
 
 def send_email(subject, html, recipient):
     resend.api_key = os.environ["RESEND_API_KEY"]
-    print(resend.api_key)
     from_address = f"{os.environ["EMAIL_FROM_NAME"]} <{os.environ["EMAIL_FROM"]}>"
     params = {
         "from": from_address,
