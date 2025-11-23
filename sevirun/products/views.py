@@ -243,6 +243,7 @@ def catalog_management(request):
         'materials': ProductMaterial.objects.all(),
         'sizes': ProductSize.objects.all(),
         'colours': ProductColour.objects.all(),
+        'seasons': ProductSeason.objects.all(),
         'from': prev_page
     })
 
@@ -305,6 +306,16 @@ def create_colour(request):
         if name:
             ProductColour.objects.create(name=name)
         return redirect(f"{reverse('catalog_management')}?tab=colours")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_season(request):
+    if request.method == "POST":
+        name = request.POST.get("seasonName")
+        if name:
+            ProductSeason.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=seasons")
     
     return redirect('catalog_management')
 
@@ -409,6 +420,22 @@ def delete_colour(request, colour_id):
     
     return render(request, 'products/product_confirm_delete.html', {'object': colour, 'object_name': 'color', 'cancel_target': f"{reverse('catalog_management')}?tab=colours"})
     
+@staff_member_required(login_url='login')
+def delete_season(request, season_id):
+    season = get_object_or_404(ProductSeason, pk=season_id)
+    if Product.objects.filter(season=season).exists():
+        messages.error(request, 'Existen productos que usan esta temporada!')
+        return redirect(f"{reverse('catalog_management')}?tab=seasons")
+    
+    if request.method == 'POST':
+        season_name = season.name
+        season.delete()
+        messages.success(request, f'La temporada "{season_name}" ha sido eliminada correctamente.')
+        return redirect(f"{reverse('catalog_management')}?tab=seasons")
+    
+    return render(request, 'products/product_confirm_delete.html', {'object': season, 'object_name': 'temporada', 'cancel_target': f"{reverse('catalog_management')}?tab=seasons"})
+
+
 @staff_member_required(login_url='login')
 def edit_brand(request, brand_id):
     brand = get_object_or_404(Brand, id=brand_id)
@@ -528,6 +555,26 @@ def edit_colour(request, colour_id):
             messages.error(request, f'Error al crear el color: {str(e)}')
             
     return render_product_attribute_edit(request, colour, 'color', has_picture=True)
+
+@staff_member_required(login_url='login')
+def edit_season(request, season_id):    
+    season = get_object_or_404(ProductSeason, id=season_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(season, 'name', request.POST.get('name'))
+                        
+            if 'picture' in request.FILES:
+                season.picture = request.FILES['picture']
+
+            season.save()
+            messages.success(request, f'Temporada "{season.name}" editada correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=seasons")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear la temporada: {str(e)}')
+            
+    return render_product_attribute_edit(request, season, 'temporada', has_picture=True)
 
 @staff_member_required(login_url='login')
 def product_stock_view(request):

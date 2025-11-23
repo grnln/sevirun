@@ -26,7 +26,8 @@ function setFormActions() {
         { id: 'typeForm', tab: 'types' },
         { id: 'materialForm', tab: 'materials' },
         { id: 'sizeForm', tab: 'sizes' },
-        { id: 'colourForm', tab: 'colours' }
+        { id: 'colourForm', tab: 'colours' },
+        { id: 'seasonForm', tab: 'seasons' }
     ];
     
     forms.forEach(({ id, tab }) => {
