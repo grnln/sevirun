@@ -90,8 +90,9 @@
                         <span id="real_shipping_costs" class="d-none">{{ order.delivery_cost }}</span>
                         <span class="summary-label">Gastos de envío:</span> <span id="shipping_costs">{{ order.delivery_cost }}€</span>
                     </div>
+                                                <span class="summary-label">IVA incluido en el precio (<span id="tax">{{ order.tax_percentage }}</span>%):</span> <span id="tax_amount">{{ order.tax_amount }}€</span>
                     <div class="subtotal">
-                        Total (IVA <span id="tax">{{ order.tax_percentage }}</span>%): <span id="total_price">{{ order.total_price }}€</span>
+                        Total: <span id="total_price">{{ order.total_price }}€</span>
                     </div>
 
                     {% if not user.is_staff and not user.is_superuser and order.state == "PE" %}

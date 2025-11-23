@@ -253,8 +253,8 @@
                         <span>&nbsp;{{ order.delivery_cost|floatformat:2 }}€</span>
                     </div>
                     <div class="summary-row">
-                        <span>IVA ({{ order.tax_percentage }}%):</span>
-                        <span>&nbsp;{{ tax_amount|floatformat:2 }}€</span>
+                        <span>IVA incluido en el precio ({{ order.tax_percentage }}%):</span>
+                        <span>&nbsp;{{ order.tax_amount|floatformat:2 }}€</span>
                     </div>
                     <div class="summary-row total">
                         <span>TOTAL:</span>

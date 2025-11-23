@@ -55,8 +55,11 @@
                                     <div class = "summary-item">
                                         <span class = "summary-label">Código de seguimiento:</span> {{s.tracking_number}}
                                     </div>
+                                    <div class = "summary-item">
+                                        <span class = "summary-label">IVA incluido en el precio ({{ s.tax_percentage }}%):</span> {{ s.tax_amount }}€
+                                    </div>
                                     <div class="subtotal">
-                                        Total (IVA {{ s.tax_percentage }}%): {{ s.total_price }}€
+                                        Total: {{ s.total_price }}€
                                     </div>
                                 </div>
                             </div>

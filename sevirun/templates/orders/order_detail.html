@@ -97,10 +97,13 @@
                                             <span class="summary-label">Gastos de envío:</span> {{ order.delivery_cost }}€
                                         </div>
                                         <div class="summary-item">
+                                            <span class="summary-label">IVA incluido en el precio ({{ order.tax_percentage }}%):</span> {{ order.tax_amount }}€
+                                        </div>
+                                        <div class="summary-item">
                                             <span class="summary-label">Método de pago:</span> {{ order.get_payment_method_display }}
                                         </div>
                                         <div class="subtotal">
-                                            Total (IVA {{ order.tax_percentage }}%): {{ order.total_price }}€
+                                            Total: {{ order.total_price }}€
                                         </div>
 
                                         {% if not user.is_staff and not user.is_superuser and order.state == "PE" %}

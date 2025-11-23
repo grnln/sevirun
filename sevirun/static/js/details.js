@@ -5,8 +5,6 @@ const shippingCosts = document.getElementById('shipping_costs');
 const realShippingCosts = document.getElementById('real_shipping_costs');
 const totalPrice = document.getElementById('total_price');
 const subtotalPrice = document.getElementById('subtotal');
-const taxElement = document.getElementById('tax'); // Renombrado para evitar conflicto
-
 const shippingSection = shippingInput.closest('.mb-3');
 
 function cleanAndParse(element) {
@@ -22,15 +20,10 @@ function cleanAndParse(element) {
 
 function calculateTotal(shippingFee) {
     const subtotal = cleanAndParse(subtotalPrice);
-    const taxPercentage = cleanAndParse(taxElement);
 
     const baseTotal = subtotal + shippingFee;
 
-    const taxMultiplier = 1 + (taxPercentage / 100);
-
-    let finalTotal = baseTotal * taxMultiplier;
-
-    totalPrice.innerText = finalTotal.toFixed(2) + '€';
+    totalPrice.innerText = baseTotal.toFixed(2).replace('.', ',') + '€';
 }
 
 
@@ -38,18 +31,18 @@ function toggleShippingAddress() {
     const DELIVERY_COST = cleanAndParse(realShippingCosts);
 
     if (homeDelivery && storePickup) {
-        if (homeDelivery.checked) {
-            shippingCosts.innerText = DELIVERY_COST.toFixed(2) + '€';
+            if (homeDelivery.checked) {
+            shippingCosts.innerText = DELIVERY_COST.toFixed(2).replace('.', ',') + '€';
             shippingSection.style.display = 'block';
             shippingInput.required = true;
 
             calculateTotal(DELIVERY_COST);
 
-        } else if (storePickup.checked) {
+            } else if (storePickup.checked) {
             shippingSection.style.display = 'none';
             shippingInput.required = false;
             shippingInput.value = '';
-            shippingCosts.innerText  = '0.00€';
+                shippingCosts.innerText  = '0,00€';
 
             calculateTotal(0.00); // Recalcula con 0.00€
         }
