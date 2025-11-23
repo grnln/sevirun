@@ -83,12 +83,23 @@
                                     </select>
                                 </div>
                             {% endif %}
+
+                            <div class="col-md-2">
+                                <label for="quantity" class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="quantity" name="stock" min="0" required step="1" value="1">
+                            </div>
+                            
+                            <script src="{% static 'js/check-integer-input.js' %}?v=3"></script>
+                            <script>
+                                validateIntegerInput('quantity');
+                            </script>
                         </div>
                     {% endif %}
 
                     <div class="mb-3">
                         {% if product.is_available %}
-                            <button class="btn btn-primary" type="button" aria-label="Añadir al carrito">
+                            <button class="btn btn-primary" type="button" aria-label="Añadir al carrito"
+                                    onclick="addToCartRedirect({{ product.id }})">
                                 <svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-cart"/></svg>
                                 Añadir al carrito
                             </button>

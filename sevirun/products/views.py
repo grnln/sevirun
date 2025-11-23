@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from .models import *
-from django.http import HttpResponse
 from django.db.models import Sum
 from .models import Product
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from .forms import ProductFiltersForm
+from django.urls import reverse
 
 def index(request):
     products = Product.objects.filter(is_deleted=False)
@@ -81,7 +81,7 @@ def categories(request):
     return render(request, 'products/categories.html', context)
 
 def product_detail(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, pk=product_id)
     
     sizes = product.productstock_set.values('size__id', 'size__name')\
         .annotate(total=Sum('stock'))\
@@ -136,11 +136,7 @@ def edit_product(request, product_id):
                 if value:
                     setattr(product, field, value)
             
-            if 'is_available' in request.POST:
-                product.is_available = request.POST.get('is_available')
-
-            if 'is_highlighted' in request.POST:
-                product.is_highlighted = request.POST.get('is_highlighted')
+            product.is_highlighted = request.POST.get('is_highlighted', False) == 'on'
             
             if 'picture' in request.FILES:
                 product.picture = request.FILES['picture']
@@ -170,7 +166,6 @@ def create_product(request):
                 'picture': request.FILES.get('picture'),
                 'price': request.POST.get('price'),
                 'price_on_sale': request.POST.get('price_on_sale') or None,
-                'is_available': 'is_available' in request.POST,
                 'is_highlighted': 'is_highlighted' in request.POST,
                 'model': model,
                 'type': product_type,
@@ -204,6 +199,28 @@ def render_create_edit_form(request, product=None, is_editing=False):
     }
     return render(request, 'products/create_edit_product.html', context)
 
+def render_create_edit_stock_form(request, stock=None, is_editing=False):
+    return render(request, 'products/create_stock.html', {
+        'products': Product.objects.filter(is_deleted=False),
+        'colours': ProductColour.objects.all(),
+        'sizes': ProductSize.objects.all(),
+        'is_editing': is_editing,
+        'stock': stock
+    })
+
+def render_product_attribute_edit(request, attribute, attribute_name, has_logo = False, has_picture = False, has_brand = False):
+    brands = []
+    if has_brand:
+        brands = Brand.objects.all()
+    context = {
+        'attribute': attribute,
+        'attribute_name': attribute_name,
+        'has_logo': has_logo,
+        'has_picture': has_picture,
+        'brands': brands
+    }
+    return render(request, 'products/edit_product_attribute.html', context)
+
 @staff_member_required(login_url='login')
 def delete_product(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
@@ -213,5 +230,369 @@ def delete_product(request, product_id):
         product.save()
         messages.success(request, f'El producto "{product_name}" ha sido eliminado correctamente.')
         return redirect('products')
-    return render(request, 'products/product_confirm_delete.html', {'product': product})
+    return render(request, 'products/product_confirm_delete.html', {'object': product, 'object_name': 'producto', 'cancel_url': 'products'})
 
+@staff_member_required(login_url='login')
+def catalog_management(request):
+    prev_page = request.GET.get('from', '/')
+
+    return render(request, 'products/catalog_management.html', {
+        'brands': Brand.objects.all(),
+        'models': ProductModel.objects.all(),
+        'types': ProductType.objects.all(),
+        'materials': ProductMaterial.objects.all(),
+        'sizes': ProductSize.objects.all(),
+        'colours': ProductColour.objects.all(),
+        'from': prev_page
+    })
+
+@staff_member_required(login_url='login')
+def create_brand(request):
+    if request.method == "POST":
+        name = request.POST.get("brandName")
+        if name:
+            Brand.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=brands")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_model(request):
+    if request.method == "POST":
+        name = request.POST.get("modelName")
+        brand = request.POST.get("brandSelect")
+        if name and brand:
+            brandObject = get_object_or_404(Brand, pk=int(brand))
+            ProductModel.objects.create(name=name, brand=brandObject)
+        return redirect(f"{reverse('catalog_management')}?tab=models")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_type(request):
+    if request.method == "POST":
+        name = request.POST.get("typeName")
+        if name:
+            ProductType.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=types")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_material(request):
+    if request.method == "POST":
+        name = request.POST.get("materialName")
+        if name:
+            ProductMaterial.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=materials")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_size(request):
+    if request.method == "POST":
+        name = request.POST.get("sizeName")
+        if name:
+            ProductSize.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=sizes")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def create_colour(request):
+    if request.method == "POST":
+        name = request.POST.get("colourName")
+        if name:
+            ProductColour.objects.create(name=name)
+        return redirect(f"{reverse('catalog_management')}?tab=colours")
+    
+    return redirect('catalog_management')
+
+@staff_member_required(login_url='login')
+def delete_brand(request, brand_id):
+    brand = get_object_or_404(Brand, pk=brand_id)
+    if(len(brand.models.all()) > 0):
+        messages.error(request, 'Existen modelos de productos que son de esta marca!')
+        return redirect(f"{reverse('catalog_management')}?tab=brands")
+    
+    if request.method == 'POST':
+        brand_name = brand.name
+        brand.delete()
+        messages.success(request, f'La marca "{brand_name}" ha sido eliminado correctamente.')
+        return redirect(f"{reverse('catalog_management')}?tab=brands")
+    
+    return render(request, 'products/product_confirm_delete.html', {'object': brand, 'object_name': 'marca', 'cancel_target': f"{reverse('catalog_management')}?tab=brands"})
+
+@staff_member_required(login_url='login')
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    if request.method == 'POST':
+        product_name = product.name
+        product.is_deleted = True
+        product.save()
+        messages.success(request, f'El producto "{product_name}" ha sido eliminado correctamente.')
+        return redirect('products')
+    return render(request, 'products/product_confirm_delete.html', {'object': product, 'object_name': 'producto', 'cancel_url': 'products'})
+
+@staff_member_required(login_url='login')
+def delete_model(request, model_id):
+    model = get_object_or_404(ProductModel, pk=model_id)
+    if Product.objects.filter(model=model).exists():
+        messages.error(request, 'Existen productos que son de este modelo!')
+        return redirect(f"{reverse('catalog_management')}?tab=models")
+    
+    if request.method == 'POST':
+        model_name = model.name
+        model.delete()
+        messages.success(request, f'El modelo "{model_name}" ha sido eliminado correctamente.')
+        return redirect(f"{reverse('catalog_management')}?tab=models")
+    
+    return render(request, 'products/product_confirm_delete.html', {'object': model, 'object_name': 'modelo', 'cancel_target': f"{reverse('catalog_management')}?tab=models"})
+
+@staff_member_required(login_url='login')
+def delete_type(request, type_id):
+    type = get_object_or_404(ProductType, pk=type_id)
+    if Product.objects.filter(type=type).exists():
+        messages.error(request, 'Existen productos que son de este tipo!')
+        return redirect(f"{reverse('catalog_management')}?tab=types")
+    
+    if request.method == 'POST':
+        type_name = type.name
+        type.delete()
+        messages.success(request, f'El tipo "{type_name}" ha sido eliminado correctamente.')
+        return redirect(f"{reverse('catalog_management')}?tab=types")
+    
+    return render(request, 'products/product_confirm_delete.html', {'object': type, 'object_name': 'tipo', 'cancel_target': f"{reverse('catalog_management')}?tab=types"})
+
+@staff_member_required(login_url='login')
+def delete_material(request, material_id):
+    material = get_object_or_404(ProductMaterial, pk=material_id)
+    if Product.objects.filter(material=material).exists():
+        messages.error(request, 'Existen productos que usan este material!')
+        return redirect(f"{reverse('catalog_management')}?tab=materials")
+    
+    if request.method == 'POST':
+        material_name = material.name
+        material.delete()
+        messages.success(request, f'El material "{material_name}" ha sido eliminado correctamente.')
+        return redirect(f"{reverse('catalog_management')}?tab=materials")
+    
+    return render(request, 'products/product_confirm_delete.html', {'object': material, 'object_name': 'material', 'cancel_target': f"{reverse('catalog_management')}?tab=materials"})
+
+@staff_member_required(login_url='login')
+def delete_size(request, size_id):
+    size = get_object_or_404(ProductSize, pk=size_id)
+    if Product.objects.filter(productstock__size=size).exists():
+        messages.error(request, 'Existen productos que usan esta talla!')
+        return redirect(f"{reverse('catalog_management')}?tab=sizes")
+    
+    if request.method == 'POST':
+        size_name = size.name
+        size.delete()
+        messages.success(request, f'La talla "{size_name}" ha sido eliminado correctamente.')
+        return redirect(f"{reverse('catalog_management')}?tab=sizes")
+    
+    return render(request, 'products/product_confirm_delete.html', {'object': size, 'object_name': 'talla', 'cancel_target': f"{reverse('catalog_management')}?tab=sizes"})
+
+@staff_member_required(login_url='login')
+def delete_colour(request, colour_id):    
+    colour = get_object_or_404(ProductColour, pk=colour_id)
+    if Product.objects.filter(productstock__colour=colour).exists():
+        messages.error(request, 'Existen productos que usan este color!')
+        return redirect(f"{reverse('catalog_management')}?tab=colours")
+    
+    if request.method == 'POST':
+        colour_name = colour.name
+        colour.delete()
+        messages.success(request, f'El color "{colour_name}" ha sido eliminado correctamente.')
+        return redirect(f"{reverse('catalog_management')}?tab=colours")
+    
+    return render(request, 'products/product_confirm_delete.html', {'object': colour, 'object_name': 'color', 'cancel_target': f"{reverse('catalog_management')}?tab=colours"})
+    
+@staff_member_required(login_url='login')
+def edit_brand(request, brand_id):
+    brand = get_object_or_404(Brand, id=brand_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(brand, 'name', request.POST.get('name'))
+
+            if 'logo' in request.FILES:
+                brand.logo = request.FILES['logo']
+
+            brand.save()
+            messages.success(request, f'Marca "{brand.name}" editada correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=brands")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear la marca: {str(e)}')
+            
+    return render_product_attribute_edit(request, brand, 'marca', has_logo=True)
+
+@staff_member_required(login_url='login')
+def edit_model(request, model_id):
+    model = get_object_or_404(ProductModel, id=model_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(model, 'name', request.POST.get('name'))
+
+            if request.POST.get('brand'):
+                model.brand = get_object_or_404(Brand, id=request.POST.get('brand'))
+
+            if 'picture' in request.FILES:
+                model.picture = request.FILES['picture']
+
+            model.save()
+            messages.success(request, f'Modelo "{model.name}" editado correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=models")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear el modelo: {str(e)}')
+            
+    return render_product_attribute_edit(request, model, 'modelo', has_picture=True, has_brand=True)
+
+@staff_member_required(login_url='login')
+def edit_type(request, type_id):
+    type = get_object_or_404(ProductType, id=type_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(type, 'name', request.POST.get('name'))
+
+            if 'picture' in request.FILES:
+                type.picture = request.FILES['picture']
+
+            type.save()
+            messages.success(request, f'Tipo "{type.name}" editado correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=types")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear el tipo: {str(e)}')
+            
+    return render_product_attribute_edit(request, type, 'tipo', has_picture=True)
+
+@staff_member_required(login_url='login')
+def edit_material(request, material_id):
+    material = get_object_or_404(ProductMaterial, id=material_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(material, 'name', request.POST.get('name'))
+
+            if 'picture' in request.FILES:
+                material.picture = request.FILES['picture']
+
+            material.save()
+            messages.success(request, f'Material "{material.name}" editado correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=materials")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear el material: {str(e)}')
+            
+    return render_product_attribute_edit(request, material, 'material', has_picture=True)
+
+@staff_member_required(login_url='login')
+def edit_size(request, size_id):
+    size = get_object_or_404(ProductSize, id=size_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(size, 'name', request.POST.get('name'))
+
+            size.save()
+            messages.success(request, f'Talla "{size.name}" editada correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=sizes")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear la talla: {str(e)}')
+            
+    return render_product_attribute_edit(request, size, 'talla')
+
+@staff_member_required(login_url='login')
+def edit_colour(request, colour_id):    
+    colour = get_object_or_404(ProductColour, id=colour_id)
+    if request.method == 'POST':
+        try:            
+            if request.POST.get('name'):
+                setattr(colour, 'name', request.POST.get('name'))
+                        
+            if 'picture' in request.FILES:
+                colour.picture = request.FILES['picture']
+
+            colour.save()
+            messages.success(request, f'Color "{colour.name}" editado correctamente.')
+            return redirect(f"{reverse('catalog_management')}?tab=colours")
+        
+        except Exception as e:
+            messages.error(request, f'Error al crear el color: {str(e)}')
+            
+    return render_product_attribute_edit(request, colour, 'color', has_picture=True)
+
+@staff_member_required(login_url='login')
+def product_stock_view(request):
+    prev_page = request.GET.get('from', '/')
+
+    return render(request, 'products/product_stock_view.html', {
+        'stocks': ProductStock.objects.all().filter(product__is_deleted=False),
+        'from': prev_page
+    })
+
+@staff_member_required(login_url='login')
+def create_stock(request):
+    if request.method == 'POST':
+        try:
+            product = get_object_or_404(Product, id=request.POST.get('product'))
+            colour = get_object_or_404(ProductColour, id=request.POST.get('colour'))
+            size = get_object_or_404(ProductSize, id=request.POST.get('size'))
+
+            data = {
+                'product': product,
+                'size': size,
+                'colour': colour,
+            }
+
+            required = ['product', 'size', 'colour']
+            if not all(data.get(field) for field in required):
+                messages.error(request, 'Por favor, completa todos los campos obligatorios.')
+                return redirect('create_stock')
+            
+            if ProductStock.objects.filter(**data).exists():
+                messages.error(request, 'Ya existe stock para este producto, color y talla.')
+                return redirect('create_stock')
+
+            productStock = ProductStock.objects.create(**data, stock=request.POST.get('stock') or 0)
+            productStock.save()
+            messages.success(request, f'Stock creado correctamente.')
+            return redirect('product_stock_view')
+            
+        except Exception as e:
+            messages.error(request, f'Error: {str(e)}')
+            return redirect('create_stock')
+    return render_create_edit_stock_form(request)
+
+@staff_member_required(login_url='login')
+def edit_stock(request, stock_id):
+    if request.method == 'POST':
+        try:
+            productStock = get_object_or_404(ProductStock, id=stock_id)
+            
+            if request.POST.get('stock'):
+                setattr(productStock, 'stock', request.POST.get('stock'))
+            
+            productStock.save()
+            messages.success(request, f'Stock editado correctamente.')
+            return redirect('product_stock_view')
+        
+        except Exception as e:
+            messages.error(request, f'Error al editar el stock: {str(e)}')
+    return render_create_edit_stock_form(request, stock=get_object_or_404(ProductStock, id=stock_id), is_editing=True)
+
+@staff_member_required(login_url='login')
+def delete_stock(request, stock_id):
+    stock = get_object_or_404(ProductStock, pk=stock_id)
+    if request.method == 'POST':
+        stock.delete()
+        messages.success(request, f'Inventario del producto eliminado correctamente.')
+        return redirect('product_stock_view')
+    return render(request, 'products/product_confirm_delete.html', {'object': stock, 'object_name': 'inventario del producto', 'cancel_url': 'product_stock_view'})

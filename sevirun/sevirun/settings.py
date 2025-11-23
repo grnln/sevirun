@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!%g8za79#3o6b6hac-^smtfh)wf0_+-aspi4q!!uli#suvh=u8'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.environ['SEVIRUN_ENVIRONMENT'] == 'Development')
 
 ALLOWED_HOSTS = [
     '*'
@@ -32,7 +36,6 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -42,8 +45,12 @@ INSTALLED_APPS = [
     'home',
     'users',
     'products',
-    'orders'
+    'orders',
+    'cart'
 ]
+
+if DEBUG:
+    INSTALLED_APPS += 'django.contrib.admin',
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -138,19 +146,14 @@ if not DEBUG:
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'             # carpeta donde se guardan los archivos subidos
+
+# carpeta donde se guardan los archivos subidos
+if DEBUG:
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    MEDIA_ROOT = os.environ['SEVIRUN_MEDIA_DIR']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Datos demo para usar el sandbox de Redsys
-REDSYS_CONFIG = {
-    'MERCHANT_CODE': '999008881',  # Código de comercio de pruebas
-    'TERMINAL': '001',
-    'SECRET_KEY': 'sq7HjrUOBfKmC576ILgskD5srU870gJ7',  # Clave de pruebas
-    'CURRENCY': '978',  # EUR
-    'TRANSACTION_TYPE': '0',  # Autorización
-    'REDSYS_URL': 'https://sis-t.redsys.es:25443/sis/realizarPago',     # Entorno de pruebas
-}

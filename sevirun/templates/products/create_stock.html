@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block override_style %}
+    <link rel="stylesheet" href="{% static 'css/admin_create_user.css' %}">
+{% endblock %}
+
+{% block content %}
+{% load l10n %}
+
+<main class="container py-4">
+    <aside class = "ml-4 mb-4">
+        <a href="{% if from %}{{ from }}{% else %}{% url 'home' %}{% endif %}" class="text-dark">← Volver</a>
+    </aside>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">{% if is_editing %}Editar inventario de producto{% else %}Añadir inventario de producto{% endif %}</h2>
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="stock" class="form-label">Cantidad de productos</label>
+                                    <input type="number" class="form-control" id="stock" name="stock" min="0" required step="1" value="{{ stock.stock|unlocalize|default_if_none:'' }}">
+                                </div>
+                            </div>
+
+                            {% if not is_editing %}
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="product" class="form-label">Producto</label>
+                                    <select id="product" name="product" class="form-select" required>
+                                        <option value="">Selecciona un producto</option>
+                                        {% for product in products %}
+                                            <option value="{{ product.id }}" {% if stock.product_id == product.id %}selected{% endif %}>
+                                                {{ product.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="size" class="form-label">Talla</label>
+                                    <select id="size" name="size" class="form-select" required>
+                                        <option value="">Selecciona una talla</option>
+                                        {% for size in sizes %}
+                                            <option value="{{ size.id }}" {% if stock.size_id == size.id %}selected{% endif %}>
+                                                {{ size.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="colour" class="form-label">Color</label>
+                                    <select id="colour" name="colour" class="form-select" required>
+                                        <option value="">Selecciona un tipo</option>
+                                        {% for colour in colours %}
+                                            <option value="{{ colour.id }}" {% if stock.colour_id == colour.id %}selected{% endif %}>
+                                                {{ colour.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {% endif %}
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">{% if is_editing %}Guardar inventario{% else %}Crear inventario{% endif %}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</main>
+{% endblock %}

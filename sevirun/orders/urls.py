@@ -5,4 +5,6 @@ urlpatterns = [
     path('', views.index_customer_orders, name = 'orders'),
     path('sales', views.index_sales, name = 'sales'),
     path('detail/<int:order_id>/', views.order_detail, name='order_detail'),
+    path('tracking/<str:tracking_number>/', views.order_tracking, name='order_tracking'),
+    path('delivery_cost', views.delivery_cost, name='delivery_cost'),
 ]

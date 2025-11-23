@@ -12,7 +12,11 @@ class Brand(models.Model):
 class ProductModel(models.Model):
     name = models.CharField(max_length = 32, null = False)
     picture = models.ImageField(upload_to = 'models/', null = True)
-    brand = models.ForeignKey(Brand, on_delete = models.CASCADE, null = False)
+    brand = models.ForeignKey(Brand, on_delete = models.DO_NOTHING, null = False, related_name='models')
+
+    @property
+    def products(self):
+        return Product.objects.filter(model=self, is_deleted=False)
 
     def __str__(self):
         return f'{{name: {self.name}, brand: {self.brand.name}}}'
@@ -20,6 +24,10 @@ class ProductModel(models.Model):
 class ProductType(models.Model):
     name = models.CharField(max_length = 16, null = False)
     picture = models.ImageField(upload_to = 'types/', null = True)
+
+    @property
+    def products(self):
+        return Product.objects.filter(type=self, is_deleted=False)
 
     def __str__(self):
         return f'{{name: {self.name}}}'
@@ -35,11 +43,22 @@ class ProductMaterial(models.Model):
     name = models.CharField(max_length = 16, null = False)
     picture = models.ImageField(upload_to = 'materials/', null = True)
 
+    @property
+    def products(self):
+        return Product.objects.filter(material=self, is_deleted=False)
+
     def __str__(self):
         return f'{{name: {self.name}}}'    
 
 class ProductSize(models.Model):
     name = models.CharField(max_length = 4, null = False)
+
+    @property
+    def product_count(self):
+        return self.productstock_set.filter(
+            stock__gt=0,
+            product__is_deleted=False
+        ).values('product').distinct().count()
 
     def __str__(self):
         return f'{{name: {self.name}}}'
@@ -47,6 +66,13 @@ class ProductSize(models.Model):
 class ProductColour(models.Model):
     name = models.CharField(max_length = 16, null = False)
     picture = models.ImageField(upload_to = 'colours/', null = True)
+
+    @property
+    def product_count(self):
+        return self.productstock_set.filter(
+            stock__gt=0,
+            product__is_deleted=False
+        ).values('product').distinct().count()
 
     def __str__(self):
         return f'{{name: {self.name}}}'
@@ -61,7 +87,6 @@ class Product(models.Model):
     price = models.DecimalField(max_digits = 6, decimal_places = 2, null = False)
     price_on_sale = models.DecimalField(max_digits = 6, decimal_places = 2, null = True)
     
-    is_available = models.BooleanField(null = False)
     is_highlighted = models.BooleanField(null = False)
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -70,11 +95,16 @@ class Product(models.Model):
     is_deleted = models.BooleanField(null = False, default=False)
 
     # Navigation attributes
-    model = models.ForeignKey(ProductModel, on_delete = models.CASCADE, null = False)
-    type = models.ForeignKey(ProductType, on_delete = models.CASCADE, null = False)
+    model = models.ForeignKey(ProductModel, on_delete = models.DO_NOTHING, null = False)
+    type = models.ForeignKey(ProductType, on_delete = models.DO_NOTHING, null = False)
     season = models.ForeignKey(ProductSeason, on_delete = models.CASCADE, null = False)
-    material = models.ForeignKey(ProductMaterial, on_delete = models.CASCADE, null = False)
-
+    material = models.ForeignKey(ProductMaterial, on_delete = models.DO_NOTHING, null = False)
+    
+    @property
+    def is_available(self):
+        stocks = ProductStock.objects.all().filter(product = self)
+        return (sum([s.stock for s in stocks]) > 0)
+    
     def __str__(self):
         return f'''
                 {{

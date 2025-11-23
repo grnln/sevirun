@@ -1,0 +1,62 @@
+const homeDelivery = document.getElementById('home_delivery');
+const storePickup = document.getElementById('store_pickup');
+const shippingInput = document.getElementById('shipping_address');
+const shippingCosts = document.getElementById('shipping_costs');
+const realShippingCosts = document.getElementById('real_shipping_costs');
+const totalPrice = document.getElementById('total_price');
+const subtotalPrice = document.getElementById('subtotal');
+const shippingSection = shippingInput.closest('.mb-3');
+const taxSection = document.getElementById('tax_amount');
+const taxPercentage = document.getElementById('tax');
+
+function cleanAndParse(element) {
+    if (!element || !element.innerText) return 0;
+    const text = element.innerText
+      .replace(/[€%]/g, '')
+      .replace('.', '')
+      .replace(',', '.')
+      .trim();
+
+    return parseFloat(text) || 0;
+}
+
+function calculateTotal(shippingFee) {
+    const subtotal = cleanAndParse(subtotalPrice);
+    const taxRate = cleanAndParse(taxPercentage);
+
+    const baseTotal = subtotal + shippingFee;
+    const taxTotal = baseTotal - baseTotal / (1 + (taxRate / 100));
+
+    totalPrice.innerText = baseTotal.toFixed(2).replace('.', ',') + '€';
+    taxSection.innerText = taxTotal.toFixed(2).replace('.', ',') + '€';
+}
+
+
+function toggleShippingAddress() {
+    const DELIVERY_COST = cleanAndParse(realShippingCosts);
+
+    if (homeDelivery && storePickup) {
+            if (homeDelivery.checked) {
+            shippingCosts.innerText = DELIVERY_COST.toFixed(2).replace('.', ',') + '€';
+            shippingSection.style.display = 'block';
+            shippingInput.required = true;
+
+            calculateTotal(DELIVERY_COST);
+
+            } else if (storePickup.checked) {
+            shippingSection.style.display = 'none';
+            shippingInput.required = false;
+            shippingInput.value = '';
+                shippingCosts.innerText  = '0,00€';
+
+            calculateTotal(0.00); // Recalcula con 0.00€
+        }
+    }
+}
+
+if (homeDelivery && storePickup) {
+    homeDelivery.addEventListener('change', toggleShippingAddress);
+    storePickup.addEventListener('change', toggleShippingAddress);
+
+    toggleShippingAddress();
+}

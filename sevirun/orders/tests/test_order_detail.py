@@ -13,12 +13,12 @@ def test_order_detail_access_as_unauthenticated(client):
     assert "accounts/login" in response.url
 
 @pytest.mark.django_db
-def test_order_detail_access_as_staff(client, staff_user):
+def test_order_detail_access_as_staff(client, staff_user, order_and_items_list):
     client.force_login(staff_user)
     url = reverse('order_detail', args=[1])
     response = client.get(url)
-    assert response.status_code == 302
-    assert response.url == reverse('sales')
+    assert response.status_code == 200
+    assert 'states' in response.context
 
 @pytest.mark.django_db
 def test_order_detail_access_as_non_owner_client(client, regular_user, order_list):
@@ -58,9 +58,8 @@ def test_prices_are_computed(client, regular_user, order_and_items_list):
     url = reverse('orders')
     response = client.get(url)
 
-    expected_price = Decimal((55.90 * 2 + 75.00 * 1 + 5.5) * 1.21 * 0.9).quantize(Decimal("0.01"), rounding=ROUND_CEILING)
+    expected_price = Decimal((55.90 * 2 + 75.00 * 1 + 5.49)).quantize(Decimal("0.01"), rounding=ROUND_CEILING)
     encoded_price = str(expected_price).replace('.', ',').encode()
-
     assert response.status_code == 200
     assert encoded_price in response.content
 
@@ -76,3 +75,47 @@ def test_order_detail_shows_size_and_color(client, regular_user, order_and_items
     assert b'Color: Red' in response.content
     assert b'Talla: 43' in response.content
     assert b'Color: Blue' in response.content
+
+@pytest.mark.django_db
+def test_order_detail_shows_form_to_staff(client, staff_user, order_and_items_list):
+    client.force_login(staff_user)
+
+    url = reverse('order_detail', args = [1])
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert b'name = "order-1-state"' in response.content
+
+@pytest.mark.django_db
+def test_order_detail_does_not_show_form_to_client(client, regular_user, order_and_items_list):
+    client.force_login(regular_user)
+
+    url = reverse('order_detail', args = [1])
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert b'name = "order-1-state"' not in response.content
+
+@pytest.mark.django_db
+def test_order_detail_changes_state_on_staff_post(client, staff_user, order_and_items_list):
+    client.force_login(staff_user)
+
+    url = reverse('order_detail', args = [1])
+    response = client.post(url, {'order-1-state': 'CA'})
+
+    assert response.status_code == 200
+    assert b'name = "order-1-state"' in response.content
+    assert b'Cancelado' in response.content
+    assert Order.objects.get(pk = 1).state == 'CA'
+
+@pytest.mark.django_db
+def test_order_detail_does_not_change_state_on_client_post(client, regular_user, order_and_items_list):
+    client.force_login(regular_user)
+
+    url = reverse('order_detail', args = [1])
+    response = client.post(url, {'order-1-state': 'CA'})
+
+    assert response.status_code == 200
+    assert b'name = "order-1-state"' not in response.content
+    assert b'Cancelado' not in response.content
+    assert Order.objects.get(pk = 1).state != 'CA'

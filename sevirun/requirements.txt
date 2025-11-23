@@ -3,8 +3,11 @@ Pillow==9.5.0
 django-bootstrap5==23.1.0
 pytest==7.4.0
 pytest-django==4.5.2
+pycryptodome==3.19.0
+resend==2.19.0
+dotenv==0.9.9
 gunicorn==23.0.0
 brotli==1.2.0
 whitenoise==6.11.0
 uvicorn==0.38.0
-pycryptodome==3.19.0
+waitress==3.0.2

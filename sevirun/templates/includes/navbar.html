@@ -25,7 +25,11 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="gestionDropdown">
               <li class="nav-item"><a class="nav-link" href="{% url 'products' %}?from={{ request.path }}">Productos</a></li>
-              <li class="nav-item"><a class="nav-link" href="/users/admin/all">Usuarios</a></li>
+              <li class="nav-item"><a class="nav-link" href="/users/admin/all?from={{ request.path }}">Usuarios</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'orders' %}?from={{ request.path }}">Pedidos</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'catalog_management' %}?from={{ request.path }}">Catálogo</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'product_stock_view' %}?from={{ request.path }}">Inventario</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'delivery_cost' %}?from={{ request.path }}">Gastos de envío</a></li>
             </ul>
           </li>
           <li class="nav-item"><a class="nav-link" href="/orders/sales">Ventas</a></li>

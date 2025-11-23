@@ -1,0 +1,301 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .order-number {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-left: 4px solid #333;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .order-number strong {
+            display: block;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .greeting {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        th {
+            background-color: #f9f9f9;
+            text-align: left;
+            padding: 12px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 14px;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+            color: #555;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .price-right {
+            text-align: right;
+        }
+        .summary {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        .summary-row:last-child {
+            margin-bottom: 0;
+        }
+        .summary-row.total {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .shipping-info {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+        }
+        .shipping-info strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+        .footer {
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #e0e0e0;
+        }
+        .status-badge {
+            display: inline-block;
+            background-color: #ffc107;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .tracking-button-container {
+            text-align: center;
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 4px solid #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .tracking-button {
+            display: inline-block;
+            background-color: #333;
+            color: white !important;
+            padding: 14px 40px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .tracking-button:hover {
+            background-color: #555;
+        }
+        .tracking-number-section {
+            color: #333;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        .tracking-number-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .tracking-number-value {
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            color: #333;
+            padding: 8px 12px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✓ Pedido Confirmado</h1>
+        </div>
+
+        <div class="content">
+            <div class="order-number">
+                <strong>Número de Pedido:</strong>
+                #{{ order.id }}
+                <div class="status-badge">{{ order.get_state_display }}</div>
+            </div>
+
+            <div class="greeting">
+                <p>Hola,</p>
+                <p>¡Gracias por tu pedido! Hemos recibido tu compra correctamente. A continuación encontrarás un resumen de los detalles.</p>
+            </div>
+
+            <div style="padding: 10px; padding-bottom: 30px;">
+                <div class="tracking-button-container">
+                    <a href="{{ tracking_url }}" class="tracking-button">📦 Seguimiento del Envío</a>
+                    <div class="tracking-number-section">
+                        <span class="tracking-number-label">Número de seguimiento:</span>
+                        <br/>
+                        <span class="tracking-number-value">{{ order.tracking_number }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Productos pedidos</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Tamaño / Color</th>
+                            <th style="text-align: center;">Cantidad</th>
+                            <th class="price-right">Precio Unitario</th>
+                            <th class="price-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td><strong>{{ item.product.name }}</strong></td>
+                            <td>{{ item.size.name }} / {{ item.colour.name }}</td>
+                            <td style="text-align: center;">{{ item.quantity }}</td>
+                            <td class="price-right">{{ item.unit_price }}€</td>
+                            <td class="price-right"><strong>{{ item.total_price }}€</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Resumen del Pedido</div>
+                <div class="summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>&nbsp;{{ order.subtotal|floatformat:2 }}€</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Envío:</span>
+                        <span>&nbsp;{{ order.delivery_cost|floatformat:2 }}€</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>IVA incluido en el precio ({{ order.tax_percentage }}%):</span>
+                        <span>&nbsp;{{ order.tax_amount|floatformat:2 }}€</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>TOTAL:</span>
+                        <span>&nbsp;{{ order.total_price|floatformat:2 }}€</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if order.shipping_address %}
+            <div class="section">
+                <div class="section-title">Información de Envío</div>
+                <div class="shipping-info">
+                    <p>
+                        <strong>Dirección de Envío:</strong>
+                        {{ order.shipping_address }}
+                    </p>
+                    {% if order.phone_number %}
+                    <p>
+                        <br><strong>Teléfono:</strong>
+                        {{ order.phone_number }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="section">
+                <div class="section-title">Método de Pago</div>
+                <p style="font-size: 14px; color: #555; margin: 0;">{{ order.get_payment_method_display }}</p>
+            </div>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #666; font-size: 14px;">
+                <p>Si tienes preguntas sobre tu pedido, no dudes en contactarnos.</p>
+                <p>Gracias por comprar con nosotros.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 Sevirun. Todos los derechos reservados.</p>
+            <p>Este es un correo automático, por favor no respondas directamente.</p>
+        </div>
+    </div>
+</body>
+</html>
