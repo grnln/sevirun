@@ -601,27 +601,38 @@ def test_add_product_to_existing_cart(client, regular_user, auth_cart, sample_pr
     client.force_login(regular_user)
     previousCartItemsCount = len(CartItem.objects.all())
 
-    size = ProductSize.objects.create(name = '43')
-    colour = ProductColour.objects.create(name = 'White')
+    size = ProductStock.objects.all().filter(product=sample_product).first().size
+    colour = ProductStock.objects.all().filter(product=sample_product).first().colour
+    amount = 2
 
-    url = reverse('add_to_cart', args=[sample_product.pk, colour.pk, size.pk])
+    url = reverse('add_to_cart', args=[sample_product.pk, colour.pk, size.pk, amount])
     response = client.get(url)
 
     currentCartItemCount = len(CartItem.objects.all())
 
     assert response.status_code == 302
     assert "cart" in response.url
-    assert currentCartItemCount == previousCartItemsCount + 1
+    assert currentCartItemCount == previousCartItemsCount
+    assert auth_cart.items.all().filter(product=sample_product, size=size, colour=colour).first().quantity == amount + 1
+
 
 @pytest.mark.django_db
 def test_add_product_to_non_existing_cart(client, regular_user, sample_product):
     client.force_login(regular_user)
     previousCartItemsCount = len(CartItem.objects.all())
 
-    size = ProductSize.objects.create(name = '43')
-    colour = ProductColour.objects.create(name = 'White')
+    size = ProductSize.objects.create(name='39')
+    colour=ProductColour.objects.create(name='Blue')
+    ProductStock.objects.create(
+        product=sample_product,
+        size=size,
+        colour=colour,
+        stock=1
+    )
 
-    url = reverse('add_to_cart', args=[sample_product.pk, colour.pk, size.pk])
+    amount = 2
+
+    url = reverse('add_to_cart', args=[sample_product.pk, colour.pk, size.pk, amount])
     response = client.get(url)
 
     currentCartItemCount = len(CartItem.objects.all())
@@ -629,7 +640,7 @@ def test_add_product_to_non_existing_cart(client, regular_user, sample_product):
     assert response.status_code == 302
     assert "cart" in response.url
     assert currentCartItemCount == previousCartItemsCount + 1
-    assert currentCartItemCount == 1
+    assert CartItem.objects.all().filter(product=sample_product, size=size, colour=colour).first().quantity == 1
 
 @pytest.mark.django_db
 def test_increase_product(client, regular_user, auth_cart):

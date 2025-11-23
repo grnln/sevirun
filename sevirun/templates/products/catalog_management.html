@@ -46,6 +46,11 @@
                     <i class="bi bi-palette"></i> Colores
                 </button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="seasons-tab" data-bs-toggle="tab" data-bs-target="#seasons" type="button">
+                    <i class="bi bi-calendar3"></i> Temporadas
+                </button>
+            </li>
         </ul>
 
         <div class="tab-content" id="managementTabContent">
@@ -373,6 +378,59 @@
                     </table>
                 </div>
             </div>
+
+            <div class="tab-pane fade" id="seasons" role="tabpanel">
+                <div class="form-section">
+                    <h5 class="mb-3">Añadir Nueva Temporada</h5>
+                    <form id="seasonForm" class="row g-2" data-create-url="{% url 'create_season' %}">
+                        {% csrf_token %}
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="Nombre de la temporada" id="seasonName" name="seasonName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-plus-circle"></i> Añadir Temporada
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover management-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Temporada</th>
+                                <th style="width: 10rem;" class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="seasonsList">
+                            {% for season in seasons %}
+                                <tr>
+                                    <td>{{ season.name }}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="{% url 'edit_season' season.pk %}" class="btn btn-sm btn-outline-secondary" style="margin: auto;">
+                                                Editar
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{% url 'delete_season' season.pk %}" class="btn btn-sm btn-outline-danger" style="margin: auto;">
+                                                Eliminar
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td>No hay temporadas creadas.</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
         <script src="{% static 'js/product-crud.js' %}?v=2"></script>
     </main>
