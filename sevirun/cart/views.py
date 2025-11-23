@@ -196,7 +196,7 @@ def create_order_from_cart(request):
         OrderItem.objects.create(order=order, product=item.product, size=item.size, colour=item.colour, quantity=item.quantity, unit_price=price)
     
     order.save()
-    cart.delete()
+    cart.items.all().delete()
 
     return redirect('order_info', order_id=order.pk)
 
