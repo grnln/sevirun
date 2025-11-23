@@ -719,7 +719,8 @@ def test_create_order_from_cart(client, regular_user, auth_cart, delivery_cost):
     assert reverse('order_info', args=[createdOrder.pk]) in response.url
     assert createdOrder
     assert len(createdOrder.items.all()) == 1
-    assert len(Cart.objects.all()) == 0
+    assert len(Cart.objects.all()) == 1
+    assert len(CartItem.objects.all()) == 0
 
 @pytest.mark.django_db
 def test_create_order_from_empty_cart(client, regular_user):
