@@ -4,7 +4,7 @@
         "pk": 1,
         "fields": {
             "name": "sevirun-admin",
-            "email": "seirun-admin@sevirun.com",
+            "email": "sevirun-admin@sevirun.com",
             "password": "pbkdf2_sha256$1000000$QcTaMZYAHovXte1KxDG2Wc$6lv9fARaYRH4hL1fwlNBBbngoh6iy5XVGE9mWcFo3To=",
             "is_staff": true,
             "date_joined": "2025-11-01T12:00:00Z"
