@@ -8,7 +8,7 @@ def send_email(subject, html, recipient):
     from_address = f"{os.environ["EMAIL_FROM_NAME"]} <{os.environ["EMAIL_FROM"]}>"
     params = {
         "from": from_address,
-        "to": [recipient],
+        "to": ['ignaciomorap04@gmail.com'],
         "subject": subject,
         "html": html
     }

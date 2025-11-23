@@ -362,6 +362,7 @@ def payment_success(request, order_id):
     if request.user.is_staff:
         messages.error(request, "Esta vista es sólo para clientes.")
         return redirect('home')
+    messages.success(request, 'Por limitaciones de la versión gratuita de Resend, todos los mensajes se envían a ignaciomorap04@gmail.com')
     return render(request, 'cart/payment_success.html', {"order": order})
 
 def payment_error(request, order_id):
